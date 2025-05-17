@@ -1,8 +1,15 @@
 // src/pages/AdminPage.tsx
 import { useState } from 'react';
 import LoginForm from '../components/LoginForm';
-import Form from '../components/Form'; // ✅ New form component
-import PartnerForm from '../components/PartnerForm';
+import AboutForm from '../components/AboutForm'; // ✅ New form component
+import Coaches from '../components/Coaches';
+import Achievements from '../components/Achievements';
+import Partners from '../components/Partners';
+import Testinomials from '../components/Testinomials';
+import Touranments from '../components/Touranments';
+import AdminsForm from '../components/AdminsForm';
+
+
 
 const AdminPage = () => {
   const [token, setToken] = useState<string | null>(
@@ -28,7 +35,13 @@ const AdminPage = () => {
       <br /><br />
 
       {/* ✅ Embedded form component */}
-      <PartnerForm />
+      <AboutForm />
+      <Coaches />
+      <Achievements />
+      <Partners/>
+      <Testinomials/>
+      <Touranments/>
+      <AdminsForm/>
     </div>
   );
 };
