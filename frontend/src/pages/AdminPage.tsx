@@ -3,6 +3,15 @@ import { useState } from 'react';
 import LoginForm from '../components/LoginForm';
 import Form from '../components/Form'; // ✅ New form component
 import AchieveForm from '../components/AchieveForm';
+import Achi from '../components/Achi';
+import Partners from '../components/Partners';
+import Testinomials from '../components/Testinomials';
+import Touranments from '../components/Touranments';
+import AdminsForm from '../components/AdminsForm';
+
+
+
+
 
 const AdminPage = () => {
   const [token, setToken] = useState<string | null>(
@@ -30,6 +39,12 @@ const AdminPage = () => {
       {/* ✅ Embedded form component */}
       <Form />
       <AchieveForm />
+      
+      <Achi/>
+      <Partners/>
+      <Testinomials/>
+      <Touranments/>
+      <AdminsForm/>
     </div>
   );
 };
