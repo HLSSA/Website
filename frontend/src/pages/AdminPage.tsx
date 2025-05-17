@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import LoginForm from '../components/LoginForm';
 import Form from '../components/Form'; // ✅ New form component
-import AchieveForm from '../components/AchieveForm';
+import PartnerForm from '../components/PartnerForm';
 
 const AdminPage = () => {
   const [token, setToken] = useState<string | null>(
@@ -28,8 +28,7 @@ const AdminPage = () => {
       <br /><br />
 
       {/* ✅ Embedded form component */}
-      <Form />
-      <AchieveForm />
+      <PartnerForm />
     </div>
   );
 };

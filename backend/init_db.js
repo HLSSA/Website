@@ -12,6 +12,8 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 });
 
+
+
 db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS coaches (
     staff_id INTEGER PRIMARY KEY AUTOINCREMENT,
