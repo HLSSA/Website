@@ -1,477 +1,745 @@
+// Updated coaches.tsx React component with improved error handling and UX
+import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 
-const Coaches = () => {
-  return (
-    <StyledWrapper>
-      <center>
-      <form className="form">
-        <p className="title">Coaches</p>
-        <p className="message"></p>
-        <div className="flex">
-          
-        </div>
-        <label>
-            <input required placeholder='' type="text" className="input" />
-            <span>Name</span>
-          </label>  
-        <label>
-          <input required placeholder='' type="text" className="input" />
-          <span>Role</span>
-        </label> 
-        <label>
-          <input required placeholder='' type="text" className="input" />
-          <span>Phone</span>
-        </label>
-        <label>
-          <input required placeholder='' type="text" className="input" />
-          <span>Description</span>
-        </label>
-        <button className="submit">Submit</button>
-        
-      </form>
-      </center>
-    </StyledWrapper>
-  );
+interface Coach {
+  id: number;
+  name: string;
+  role: string;
+  phone: string;
+  description: string;
+  image?: string;
 }
 
+interface FormData {
+  name: string;
+  role: string;
+  phone: string;
+  description: string;
+}
+
+const Coaches = () => {
+  const [coaches, setCoaches] = useState<Coach[]>([]);
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    role: '',
+    phone: '',
+    description: ''
+  });
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
+
+  const API_URL = 'http://localhost:5000/api/admin';
+  const token = localStorage.getItem('adminToken');
+
+  // API headers with authorization
+  const headers = {
+    'Authorization': `Bearer ${token}`
+  };
+
+  // Fetch coaches data on component mount
+  useEffect(() => {
+    fetchCoaches();
+  }, []);
+
+  // Function to fetch coaches from API
+  const fetchCoaches = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await axios.get(`${API_URL}/coaches`, { headers });
+      setCoaches(response.data);
+    } catch (err: any) {
+      console.error('Error fetching coaches:', err);
+      setError(err.response?.data?.error || err.message || 'Failed to load coaches');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle form input changes
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Handle image file selection
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setImageFile(file);
+      
+      // Create preview URL for selected image
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+    }
+  };
+
+  // Clear form and reset states
+  const resetForm = () => {
+    setFormData({ name: '', role: '', phone: '', description: '' });
+    setImageFile(null);
+    setImagePreview(null);
+    setEditingId(null);
+    setSubmitError(null);
+    setSubmitSuccess(null);
+  };
+
+  // Handle form submission (create or update)
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    
+    if (!token) {
+      setSubmitError('You must be logged in to perform this action');
+      return;
+    }
+
+    if (submitLoading) return;
+
+    setSubmitLoading(true);
+    setSubmitError(null);
+    setSubmitSuccess(null);
+
+    try {
+      const form = new FormData();
+      form.append('name', formData.name);
+      form.append('role', formData.role);
+      form.append('phone_number', formData.phone);
+      form.append('description', formData.description);
+      
+      if (imageFile) {
+        form.append('image', imageFile);
+      }
+
+      let response;
+      
+      if (editingId !== null) {
+        // Update existing coach
+        response = await axios.put(`${API_URL}/coaches/${editingId}`, form, { headers });
+        setSubmitSuccess('Coach updated successfully!');
+      } else {
+        // Create new coach
+        response = await axios.post(`${API_URL}/coaches`, form, { headers });
+        setSubmitSuccess('New coach added successfully!');
+      }
+
+      // Format the response data to match our Coach interface
+      const responseData = response.data;
+      const updatedCoach: Coach = {
+        id: responseData.id,
+        name: responseData.name,
+        role: responseData.role,
+        phone: responseData.phone || responseData.phone_number,
+        description: responseData.description,
+        image: responseData.image
+      };
+
+      // Update coaches state
+      if (editingId !== null) {
+        setCoaches(prev => prev.map(coach => 
+          coach.id === editingId ? updatedCoach : coach
+        ));
+      } else {
+        setCoaches(prev => [...prev, updatedCoach]);
+      }
+
+      // Reset form after successful submission
+      resetForm();
+      
+      // Refresh coaches list to ensure we have latest data
+      fetchCoaches();
+    } catch (err: any) {
+      console.error('Error saving coach:', err);
+      setSubmitError(err.response?.data?.error || err.message || 'An error occurred while saving the coach');
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+
+  // Handle deletion of a coach
+  const handleDelete = async (id: number) => {
+    if (!token) {
+      setSubmitError('You must be logged in to delete coaches');
+      return;
+    }
+
+    if (submitLoading) return;
+
+    setSubmitLoading(true);
+    setSubmitError(null);
+    setSubmitSuccess(null);
+
+    try {
+      await axios.delete(`${API_URL}/coaches/${id}`, { headers });
+      
+      // Remove coach from state
+      setCoaches(prev => prev.filter(coach => coach.id !== id));
+      setSubmitSuccess('Coach deleted successfully!');
+      
+      // Reset delete confirmation
+      setDeleteConfirm(null);
+    } catch (err: any) {
+      console.error('Error deleting coach:', err);
+      setSubmitError(err.response?.data?.error || err.message || 'An error occurred while deleting the coach');
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+
+  // Set up form for editing a coach
+  const handleEdit = (coach: Coach) => {
+    setFormData({
+      name: coach.name,
+      role: coach.role,
+      phone: coach.phone,
+      description: coach.description
+    });
+    setEditingId(coach.id);
+    setImageFile(null);
+    setImagePreview(coach.image || null);
+    setSubmitError(null);
+    setSubmitSuccess(null);
+    
+    // Scroll to form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Cancel editing
+  const handleCancel = () => {
+    resetForm();
+  };
+
+  return (
+    <StyledWrapper>
+      <div className="container">
+        <form className="form" onSubmit={handleSubmit}>
+          <h1 className="title">{editingId !== null ? 'Edit Coach' : 'Add Coach'}</h1>
+          
+          {/* Success message */}
+          {submitSuccess && (
+            <div className="success-message">
+              {submitSuccess}
+            </div>
+          )}
+          
+          {/* Error message */}
+          {submitError && (
+            <div className="error-message">
+              {submitError}
+            </div>
+          )}
+
+          <div className="form-group">
+            <label htmlFor="name">Name</label>
+            <input
+              required
+              type="text"
+              id="name"
+              className="input"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              disabled={submitLoading}
+              placeholder="Enter coach name"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="role">Role</label>
+            <input
+              required
+              type="text"
+              id="role"
+              className="input"
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              disabled={submitLoading}
+              placeholder="Enter coach role (e.g. Head Coach)"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="phone">Phone</label>
+            <input
+              required
+              type="text"
+              id="phone"
+              className="input"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              disabled={submitLoading}
+              placeholder="Enter phone number"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="description">Description</label>
+            <textarea
+              required
+              id="description"
+              className="input description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              disabled={submitLoading}
+              placeholder="Enter coach description and qualifications"
+              rows={4}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="image">Coach Image</label>
+            <input
+              type="file"
+              id="image"
+              accept="image/*"
+              className="input file-input"
+              onChange={handleImageChange}
+              disabled={submitLoading}
+            />
+            
+            {/* Image preview */}
+            {imagePreview && (
+              <div className="image-preview">
+                <img src={imagePreview} alt="Preview" />
+              </div>
+            )}
+          </div>
+
+          <div className="button-group">
+            <button 
+              className="submit" 
+              type="submit" 
+              disabled={submitLoading}
+            >
+              {submitLoading
+                ? editingId !== null ? 'Updating...' : 'Submitting...'
+                : editingId !== null ? 'Update Coach' : 'Add Coach'}
+            </button>
+            
+            {editingId !== null && (
+              <button 
+                className="cancel" 
+                type="button" 
+                onClick={handleCancel}
+                disabled={submitLoading}
+              >
+                Cancel
+              </button>
+            )}
+          </div>
+        </form>
+
+        <div className="coaches-list">
+          <h2>Coaches List</h2>
+          
+          {loading ? (
+            <div className="loading">Loading coaches...</div>
+          ) : error ? (
+            <div className="error-message">{error}</div>
+          ) : coaches.length === 0 ? (
+            <div className="empty-message">No coaches available</div>
+          ) : (
+            <ul className="coaches">
+              {coaches.map(coach => (
+                <li key={coach.id} className="coach-item">
+                  <div className="coach-info">
+                    {coach.image && (
+                      <div className="coach-image">
+                        <img src={coach.image} alt={coach.name} />
+                      </div>
+                    )}
+                    <div className="coach-details">
+                      <h3 className="coach-name">{coach.name}</h3>
+                      <div className="coach-role"><strong>Role:</strong> {coach.role}</div>
+                      <div className="coach-phone"><strong>Phone:</strong> {coach.phone}</div>
+                      <div className="coach-description"><strong>Description:</strong> {coach.description}</div>
+                    </div>
+                  </div>
+                  <div className="action-buttons">
+                    <button 
+                      className="edit-btn" 
+                      onClick={() => handleEdit(coach)} 
+                      disabled={submitLoading}
+                    >
+                      Edit
+                    </button>
+                    
+                    {deleteConfirm === coach.id ? (
+                      <div className="delete-confirm">
+                        <span>Are you sure?</span>
+                        <button 
+                          className="confirm-yes" 
+                          onClick={() => handleDelete(coach.id)}
+                          disabled={submitLoading}
+                        >
+                          Yes
+                        </button>
+                        <button 
+                          className="confirm-no" 
+                          onClick={() => setDeleteConfirm(null)}
+                          disabled={submitLoading}
+                        >
+                          No
+                        </button>
+                      </div>
+                    ) : (
+                      <button 
+                        className="delete-btn" 
+                        onClick={() => setDeleteConfirm(coach.id)} 
+                        disabled={submitLoading}
+                      >
+                        Delete
+                      </button>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    </StyledWrapper>
+  );
+};
+
 const StyledWrapper = styled.div`
-  .form {
+  .container {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    max-width: 1000px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    gap: 2rem;
+  }
+
+  .form {
     background-color: #fff;
-    padding: 20px;
-    border-radius: 20px;
-    position: relative;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 
   .title {
-    font-size: 28px;
-    color: black;
+    font-size: 1.75rem;
     font-weight: 600;
-    letter-spacing: -1px;
+    color: #333;
+    margin-bottom: 1.5rem;
     position: relative;
-    display: flex;
-    align-items: center;
-    padding-left: 30px;
-  }
-
-  .title::before,.title::after {
-    position: absolute;
-    content: "";
-    height: 16px;
-    width: 16px;
-    border-radius: 50%;
-    left: 0px;
-    background-color: black;
+    padding-left: 1.5rem;
   }
 
   .title::before {
-    width: 18px;
-    height: 18px;
-    background-color: black;
-  }
-
-  .title::after {
-    width: 18px;
-    height: 18px;
-    animation: pulse 1s linear infinite;
-  }
-
-  .message, .signin {
-    color: rgba(88, 87, 87, 0.822);
-    font-size: 14px;
-  }
-
-  .signin {
-    text-align: center;
-  }
-
-  .signin a {
-    color: black;
-  }
-
-  .signin a:hover {
-    text-decoration: underline black;
-  }
-
-  .flex {
-    display: flex;
-    width: 100%;
-    gap: 6px;
-  }
-
-  .form label {
-    position: relative;
-  }
-
-  .form label .input {
-    width: 100%;
-    padding: 10px 10px 20px 10px;
-    outline: 0;
-    border: 1px solid rgba(105, 105, 105, 0.397);
-    border-radius: 10px;
-  }
-
-  .form label .input + span {
+    content: "";
     position: absolute;
-    left: 10px;
-    top: 15px;
-    color: grey;
-    font-size: 0.9em;
-    cursor: text;
-    transition: 0.3s ease;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0.75rem;
+    height: 0.75rem;
+    background-color: #4a90e2;
+    border-radius: 50%;
   }
 
-  .form label .input:placeholder-shown + span {
-    top: 15px;
-    font-size: 0.9em;
+  .form-group {
+    margin-bottom: 1.25rem;
   }
 
-  .form label .input:focus + span,.form label .input:valid + span {
-    top: 30px;
-    font-size: 0.7em;
-    font-weight: 600;
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #555;
   }
 
-  .form label .input:valid + span {
-    color: green;
+  .input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+  }
+
+  .input:focus {
+    border-color: #4a90e2;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+  }
+
+  .description {
+    resize: vertical;
+    min-height: 6rem;
+  }
+
+  .file-input {
+    padding: 0.5rem 0;
+    border: none;
+  }
+
+  .image-preview {
+    margin-top: 1rem;
+    max-width: 200px;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    border: 1px solid #ddd;
+  }
+
+  .image-preview img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .button-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .submit, .cancel {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
   }
 
   .submit {
+    background-color: #4a90e2;
+    color: white;
+  }
+
+  .submit:hover:not(:disabled) {
+    background-color: #3a7bc8;
+  }
+
+  .cancel {
+    background-color: #f1f1f1;
+    color: #555;
+  }
+
+  .cancel:hover:not(:disabled) {
+    background-color: #e1e1e1;
+  }
+
+  .submit:disabled, .cancel:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .error-message {
+    background-color: #fee;
+    color: #d32f2f;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #d32f2f;
+  }
+
+  .success-message {
+    background-color: #e6f7ed;
+    color: #2e7d32;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #2e7d32;
+  }
+
+  .coaches-list {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .coaches-list h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #f1f1f1;
+  }
+
+  .loading, .empty-message {
+    padding: 1.5rem;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+  }
+
+  .coaches {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .coach-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.5rem;
+    border-bottom: 1px solid #f1f1f1;
+    transition: background-color 0.2s ease;
+  }
+
+  .coach-item:last-child {
+    border-bottom: none;
+  }
+
+  .coach-item:hover {
+    background-color: #f9f9f9;
+  }
+
+  .coach-info {
+    display: flex;
+    gap: 1.5rem;
+    flex: 1;
+  }
+
+  .coach-image {
+    flex-shrink: 0;
+    width: 120px;
+    height: 120px;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background-color: #f1f1f1;
+  }
+
+  .coach-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .coach-details {
+    flex: 1;
+  }
+
+  .coach-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 0.5rem;
+  }
+
+  .coach-role, .coach-phone, .coach-description {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+  }
+
+  .coach-description {
+    max-width: 500px;
+  }
+
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 100px;
+  }
+
+  .edit-btn, .delete-btn, .confirm-yes, .confirm-no {
+    padding: 0.5rem 1rem;
     border: none;
-    outline: none;
-    background-color: black;
-    padding: 10px;
-    border-radius: 10px;
-    color: #fff;
-    font-size: 16px;
-    transform: .3s ease;
+    border-radius: 0.35rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    width: 100%;
   }
 
-  .submit:hover {
-    background-color: rgb(56, 90, 194);
+  .edit-btn {
+    background-color: #4a90e2;
+    color: white;
   }
 
-  @keyframes pulse {
-    from {
-      transform: scale(0.9);
-      opacity: 1;
+  .edit-btn:hover:not(:disabled) {
+    background-color: #3a7bc8;
+  }
+
+  .delete-btn {
+    background-color: #e74c3c;
+    color: white;
+  }
+
+  .delete-btn:hover:not(:disabled) {
+    background-color: #c0392b;
+  }
+
+  .delete-confirm {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .delete-confirm span {
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: center;
+    color: #e74c3c;
+  }
+
+  .confirm-yes {
+    background-color: #e74c3c;
+    color: white;
+  }
+
+  .confirm-yes:hover:not(:disabled) {
+    background-color: #c0392b;
+  }
+
+  .confirm-no {
+    background-color: #95a5a6;
+    color: white;
+  }
+
+  .confirm-no:hover:not(:disabled) {
+    background-color: #7f8c8d;
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      padding: 1rem;
     }
 
-    to {
-      transform: scale(1.8);
-      opacity: 0;
+    .coach-info {
+      flex-direction: column;
+      gap: 1rem;
     }
-  }`;
+
+    .coach-image {
+      width: 100%;
+      height: auto;
+      max-width: 200px;
+    }
+
+    .coach-item {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .action-buttons {
+      flex-direction: row;
+      width: 100%;
+    }
+  }
+`;
 
 export default Coaches;
-
-
-/*import styled from 'styled-components';
-
-const Form = () => {
-  return (
-    <StyledWrapper>
-      <center>
-      <div className="form-container">
-        <form className="form">
-          <div className="form-group">
-            <label htmlFor="name">Name</label>
-            <input type="text" id="name" name="name" required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="role">Role</label>
-            <input type="text" id="role" name="role" required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="textarea">Your Feedback?</label>
-            <textarea name="textarea" id="textarea" rows={10} cols={50} required defaultValue={"          "} />
-          </div>
-          
-<div className="radio">
-  <input value="1" name="rating" type="radio" id="rating-1" />
-  <label title="1 stars" htmlFor="rating-1">
-    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512">
-      <path
-        d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"
-      ></path>
-    </svg>
-  </label>
-
-  <input value="2" name="rating" type="radio" id="rating-2" />
-  <label title="2 stars" htmlFor="rating-2">
-    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512">
-      <path
-        d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"
-      ></path>
-    </svg>
-  </label>
-
-  <input value="3" name="rating" type="radio" id="rating-3" />
-  <label title="3 stars" htmlFor="rating-3">
-    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512">
-      <path
-        d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"
-      ></path>
-    </svg>
-  </label>
-
-  <input value="4" name="rating" type="radio" id="rating-4" />
-  <label title="4 stars" htmlFor="rating-4">
-    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512">
-      <path
-        d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"
-      ></path>
-    </svg>
-  </label>
-
-  <input value="5" name="rating" type="radio" id="rating-5" />
-  <label title="5 star" htmlFor="rating-5">
-    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 576 512">
-      <path
-        d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"
-      ></path>
-    </svg>
-  </label>
-</div>
-
-          <button className="form-submit-btn" type="submit">Submit</button>
-        </form>
-      </div>
-      </center>
-    </StyledWrapper>
-  );
-}
-
-const StyledWrapper = styled.div`
-  .form-container {
-    width: 600px;
-    background: linear-gradient(#212121, #212121) padding-box,
-                linear-gradient(145deg, transparent 35%,#e81cff, #00bfff) border-box;
-    border: 2px solid transparent;
-    padding: 32px 24px;
-    font-size: 14px;
-    font-family: inherit;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    box-sizing: border-box;
-    border-radius: 16px;
-  }
-
-  .form-container button:active {
-    scale: 0.95;
-  }
-
-  .form-container .form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .form-container .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .form-container .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: #00bfff;
-    font-weight: 600;
-    font-size: 12px;
-  }
-
-  .form-container .form-group input {
-    width: 90%;
-    padding: 12px 15px;
-    border-radius: 8px;
-    color: #fff;
-    font-family: inherit;
-    background-color: transparent;
-    border: 1px solid #00bfff;
-  }
-
-  .form-container .form-group textarea {
-    width: 90%;
-    padding: 12px 16px;
-    border-radius: 8px;
-    resize: none;
-    color: #fff;
-    height: 96px;
-    border: 1px solid #00bfff;
-    background-color: transparent;
-    font-family: inherit;
-  }
-
-  .form-container .form-group input::placeholder {
-    opacity: 0.5;
-  }
-
-  .form-container .form-group input:focus {
-    outline: none;
-    border-color: #00bfff;
-  }
-
-  .form-container .form-group textarea:focus {
-    outline: none;
-    border-color: #00bfff;
-  }
-
-  .form-container .form-submit-btn {
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    align-self: flex-start;
-    font-family: inherit;
-    color: #00bfff;
-    font-weight: 600;
-    width: 40%;
-    background: #313131;
-    border: 1px solid #00bfff;
-    padding: 12px 16px;
-    font-size: inherit;
-    gap: 8px;
-    margin-top: 8px;
-    cursor: pointer;
-    border-radius: 6px;
-  }
-  /* From Uiverse.io by elijahgummer */ 
-/*.radio {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-.radio > input {
-  position: absolute;
-  appearance: none;
-}
-
-.radio > label {
-  cursor: pointer;
-  font-size: 30px;
-  position: relative;
-  display: inline-block;
-  transition: transform 0.3s ease;
-}
-
-.radio > label > svg {
-  fill: #666;
-  transition: fill 0.3s ease;
-}
-
-.radio > label::before,
-.radio > label::after {
-  content: "";
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  background-color: #ff9e0b;
-  border-radius: 50%;
-  opacity: 0;
-  transform: scale(0);
-  transition:
-    transform 0.4s ease,
-    opacity 0.4s ease;
-  animation: particle-explosion 1s ease-out;
-}
-
-.radio > label::before {
-  top: -15px;
-  left: 50%;
-  transform: translateX(-50%) scale(0);
-}
-
-.radio > label::after {
-  bottom: -15px;
-  left: 50%;
-  transform: translateX(-50%) scale(0);
-}
-
-.radio > label:hover::before,
-.radio > label:hover::after {
-  opacity: 1;
-  transform: translateX(-50%) scale(1.5);
-}
-
-.radio > label:hover {
-  transform: scale(1.2);
-  animation: pulse 0.6s infinite alternate;
-}
-
-/* Star glow and animation on hover */
-/*.radio > label:hover > svg {
-  fill: #ff9e0b;
-  filter: drop-shadow(0 0 15px rgba(255, 158, 11, 0.9));
-  animation: shimmer 1s ease infinite alternate;
-}
-
-.radio > input:checked + label > svg {
-  fill: #ff9e0b;
-  filter: drop-shadow(0 0 15px rgba(255, 158, 11, 0.9));
-  animation: pulse 0.8s infinite alternate;
-}
-
-.radio > input:checked + label ~ label > svg,
-.radio > input:checked + label > svg {
-  fill: #ff9e0b; /* Highlight the stars */
-/*}
-
-/*@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(1.1);
-  }
-}
-
-@keyframes particle-explosion {
-  0% {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.2);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    filter: drop-shadow(0 0 10px rgba(255, 158, 11, 0.5));
-  }
-  100% {
-    filter: drop-shadow(0 0 20px rgba(255, 158, 11, 1));
-  }
-}
-
-.radio > input:checked + label:hover,
-.radio > input:checked + label:hover ~ label {
-  fill: #e58e09;
-}
-
-.radio > label:hover,
-.radio > label:hover ~ label {
-  fill: #ff9e0b;
-}
-
-.radio input:checked ~ label svg {
-  fill: #ffa723;
-}
-
-  .form-container .form-submit-btn:hover {
-    background-color: #fff;
-    border-color: #fff;
-  }`;
-
-export default Form;*/

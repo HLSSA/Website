@@ -1,7 +1,6 @@
-// frontend/src/components/LoginForm.tsx
 import { useState } from 'react';
 import styled from 'styled-components';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 interface LoginFormProps {
   onLoginSuccess: (token: string) => void;
@@ -12,26 +11,46 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
 
     try {
-      const res = await axios.post('http://localhost:5000/api/admin/login', {
-        username,
-        password,
-      });
-
-      const token = res.data.token;
-      if (token) {
-        onLoginSuccess(token);
-      } else {
-        setError('Invalid response from server.');
-      }
-    } catch (err) {
-      console.error(err);
-      setError('Invalid username or password');
+  const res = await axios.post(
+    'http://localhost:5000/api/admin/login',
+    { username, password },
+    {
+      withCredentials: true, // Include cookies if needed
+      headers: {
+        'Content-Type': 'application/json',
+      },
     }
+  );
+  console.log(res);
+
+  const token = res.data.token;
+  if (token) {
+    onLoginSuccess(token);
+  } else {
+    setError('Invalid response from server.');
+  }
+} catch (error) {
+  const err = error as AxiosError;
+
+  if (err.response) {
+    // Server responded with a status code outside 2xx
+    console.error('Server error:', err.response.data);
+    setError('Invalid username or password');
+  } else if (err.request) {
+    // No response from server
+    console.error('No response:', err.request);
+    setError('Server not responding. Please try again later.');
+  } else {
+    // Something else went wrong
+    console.error('Error:', err.message);
+    setError('An unexpected error occurred.');
+  }
+}
   };
 
   return (
@@ -39,12 +58,11 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
       <div className="wrapper">
         <form className="form" onSubmit={handleSubmit}>
           <span className="title">Admin Login</span>
-
           <div className="input-container">
             {/* Username Icon */}
-            <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width={24} height={24} viewBox="0 0 24 24" fill="none">
               <defs>
-                <linearGradient id="gradient-stroke" x1={0} y1={0} x2={24} y2={24} gradientUnits="userSpaceOnUse">
+                <linearGradient id="gradient-stroke" x1={0} y1={0} x2={24} y2={24}>
                   <stop offset="0%" stopColor="black" />
                   <stop offset="100%" stopColor="white" />
                 </linearGradient>
@@ -61,14 +79,13 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
               type="text"
               placeholder="Username"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={e => setUsername(e.target.value)}
               required
             />
           </div>
-
           <div className="input-container">
             {/* Password Icon */}
-            <svg width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width={24} height={24} viewBox="0 0 24 24" fill="none">
               <g stroke="url(#gradient-stroke)" fill="none" strokeWidth={1}>
                 <path d="M3.5 15.5503L9.20029 9.85L12.3503 13L11.6 13.7503H10.25L9.8 15.1003L8 16.0003L7.55 18.2503L5.5 19.6003H3.5V15.5503Z" />
                 <path d="M16 3.5H11L8.5 6L16 13.5L21 8.5L16 3.5Z" />
@@ -80,19 +97,16 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
               type="password"
               placeholder="Password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
               required
             />
           </div>
-
           <div className="login-button">
             <input className="input" type="submit" value="Login" />
           </div>
-
           {error && (
             <div style={{ color: '#f88', marginTop: '10px', textAlign: 'center' }}>{error}</div>
           )}
-
           <div className="texture" />
         </form>
       </div>
@@ -100,9 +114,7 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
   );
 };
 
-
 const StyledWrapper = styled.div`
-
   position: fixed;
   inset: 0;
   width: 100vw;
@@ -127,7 +139,6 @@ const StyledWrapper = styled.div`
     place-items: center;
     gap: 3rem;
     border: 1px solid transparent;
-    -o-border-image: linear-gradient(transparent, #ffe0a6, transparent) 1;
     border-image: linear-gradient(transparent, #ffe0a6, transparent) 1;
     border-width: 0 2px 0px 2px;
     background: radial-gradient(
@@ -152,14 +163,13 @@ const StyledWrapper = styled.div`
   }
   .form::before {
     inset: -1rem;
-    opacity: 15%;
+    opacity: 0.15;
   }
   .form::after {
     inset: -2rem;
-    opacity: 5%;
+    opacity: 0.05;
   }
   .form .title {
-    color: white;
     font-size: 2rem;
     font-weight: 700;
     text-align: center;
@@ -179,12 +189,6 @@ const StyledWrapper = styled.div`
       rgba(0, 0, 0, 0) 100%
     );
     border: 1px solid transparent;
-    -o-border-image: radial-gradient(
-        circle,
-        rgba(255, 255, 255, 0.445) 0%,
-        rgba(0, 0, 0, 0) 100%
-      )
-      1;
     border-image: radial-gradient(
         circle,
         rgba(255, 255, 255, 0.445) 0%,
@@ -216,7 +220,6 @@ const StyledWrapper = styled.div`
       rgba(255, 224, 166, 0.1) 5%,
       rgba(0, 0, 0, 0) 100%
     );
-    -o-border-image: radial-gradient(circle, #ffe0a6 0%, transparent 100%) 1;
     border-image: radial-gradient(circle, #ffe0a6 0%, transparent 100%) 1;
   }
   .form .input-container:focus-within svg g {
@@ -242,7 +245,6 @@ const StyledWrapper = styled.div`
         rgba(115, 115, 115, 0) 100%
       );
     border: 1px solid transparent;
-    -o-border-image: linear-gradient(transparent, #ffe0a6, transparent) 1;
     border-image: linear-gradient(transparent, #ffe0a6, transparent) 1;
     border-width: 0 1px 0 1px;
     text-align: center;
@@ -256,7 +258,7 @@ const StyledWrapper = styled.div`
     pointer-events: none;
     background-image: linear-gradient(
       0deg,
-      rgba(255, 255, 255, 0.3764705882) 0.5px,
+      rgba(255, 255, 255, 0.376) 0.5px,
       transparent 0.5px
     );
     background-size: 0.1px 3px;
@@ -296,47 +298,22 @@ const StyledWrapper = styled.div`
   }
 
   @keyframes flicker {
-    0% {
-      filter: brightness(100%);
-    }
-    10% {
-      filter: brightness(80%);
-    }
-    20% {
-      filter: brightness(120%);
-    }
-    30% {
-      filter: brightness(90%);
-    }
-    40% {
-      filter: brightness(110%);
-    }
-    50% {
-      filter: brightness(100%);
-    }
-    60% {
-      filter: brightness(85%);
-    }
-    70% {
-      filter: brightness(95%);
-    }
-    80% {
-      filter: brightness(105%);
-    }
-    90% {
-      filter: brightness(115%);
-    }
-    100% {
-      filter: brightness(100%);
-    }
+    0% { filter: brightness(100%); }
+    10% { filter: brightness(80%); }
+    20% { filter: brightness(120%); }
+    30% { filter: brightness(90%); }
+    40% { filter: brightness(110%); }
+    50% { filter: brightness(100%); }
+    60% { filter: brightness(85%); }
+    70% { filter: brightness(95%); }
+    80% { filter: brightness(105%); }
+    90% { filter: brightness(115%); }
+    100% { filter: brightness(100%); }
   }
   @keyframes movingLines {
-    0% {
-      background-position: 0 0;
-    }
-    100% {
-      background-position: 0 5px;
-    }
-  } /*# sourceMappingURL=style.css.map */`;
+    0% { background-position: 0 0; }
+    100% { background-position: 0 5px; }
+  }
+`;
 
 export default LoginForm;
