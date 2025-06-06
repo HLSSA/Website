@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import Header from '../components/LandingPage/Header';
+import Hero from '../components/LandingPage/Hero';
 import axios from 'axios';
 
 const LandingPage = () => {
@@ -13,10 +13,8 @@ const LandingPage = () => {
 
   return (
     <div>
-      <Navbar />
-      <h1>{text}</h1>
-      {image && <img src={image} alt="Landing" style={{ maxWidth: '400px' }} />}
-      <Footer />
+      <Header />
+      <Hero />
     </div>
   );
 };

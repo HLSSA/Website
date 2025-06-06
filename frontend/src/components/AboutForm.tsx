@@ -20,12 +20,12 @@ const AboutForm = () => {
     email: '',
     contact: '',
     description: [''],
-    carousel_pics: ['']
+    carousel_pics: []
   });
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const [carouselFiles, setCarouselFiles] = useState<(File | null)[]>([null]);
-  const [carouselPreviews, setCarouselPreviews] = useState<(string | null)[]>([null]);
+  const [carouselFiles, setCarouselFiles] = useState<File[]>([]);
+  const [carouselPreviews, setCarouselPreviews] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
@@ -51,7 +51,7 @@ const AboutForm = () => {
       setLoading(true);
       setError(null);
       
-      const response = await axios.get(`${API_URL}/about`, { headers });
+      const response = await axios.get(`${API_URL}/about`);
       const data = response.data;
       
       setFormData({
@@ -61,7 +61,7 @@ const AboutForm = () => {
         email: data.email || '',
         contact: data.contact || '',
         description: data.description && data.description.length > 0 ? data.description : [''],
-        carousel_pics: data.carousel_pics && data.carousel_pics.length > 0 ? data.carousel_pics : ['']
+        carousel_pics: data.carousel_pics || []
       });
 
       // Set logo preview if exists
@@ -71,8 +71,7 @@ const AboutForm = () => {
 
       // Set carousel previews if exist
       if (data.carousel_pics && data.carousel_pics.length > 0) {
-        setCarouselPreviews(data.carousel_pics.map((pic: string) => pic || null));
-        setCarouselFiles(new Array(data.carousel_pics.length).fill(null));
+        setCarouselPreviews(data.carousel_pics);
       }
     } catch (err: any) {
       console.error('Error fetching about data:', err);
@@ -126,48 +125,49 @@ const AboutForm = () => {
     }
   };
 
-  // Handle carousel image file selection
-  const handleCarouselChange = (index: number, e: ChangeEvent<HTMLInputElement>) => {
+  // Handle carousel image files selection (multiple files at once)
+  const handleCarouselChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
+      const files = Array.from(e.target.files);
+      setCarouselFiles(files);
       
-      // Update carousel files array
-      const newCarouselFiles = [...carouselFiles];
-      newCarouselFiles[index] = file;
-      setCarouselFiles(newCarouselFiles);
-      
-      // Create preview URL and update previews array
-      const previewUrl = URL.createObjectURL(file);
-      const newCarouselPreviews = [...carouselPreviews];
-      newCarouselPreviews[index] = previewUrl;
-      setCarouselPreviews(newCarouselPreviews);
+      // Create preview URLs for all selected images
+      const previewUrls = files.map(file => URL.createObjectURL(file));
+      setCarouselPreviews(previewUrls);
     }
   };
 
-  // Add new carousel image field
-  const addCarouselImage = () => {
-    setCarouselFiles(prev => [...prev, null]);
-    setCarouselPreviews(prev => [...prev, null]);
-    setFormData(prev => ({
-      ...prev,
-      carousel_pics: [...prev.carousel_pics, '']
-    }));
-  };
-
-  // Remove carousel image field
+  // Remove individual carousel image
   const removeCarouselImage = (index: number) => {
-    if (carouselFiles.length > 1) {
-      setCarouselFiles(prev => prev.filter((_, i) => i !== index));
-      setCarouselPreviews(prev => prev.filter((_, i) => i !== index));
+    // Remove from existing carousel_pics if it's an existing image
+    if (index < formData.carousel_pics.length) {
       setFormData(prev => ({
         ...prev,
         carousel_pics: prev.carousel_pics.filter((_, i) => i !== index)
       }));
     }
+    
+    // Remove from new files and previews
+    const newFileIndex = index - formData.carousel_pics.length;
+    if (newFileIndex >= 0) {
+      setCarouselFiles(prev => prev.filter((_, i) => i !== newFileIndex));
+      setCarouselPreviews(prev => {
+        const existingCount = formData.carousel_pics.length;
+        const newPreviews = [...prev];
+        newPreviews.splice(existingCount + newFileIndex, 1);
+        return newPreviews;
+      });
+    } else {
+      // Remove existing image preview
+      setCarouselPreviews(prev => prev.filter((_, i) => i !== index));
+    }
   };
 
   // Reset form to original data
   const resetForm = () => {
+    setLogoFile(null);
+    setCarouselFiles([]);
+    setCarouselPreviews([]);
     fetchAboutData();
     setSubmitError(null);
     setSubmitSuccess(null);
@@ -189,32 +189,29 @@ const AboutForm = () => {
     setSubmitSuccess(null);
 
     try {
-      const form = new FormData();
-      form.append('name', formData.name);
-      form.append('location', formData.location);
-      form.append('email', formData.email);
-      form.append('contact', formData.contact);
+      const formDataToSend = new FormData();
+      formDataToSend.append('name', formData.name);
+      formDataToSend.append('location', formData.location);
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('contact', formData.contact);
       
-      // Add descriptions array
-      formData.description.forEach((desc, index) => {
-        if (desc.trim()) {
-          form.append(`description[${index}]`, desc);
-        }
+      // Add descriptions - filter out empty descriptions
+      const validDescriptions = formData.description.filter(desc => desc && desc.trim());
+      validDescriptions.forEach((desc, index) => {
+        formDataToSend.append(`description[${index}]`, desc.trim());
       });
       
       // Add logo if new file selected
       if (logoFile) {
-        form.append('logo', logoFile);
+        formDataToSend.append('logo', logoFile);
       }
       
-      // Add carousel images
-      carouselFiles.forEach((file, index) => {
-        if (file) {
-          form.append(`carousel_pics[${index}]`, file);
-        }
+      // Add carousel images - append all files with the same field name as expected by multer
+      carouselFiles.forEach((file) => {
+        formDataToSend.append('carousel_pics', file);
       });
 
-      const response = await axios.put(`${API_URL}/about`, form, { 
+      const response = await axios.put(`${API_URL}/about`, formDataToSend, { 
         headers: {
           ...headers,
           'Content-Type': 'multipart/form-data'
@@ -223,14 +220,30 @@ const AboutForm = () => {
       
       setSubmitSuccess('About information updated successfully!');
       
+      // Clear file inputs after successful submission
+      setLogoFile(null);
+      setCarouselFiles([]);
+      
       // Refresh data to get updated URLs
-      fetchAboutData();
+      await fetchAboutData();
+      
+      // Clear success message after 5 seconds
+      setTimeout(() => {
+        setSubmitSuccess(null);
+      }, 5000);
     } catch (err: any) {
       console.error('Error updating about information:', err);
       setSubmitError(err.response?.data?.error || err.message || 'An error occurred while updating the about information');
     } finally {
       setSubmitLoading(false);
     }
+  };
+
+  // Get all carousel previews (existing + new)
+  const getAllCarouselPreviews = () => {
+    const existingPreviews = formData.carousel_pics || [];
+    const newPreviews = carouselFiles.map(file => URL.createObjectURL(file));
+    return [...existingPreviews, ...newPreviews];
   };
 
   return (
@@ -261,7 +274,7 @@ const AboutForm = () => {
           ) : (
             <>
               <div className="form-group">
-                <label htmlFor="name">Company Name</label>
+                <label htmlFor="name">Company Name *</label>
                 <input
                   required
                   type="text"
@@ -276,7 +289,7 @@ const AboutForm = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="location">Location</label>
+                <label htmlFor="location">Location *</label>
                 <input
                   required
                   type="text"
@@ -291,7 +304,7 @@ const AboutForm = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="email">Email Address</label>
+                <label htmlFor="email">Email Address *</label>
                 <input
                   required
                   type="email"
@@ -306,7 +319,7 @@ const AboutForm = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="contact">Contact Number</label>
+                <label htmlFor="contact">Contact Number *</label>
                 <input
                   required
                   type="text"
@@ -330,11 +343,17 @@ const AboutForm = () => {
                   onChange={handleLogoChange}
                   disabled={submitLoading}
                 />
+                <small className="field-note">
+                  {logoFile ? 'New logo selected' : 'Select a new logo to replace the current one'}
+                </small>
                 
                 {/* Logo preview */}
                 {logoPreview && (
                   <div className="image-preview">
                     <img src={logoPreview} alt="Logo Preview" />
+                    <div className="preview-label">
+                      {logoFile ? 'New Logo (Preview)' : 'Current Logo'}
+                    </div>
                   </div>
                 )}
               </div>
@@ -381,45 +400,63 @@ const AboutForm = () => {
               <div className="form-group">
                 <div className="section-header">
                   <label>Carousel Images</label>
-                  <button 
-                    type="button" 
-                    className="add-btn" 
-                    onClick={addCarouselImage}
-                    disabled={submitLoading}
-                  >
-                    Add Image
-                  </button>
                 </div>
                 
-                {carouselFiles.map((file, index) => (
-                  <div key={index} className="dynamic-field">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="input file-input"
-                      onChange={(e) => handleCarouselChange(index, e)}
-                      disabled={submitLoading}
-                    />
-                    
-                    {/* Carousel image preview */}
-                    {carouselPreviews[index] && (
-                      <div className="image-preview">
-                        <img src={carouselPreviews[index]} alt={`Carousel Preview ${index + 1}`} />
-                      </div>
-                    )}
-                    
-                    {carouselFiles.length > 1 && (
-                      <button 
-                        type="button" 
-                        className="remove-btn" 
-                        onClick={() => removeCarouselImage(index)}
-                        disabled={submitLoading}
-                      >
-                        Remove
-                      </button>
-                    )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="input file-input"
+                  onChange={handleCarouselChange}
+                  disabled={submitLoading}
+                />
+                <small className="field-note">
+                  {carouselFiles.length > 0 
+                    ? `${carouselFiles.length} new image(s) selected. These will replace all existing carousel images.`
+                    : 'Select multiple images for the carousel. This will replace all existing images.'
+                  }
+                </small>
+
+                {/* Display existing carousel images */}
+                {formData.carousel_pics.length > 0 && carouselFiles.length === 0 && (
+                  <div className="existing-images">
+                    <h4>Current Carousel Images:</h4>
+                    <div className="carousel-preview">
+                      {formData.carousel_pics.map((pic, index) => (
+                        <div key={index} className="carousel-image">
+                          <img src={pic} alt={`Current Carousel ${index + 1}`} />
+                          <div className="image-label">Image {index + 1}</div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                ))}
+                )}
+
+                {/* Display new carousel image previews */}
+                {carouselFiles.length > 0 && (
+                  <div className="new-images">
+                    <h4>New Carousel Images (Preview):</h4>
+                    <div className="carousel-preview">
+                      {carouselFiles.map((file, index) => (
+                        <div key={index} className="carousel-image">
+                          <img src={URL.createObjectURL(file)} alt={`New Carousel ${index + 1}`} />
+                          <div className="image-label">New Image {index + 1}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <button 
+                      type="button" 
+                      className="clear-btn" 
+                      onClick={() => {
+                        setCarouselFiles([]);
+                        setCarouselPreviews([]);
+                      }}
+                      disabled={submitLoading}
+                    >
+                      Clear Selected Images
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="button-group">
@@ -450,19 +487,19 @@ const AboutForm = () => {
             <div className="preview-card">
               <div className="preview-item">
                 <div className="preview-label">Company Name:</div>
-                <div className="preview-value">{formData.name}</div>
+                <div className="preview-value">{formData.name || 'Not set'}</div>
               </div>
               <div className="preview-item">
                 <div className="preview-label">Location:</div>
-                <div className="preview-value">{formData.location}</div>
+                <div className="preview-value">{formData.location || 'Not set'}</div>
               </div>
               <div className="preview-item">
                 <div className="preview-label">Email:</div>
-                <div className="preview-value">{formData.email}</div>
+                <div className="preview-value">{formData.email || 'Not set'}</div>
               </div>
               <div className="preview-item">
                 <div className="preview-label">Contact:</div>
-                <div className="preview-value">{formData.contact}</div>
+                <div className="preview-value">{formData.contact || 'Not set'}</div>
               </div>
               
               {logoPreview && (
@@ -477,22 +514,38 @@ const AboutForm = () => {
               <div className="preview-item">
                 <div className="preview-label">Descriptions:</div>
                 <div className="preview-descriptions">
-                  {formData.description.filter(desc => desc.trim()).map((desc, index) => (
-                    <div key={index} className="description-item">
-                      <strong>{index + 1}.</strong> {desc}
-                    </div>
-                  ))}
+                  {formData.description.filter(desc => desc && desc.trim()).length > 0 ? (
+                    formData.description.filter(desc => desc && desc.trim()).map((desc, index) => (
+                      <div key={index} className="description-item">
+                        <strong>{index + 1}.</strong> {desc}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="no-content">No descriptions added</div>
+                  )}
                 </div>
               </div>
               
               <div className="preview-item">
                 <div className="preview-label">Carousel Images:</div>
                 <div className="carousel-preview">
-                  {carouselPreviews.filter(preview => preview).map((preview, index) => (
-                    <div key={index} className="carousel-image">
-                      <img src={preview} alt={`Carousel ${index + 1}`} />
-                    </div>
-                  ))}
+                  {carouselFiles.length > 0 ? (
+                    // Show new images if selected
+                    carouselFiles.map((file, index) => (
+                      <div key={index} className="carousel-image">
+                        <img src={URL.createObjectURL(file)} alt={`New Carousel ${index + 1}`} />
+                      </div>
+                    ))
+                  ) : formData.carousel_pics.length > 0 ? (
+                    // Show existing images
+                    formData.carousel_pics.map((pic, index) => (
+                      <div key={index} className="carousel-image">
+                        <img src={pic} alt={`Carousel ${index + 1}`} />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="no-content">No carousel images</div>
+                  )}
                 </div>
               </div>
             </div>
@@ -553,6 +606,14 @@ const StyledWrapper = styled.div`
     color: #555;
   }
 
+  .field-note {
+    display: block;
+    margin-top: 0.25rem;
+    color: #666;
+    font-size: 0.875rem;
+    font-style: italic;
+  }
+
   .section-header {
     display: flex;
     justify-content: space-between;
@@ -567,7 +628,7 @@ const StyledWrapper = styled.div`
     color: #333;
   }
 
-  .add-btn {
+  .add-btn, .clear-btn {
     background-color: #28a745;
     color: white;
     border: none;
@@ -578,8 +639,17 @@ const StyledWrapper = styled.div`
     transition: background-color 0.2s ease;
   }
 
-  .add-btn:hover:not(:disabled) {
+  .clear-btn {
+    background-color: #6c757d;
+    margin-top: 1rem;
+  }
+
+  .add-btn:hover:not(:disabled), .clear-btn:hover:not(:disabled) {
     background-color: #218838;
+  }
+
+  .clear-btn:hover:not(:disabled) {
+    background-color: #545b62;
   }
 
   .dynamic-field {
@@ -654,6 +724,29 @@ const StyledWrapper = styled.div`
     display: block;
   }
 
+  .preview-label {
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #666;
+    border-top: 1px solid #ddd;
+  }
+
+  .existing-images, .new-images {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    background-color: #f8f9fa;
+  }
+
+  .existing-images h4, .new-images h4 {
+    margin: 0 0 1rem 0;
+    color: #333;
+    font-size: 1rem;
+  }
+
   .button-group {
     display: flex;
     gap: 1rem;
@@ -688,7 +781,7 @@ const StyledWrapper = styled.div`
     background-color: #e1e1e1;
   }
 
-  .submit:disabled, .cancel:disabled, .add-btn:disabled, .remove-btn:disabled {
+  .submit:disabled, .cancel:disabled, .add-btn:disabled, .remove-btn:disabled, .clear-btn:disabled {
     opacity: 0.7;
     cursor: not-allowed;
   }
@@ -754,16 +847,24 @@ const StyledWrapper = styled.div`
     border-bottom: none;
   }
 
-  .preview-label {
+  .preview-item .preview-label {
     font-weight: 600;
     color: #555;
     width: 150px;
     flex-shrink: 0;
+    padding: 0;
+    background: none;
+    border: none;
   }
 
   .preview-value {
     flex: 1;
     color: #333;
+  }
+
+  .no-content {
+    color: #999;
+    font-style: italic;
   }
 
   .preview-logo {
@@ -802,12 +903,25 @@ const StyledWrapper = styled.div`
     border-radius: 0.35rem;
     overflow: hidden;
     border: 1px solid #ddd;
+    position: relative;
   }
 
   .carousel-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  .image-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.25rem;
+    font-size: 0.75rem;
+    text-align: center;
   }
 
   @media (max-width: 768px) {
@@ -829,7 +943,7 @@ const StyledWrapper = styled.div`
       flex-direction: column;
     }
 
-    .preview-label {
+    .preview-item .preview-label {
       width: 100%;
       margin-bottom: 0.25rem;
     }
@@ -847,6 +961,10 @@ const StyledWrapper = styled.div`
     .carousel-image {
       width: 100%;
       max-width: 300px;
+    }
+
+    .button-group {
+      flex-direction: column;
     }
   }
 `;

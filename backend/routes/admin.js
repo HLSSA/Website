@@ -303,7 +303,6 @@ router.delete('/admins/:id', verifyToken, async (req, res) => {
 
 // ====== ABOUT MANAGEMENT ROUTES ======
 
-
 router.put('/about', verifyToken, upload.fields([
   { name: 'logo', maxCount: 1 },
   { name: 'carousel_pics', maxCount: 20 }
@@ -315,32 +314,24 @@ router.put('/about', verifyToken, upload.fields([
       return res.status(400).json({ error: 'Name, location, email, and contact are required' });
     }
 
-    // Fetch existing about data (if any)
-    let existingData = {};
-    try {
-      const { data: existing } = await supabase.from('about').select('*').single();
-      existingData = existing || {};
-    } catch (err) {
-      console.log('No existing about data found, creating new');
-    }
+    // First, delete all existing data to ensure only one row exists
+    await supabase.from('about').delete().neq('id', '00000000-0000-0000-0000-000000000000'); // This deletes all rows
 
     // Upload logo if provided
-    let logoUrl = existingData.logo || null;
+    let logoUrl = null;
     if (req.files && req.files.logo && req.files.logo[0]) {
       logoUrl = await uploadImageToSupabase(req.files.logo[0], 'about');
     }
 
     // Upload carousel images if provided
-    let carouselPics = existingData.carousel_pics || [];
+    let carouselPics = [];
     if (req.files && req.files.carousel_pics) {
       const uploadedCarouselPics = [];
       for (const file of req.files.carousel_pics) {
         const imageUrl = await uploadImageToSupabase(file, 'about/carousel');
         uploadedCarouselPics.push(imageUrl);
       }
-      if (uploadedCarouselPics.length > 0) {
-        carouselPics = uploadedCarouselPics;
-      }
+      carouselPics = uploadedCarouselPics;
     }
 
     // Process description
@@ -370,9 +361,104 @@ router.put('/about', verifyToken, upload.fields([
       carousel_pics: carouselPics
     };
 
+    // Insert the new data
     const { data, error } = await supabase
       .from('about')
-      .upsert([aboutData], { onConflict: 'id' }) // Ensure 'id' is primary key
+      .insert([aboutData])
+      .select();
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    res.json({
+      message: 'About information updated successfully',
+      data: data[0] || aboutData
+    });
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Alternative approach using proper upsert with existing ID
+router.put('/about-alternative', verifyToken, upload.fields([
+  { name: 'logo', maxCount: 1 },
+  { name: 'carousel_pics', maxCount: 20 }
+]), async (req, res) => {
+  try {
+    const { name, location, email, contact, description } = req.body;
+
+    if (!name || !location || !email || !contact) {
+      return res.status(400).json({ error: 'Name, location, email, and contact are required' });
+    }
+
+    // Fetch existing about data to get the ID
+    let existingId = null;
+    let existingData = {};
+    try {
+      const { data: existing } = await supabase.from('about').select('*').single();
+      if (existing) {
+        existingId = existing.id;
+        existingData = existing;
+      }
+    } catch (err) {
+      console.log('No existing about data found, will create new');
+    }
+
+    // Upload logo if provided, otherwise keep existing
+    let logoUrl = existingData.logo || null;
+    if (req.files && req.files.logo && req.files.logo[0]) {
+      logoUrl = await uploadImageToSupabase(req.files.logo[0], 'about');
+    }
+
+    // Upload carousel images if provided, otherwise keep existing
+    let carouselPics = existingData.carousel_pics || [];
+    if (req.files && req.files.carousel_pics) {
+      const uploadedCarouselPics = [];
+      for (const file of req.files.carousel_pics) {
+        const imageUrl = await uploadImageToSupabase(file, 'about/carousel');
+        uploadedCarouselPics.push(imageUrl);
+      }
+      carouselPics = uploadedCarouselPics;
+    }
+
+    // Process description
+    let descriptionsArray = [];
+    if (description) {
+      if (Array.isArray(description)) {
+        descriptionsArray = description.filter(desc => desc && desc.trim());
+      } else if (typeof description === 'string') {
+        descriptionsArray = [description].filter(desc => desc && desc.trim());
+      } else if (typeof description === 'object') {
+        const descKeys = Object.keys(description).sort((a, b) => {
+          const aNum = parseInt(a.match(/\d+/)?.[0] || '0');
+          const bNum = parseInt(b.match(/\d+/)?.[0] || '0');
+          return aNum - bNum;
+        });
+        descriptionsArray = descKeys.map(key => description[key]).filter(desc => desc && desc.trim());
+      }
+    }
+
+    const aboutData = {
+      name,
+      location,
+      email,
+      contact,
+      logo: logoUrl,
+      description: descriptionsArray,
+      carousel_pics: carouselPics
+    };
+
+    // Include ID if updating existing record
+    if (existingId) {
+      aboutData.id = existingId;
+    }
+
+    const { data, error } = await supabase
+      .from('about')
+      .upsert([aboutData], { onConflict: 'id' })
       .select();
 
     if (error) {
@@ -421,6 +507,74 @@ router.get('/about', async (req, res) => {
     };
 
     res.json(aboutData);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get all about records (for debugging/admin purposes)
+router.get('/about/all', verifyToken, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('about')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    res.json({
+      message: 'About records retrieved successfully',
+      data: data || [],
+      count: data ? data.length : 0
+    });
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Clean up duplicate records (optional utility route)
+router.delete('/about/cleanup', verifyToken, async (req, res) => {
+  try {
+    // Get all records ordered by creation date
+    const { data: allRecords, error: fetchError } = await supabase
+      .from('about')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (fetchError) {
+      return res.status(500).json({ error: fetchError.message });
+    }
+
+    if (!allRecords || allRecords.length <= 1) {
+      return res.json({ message: 'No cleanup needed', recordsRemaining: allRecords?.length || 0 });
+    }
+
+    // Keep the most recent record, delete the rest
+    const [keepRecord, ...deleteRecords] = allRecords;
+    const idsToDelete = deleteRecords.map(record => record.id);
+
+    if (idsToDelete.length > 0) {
+      const { error: deleteError } = await supabase
+        .from('about')
+        .delete()
+        .in('id', idsToDelete);
+
+      if (deleteError) {
+        return res.status(500).json({ error: deleteError.message });
+      }
+    }
+
+    res.json({
+      message: 'Cleanup completed successfully',
+      recordsDeleted: idsToDelete.length,
+      recordsRemaining: 1,
+      keptRecord: keepRecord
+    });
   } catch (err) {
     console.error('Unexpected error:', err);
     res.status(500).json({ error: 'Internal server error' });
