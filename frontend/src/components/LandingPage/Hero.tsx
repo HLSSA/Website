@@ -1,105 +1,104 @@
-import React from 'react';
 import { Play, Star, Award, Users } from 'lucide-react';
+import styled from 'styled-components';
 
 const Hero = () => {
   return (
-    <section id="home" className="relative min-h-screen flex items-center bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700 overflow-hidden">
+    <StyledWrapper>
+    <section id="home" className="hero-section">
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-        }} />
+      <div className="background-pattern">
+        <div className="pattern-overlay" />
       </div>
 
       {/* Hero Background Image */}
-      <div className="absolute inset-0 bg-black/40">
+      <div className="hero-background">
         <img 
           src="https://images.pexels.com/photos/274422/pexels-photo-274422.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop"
           alt="Soccer training"
-          className="w-full h-full object-cover"
+          className="hero-bg-image"
         />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <div className="hero-container">
+        <div className="hero-grid">
           {/* Hero Content */}
-          <div className="text-white">
-            <div className="mb-6">
-              <span className="inline-flex items-center px-4 py-2 bg-yellow-400 text-blue-900 rounded-full text-sm font-semibold mb-4">
+          <div className="hero-content">
+            <div className="hero-badge-container">
+              <span className="hero-badge">
                 🏆 Hyderabad's Premier Soccer Academy
               </span>
             </div>
             
-            <h1 className="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
+            <h1 className="hero-title">
               Forge Your 
-              <span className="text-yellow-400 block">Legacy.</span>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-300">
+              <span className="title-accent">Legacy.</span>
+              <span className="title-gradient">
                 Join the Champions.
               </span>
             </h1>
             
-            <p className="text-xl text-blue-100 mb-8 max-w-lg leading-relaxed">
+            <p className="hero-description">
               Professional UEFA & AFC Certified Coaching for Aspiring Players Ages 5-18. 
               Transform passion into excellence with Hyderabad's most trusted soccer academy.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <button className="bg-yellow-400 text-blue-900 px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-300 transition-all duration-300 transform hover:scale-105 shadow-lg">
+            <div className="hero-buttons">
+              <button className="btn-primary">
                 Join a Free Trial Class
               </button>
-              <button className="border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-blue-900 transition-all duration-300 flex items-center justify-center space-x-2">
-                <Play className="w-5 h-5" />
+              <button className="btn-secondary">
+                <Play className="play-icon" />
                 <span>Watch Our Story</span>
               </button>
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-400 mb-2">500+</div>
-                <div className="text-blue-200 text-sm">Students Trained</div>
+            <div className="hero-stats">
+              <div className="stat-item">
+                <div className="stat-number">500+</div>
+                <div className="stat-label">Students Trained</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-400 mb-2">15+</div>
-                <div className="text-blue-200 text-sm">Expert Coaches</div>
+              <div className="stat-item">
+                <div className="stat-number">15+</div>
+                <div className="stat-label">Expert Coaches</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-400 mb-2">10+</div>
-                <div className="text-blue-200 text-sm">Years Experience</div>
+              <div className="stat-item">
+                <div className="stat-number">10+</div>
+                <div className="stat-label">Years Experience</div>
               </div>
             </div>
           </div>
 
           {/* Hero Visual Elements */}
-          <div className="relative hidden lg:block">
-            <div className="relative">
+          <div className="hero-visual">
+            <div className="visual-container">
               {/* Floating Cards */}
-              <div className="absolute -top-4 -left-4 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-xl animate-float">
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
-                    <Award className="w-6 h-6 text-white" />
+              <div className="floating-card card-1">
+                <div className="card-content">
+                  <div className="card-icon card-icon-green">
+                    <Award className="icon" />
                   </div>
-                  <div>
-                    <div className="font-bold text-gray-900">Championship</div>
-                    <div className="text-gray-600 text-sm">U-16 Winners 2024</div>
+                  <div className="card-text">
+                    <div className="card-title">Championship</div>
+                    <div className="card-subtitle">U-16 Winners 2024</div>
                   </div>
                 </div>
               </div>
 
-              <div className="absolute -bottom-4 -right-4 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-xl animate-float-delayed">
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
-                    <Users className="w-6 h-6 text-white" />
+              <div className="floating-card card-2">
+                <div className="card-content">
+                  <div className="card-icon card-icon-blue">
+                    <Users className="icon" />
                   </div>
-                  <div>
-                    <div className="font-bold text-gray-900">Community</div>
-                    <div className="text-gray-600 text-sm">Growing Strong</div>
+                  <div className="card-text">
+                    <div className="card-title">Community</div>
+                    <div className="card-subtitle">Growing Strong</div>
                   </div>
                 </div>
               </div>
               
-              <div className="absolute top-1/2 -right-8 bg-yellow-400 p-4 rounded-2xl shadow-xl animate-pulse">
-                <Star className="w-8 h-8 text-blue-900" />
+              <div className="floating-star">
+                <Star className="star-icon" />
               </div>
             </div>
           </div>
@@ -107,16 +106,410 @@ const Hero = () => {
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
-        <div className="flex flex-col items-center space-y-2">
-          <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-white rounded-full mt-2 animate-pulse"></div>
+      <div className="scroll-indicator">
+        <div className="scroll-content">
+          <div className="scroll-mouse">
+            <div className="scroll-dot"></div>
           </div>
-          <span className="text-sm">Scroll to explore</span>
+          <span className="scroll-text">Scroll to explore</span>
         </div>
       </div>
     </section>
+    </StyledWrapper>
   );
 };
+
+const StyledWrapper = styled.div`
+
+/* Hero.css */
+
+/* Keyframes for animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes float-delayed {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate(-50%, 0);
+  }
+  40%, 43% {
+    transform: translate(-50%, -10px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Main hero section */
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(to bottom right, #1e3a8a, #1e40af, #1d4ed8);
+  overflow: hidden;
+}
+
+/* Background pattern */
+.background-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.1;
+}
+
+.pattern-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Hero background image */
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.hero-bg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Main container */
+.hero-container {
+  position: relative;
+  z-index: 10;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 128px 16px;
+}
+
+/* Grid layout */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .hero-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .hero-container {
+    padding: 128px 32px;
+  }
+}
+
+@media (min-width: 640px) {
+  .hero-container {
+    padding: 128px 24px;
+  }
+}
+
+/* Hero content */
+.hero-content {
+  color: white;
+}
+
+.hero-badge-container {
+  margin-bottom: 24px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: #facc15;
+  color: #1e3a8a;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* Title styling */
+.hero-title {
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 24px;
+  line-height: 1.1;
+}
+
+@media (min-width: 1024px) {
+  .hero-title {
+    font-size: 72px;
+  }
+}
+
+.title-accent {
+  color: #facc15;
+  display: block;
+}
+
+.title-gradient {
+  background: linear-gradient(to right, #facc15, #fde047);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Description */
+.hero-description {
+  font-size: 20px;
+  color: #dbeafe;
+  margin-bottom: 32px;
+  max-width: 512px;
+  line-height: 1.75;
+}
+
+/* Buttons */
+.hero-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+@media (min-width: 640px) {
+  .hero-buttons {
+    flex-direction: row;
+  }
+}
+
+.btn-primary {
+  background-color: #facc15;
+  color: #1e3a8a;
+  padding: 16px 32px;
+  border-radius: 9999px;
+  font-weight: bold;
+  font-size: 18px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover {
+  background-color: #fde047;
+  transform: scale(1.05);
+}
+
+.btn-secondary {
+  border: 2px solid white;
+  color: white;
+  background: transparent;
+  padding: 16px 32px;
+  border-radius: 9999px;
+  font-weight: bold;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-secondary:hover {
+  background-color: white;
+  color: #1e3a8a;
+}
+
+.play-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Stats */
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 32px;
+  font-weight: bold;
+  color: #facc15;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  color: #dbeafe;
+  font-size: 14px;
+}
+
+/* Hero visual elements */
+.hero-visual {
+  position: relative;
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .hero-visual {
+    display: block;
+  }
+}
+
+.visual-container {
+  position: relative;
+}
+
+/* Floating cards */
+.floating-card {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.card-1 {
+  top: -16px;
+  left: -16px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.card-2 {
+  bottom: -16px;
+  right: -16px;
+  animation: float-delayed 3s ease-in-out infinite;
+  animation-delay: 0.5s;
+}
+
+.card-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-icon-green {
+  background-color: #10b981;
+}
+
+.card-icon-blue {
+  background-color: #3b82f6;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+.card-title {
+  font-weight: bold;
+  color: #111827;
+}
+
+.card-subtitle {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* Floating star */
+.floating-star {
+  position: absolute;
+  top: 50%;
+  right: -32px;
+  background-color: #facc15;
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.star-icon {
+  width: 32px;
+  height: 32px;
+  color: #1e3a8a;
+}
+
+/* Scroll indicator */
+.scroll-indicator {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  animation: bounce 2s infinite;
+}
+
+.scroll-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.scroll-mouse {
+  width: 24px;
+  height: 40px;
+  border: 2px solid white;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.scroll-dot {
+  width: 4px;
+  height: 12px;
+  background-color: white;
+  border-radius: 2px;
+  margin-top: 8px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.scroll-text {
+  font-size: 14px;
+}
+
+`;
 
 export default Hero;

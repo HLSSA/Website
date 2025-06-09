@@ -1558,4 +1558,147 @@ router.get('/matches', async (req, res) => {
   }
 });
 
+// Get upcoming matches (next 60 days)
+router.get('/matches/upcoming', async (req, res) => {
+  try {
+    const now = new Date();
+    const sixtyDaysFromNow = new Date();
+    sixtyDaysFromNow.setDate(now.getDate() + 60);
+    
+    const { data, error } = await supabase
+      .from('matches')
+      .select('*')
+      .gte('datetime', now.toISOString())
+      .lte('datetime', sixtyDaysFromNow.toISOString())
+      .order('datetime', { ascending: true });
+    
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    res.json(data);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get single match by ID
+router.get('/matches/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const { data, error } = await supabase
+      .from('matches')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (error) {
+      console.error('Supabase error:', error);
+      if (error.code === 'PGRST116') {
+        return res.status(404).json({ error: 'Match not found' });
+      }
+      return res.status(500).json({ error: error.message });
+    }
+    
+    res.json(data);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update match
+router.put('/matches/:id', verifyToken, upload.single('opponent_image'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { opponent_name, datetime, location } = req.body;
+    
+    // First check if match exists
+    const { data: existingMatch, error: fetchError } = await supabase
+      .from('matches')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (fetchError) {
+      if (fetchError.code === 'PGRST116') {
+        return res.status(404).json({ error: 'Match not found' });
+      }
+      return res.status(500).json({ error: fetchError.message });
+    }
+    
+    // Prepare update object
+    const updateData = {};
+    if (opponent_name) updateData.opponent_name = opponent_name;
+    if (datetime) updateData.datetime = datetime;
+    if (location) updateData.location = location;
+    
+    // Handle image upload
+    if (req.file) {
+      const imageUrl = await uploadImageToSupabase(req.file, 'matches');
+      updateData.opponent_image = imageUrl;
+    }
+    
+    // If no fields to update
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ error: 'No fields to update' });
+    }
+
+    const { data, error } = await supabase
+      .from('matches')
+      .update(updateData)
+      .eq('id', id)
+      .select();
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    res.json(data[0]);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete match
+router.delete('/matches/:id', verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // First check if match exists
+    const { data: existingMatch, error: fetchError } = await supabase
+      .from('matches')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (fetchError) {
+      if (fetchError.code === 'PGRST116') {
+        return res.status(404).json({ error: 'Match not found' });
+      }
+      return res.status(500).json({ error: fetchError.message });
+    }
+
+    const { error } = await supabase
+      .from('matches')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    res.json({ message: 'Match deleted successfully', deletedMatch: existingMatch });
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;

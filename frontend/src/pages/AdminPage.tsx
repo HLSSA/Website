@@ -8,6 +8,7 @@ import Testinomials from '../components/Testinomials';
 import Touranments from '../components/Touranments';
 import AdminsForm from '../components/AdminsForm';
 import AboutForm from '../components/AboutForm';
+import Matches from '../components/Matches';
 
 import styled from 'styled-components';
 
@@ -18,7 +19,8 @@ const sections = {
   Partners: <Partners />,
   Testimonials: <Testinomials />,
   Tournaments: <Touranments />,
-  Admins: <AdminsForm />
+  Admins: <AdminsForm />,
+  Matches: <Matches />,
 };
 
 const AdminPage = () => {

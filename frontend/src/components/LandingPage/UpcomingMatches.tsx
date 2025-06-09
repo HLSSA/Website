@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { Calendar, Clock, MapPin } from 'lucide-react';
 
 const UpcomingMatches = () => {
@@ -30,85 +30,324 @@ const UpcomingMatches = () => {
       isHome: true,
       status: "upcoming"
     },
-    {
-      id: 4,
-      opponent: "Champions FC",
-      date: "19 JUL 2025",
-      time: "4:45 PM",
-      location: "Nizampet Football Arena",
-      isHome: false,
-      status: "upcoming"
-    }
   ];
 
+  const [hoveredCard, setHoveredCard] = useState(null);
+  const [hoveredButton, setHoveredButton] = useState(null);
+  const [hoveredViewAllButton, setHoveredViewAllButton] = useState(false);
+
+  // Add CSS styles and keyframe animation
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      
+      .pulse-animation {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      if (document.head.contains(style)) {
+        document.head.removeChild(style);
+      }
+    };
+  }, []);
+
+  const styles = {
+    // Section styles
+    section: {
+      padding: '5rem 0',
+      backgroundColor: '#f9fafb'
+    },
+    
+    // Container styles
+    container: {
+      maxWidth: '1200px',
+      margin: '0 auto',
+      padding: '0 1rem'
+    },
+    
+    // Header styles
+    header: {
+      textAlign: 'center',
+      marginBottom: '4rem'
+    },
+    title: {
+      fontSize: '2.5rem',
+      fontWeight: 'bold',
+      color: '#111827',
+      marginBottom: '1rem',
+      lineHeight: '1.2'
+    },
+    subtitle: {
+      fontSize: '1.25rem',
+      color: '#6b7280',
+      maxWidth: '32rem',
+      margin: '0 auto'
+    },
+    
+    // Grid styles
+    matchesGrid: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+      gap: '1.5rem',
+      marginBottom: '3rem'
+    },
+    
+    // Card styles
+    matchCard: {
+      backgroundColor: 'white',
+      borderRadius: '12px',
+      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+      overflow: 'hidden',
+      transition: 'all 0.3s ease',
+      cursor: 'pointer'
+    },
+    matchCardHover: {
+      transform: 'translateY(-4px)',
+      boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+    },
+    
+    // Card content styles
+    cardContent: {
+      padding: '1.5rem'
+    },
+    
+    // Match header styles
+    matchHeader: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: '1rem'
+    },
+    badge: {
+      padding: '0.25rem 0.75rem',
+      borderRadius: '9999px',
+      fontSize: '0.75rem',
+      fontWeight: '600',
+      textTransform: 'uppercase'
+    },
+    homeBadge: {
+      backgroundColor: '#dcfce7',
+      color: '#166534'
+    },
+    awayBadge: {
+      backgroundColor: '#dbeafe',
+      color: '#1e40af'
+    },
+    statusDot: {
+      width: '8px',
+      height: '8px',
+      backgroundColor: '#4ade80',
+      borderRadius: '50%'
+    },
+    
+    // Teams section styles
+    teamsContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: '1.5rem',
+      padding: '0 1rem'
+    },
+    teamSection: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      flex: '1'
+    },
+    teamLogo: {
+      width: '48px',
+      height: '48px',
+      borderRadius: '50%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: '0.5rem'
+    },
+    hlssaLogo: {
+      background: 'linear-gradient(135deg, #2563eb, #1e40af)',
+      color: 'white',
+      fontWeight: 'bold',
+      fontSize: '0.75rem'
+    },
+    opponentLogo: {
+      backgroundColor: '#e5e7eb',
+      fontSize: '1.25rem'
+    },
+    teamName: {
+      fontSize: '0.875rem',
+      fontWeight: '600',
+      color: '#111827',
+      textAlign: 'center'
+    },
+    vsText: {
+      fontSize: '1.5rem',
+      fontWeight: 'bold',
+      color: '#9ca3af',
+      margin: '0 1rem'
+    },
+    
+    // Details section styles
+    detailsContainer: {
+      borderTop: '1px solid #e5e7eb',
+      paddingTop: '1rem',
+      marginBottom: '1rem'
+    },
+    detailItem: {
+      display: 'flex',
+      alignItems: 'center',
+      marginBottom: '0.75rem',
+      color: '#6b7280'
+    },
+    detailIcon: {
+      width: '16px',
+      height: '16px',
+      marginRight: '0.5rem',
+      flexShrink: 0
+    },
+    detailText: {
+      fontSize: '0.875rem',
+      fontWeight: '500'
+    },
+    
+    // Button styles
+    mapButton: {
+      width: '100%',
+      padding: '0.5rem 1rem',
+      backgroundColor: '#facc15',
+      color: '#1e3a8a',
+      border: 'none',
+      borderRadius: '8px',
+      fontSize: '0.875rem',
+      fontWeight: '600',
+      cursor: 'pointer',
+      transition: 'background-color 0.2s ease',
+      outline: 'none'
+    },
+    mapButtonHover: {
+      backgroundColor: '#fde047'
+    },
+    mapButtonFocus: {
+      boxShadow: '0 0 0 2px #facc15'
+    },
+    
+    // View all button styles
+    viewAllContainer: {
+      textAlign: 'center'
+    },
+    viewAllButton: {
+      padding: '0.75rem 2rem',
+      backgroundColor: '#2563eb',
+      color: 'white',
+      border: 'none',
+      borderRadius: '9999px',
+      fontSize: '1rem',
+      fontWeight: '600',
+      cursor: 'pointer',
+      transition: 'background-color 0.2s ease',
+      outline: 'none'
+    },
+    viewAllButtonHover: {
+      backgroundColor: '#1d4ed8'
+    },
+    viewAllButtonFocus: {
+      boxShadow: '0 0 0 2px #93c5fd'
+    }
+  };
+
   return (
-    <section className="py-20 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Upcoming Matches</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+    <section style={styles.section}>
+      <div style={styles.container}>
+        {/* Header */}
+        <div style={styles.header}>
+          <h2 style={styles.title}>Upcoming Matches</h2>
+          <p style={styles.subtitle}>
             Follow our journey as we compete against the best teams in Hyderabad
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Matches Grid */}
+        <div style={styles.matchesGrid}>
           {matches.map((match) => (
             <div
               key={match.id}
-              className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden"
+              style={{
+                ...styles.matchCard,
+                ...(hoveredCard === match.id ? styles.matchCardHover : {})
+              }}
+              onMouseEnter={() => setHoveredCard(match.id)}
+              onMouseLeave={() => setHoveredCard(null)}
             >
-              <div className="p-6">
+              <div style={styles.cardContent}>
                 {/* Match Header */}
-                <div className="flex items-center justify-between mb-4">
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                    match.isHome 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-blue-100 text-blue-800'
-                  }`}>
+                <div style={styles.matchHeader}>
+                  <span style={{
+                    ...styles.badge,
+                    ...(match.isHome ? styles.homeBadge : styles.awayBadge)
+                  }}>
                     {match.isHome ? 'HOME' : 'AWAY'}
                   </span>
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <div 
+                    style={styles.statusDot}
+                    className="pulse-animation"
+                  />
                 </div>
 
-                {/* Teams */}
-                <div className="flex items-center justify-between mb-6">
-                  <div className="text-center flex-1">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <span className="text-white font-bold text-sm">HLSSA</span>
+                {/* Teams Section */}
+                <div style={styles.teamsContainer}>
+                  {/* HLSSA Team */}
+                  <div style={styles.teamSection}>
+                    <div style={{...styles.teamLogo, ...styles.hlssaLogo}}>
+                      HLSSA
                     </div>
-                    <div className="font-semibold text-gray-900 text-sm">HLSSA</div>
+                    <div style={styles.teamName}>HLSSA</div>
                   </div>
                   
-                  <div className="mx-4">
-                    <div className="text-2xl font-bold text-gray-400">VS</div>
-                  </div>
+                  {/* VS */}
+                  <div style={styles.vsText}>VS</div>
                   
-                  <div className="text-center flex-1">
-                    <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <span className="text-gray-600 font-bold text-xs">⚽</span>
+                  {/* Opponent Team */}
+                  <div style={styles.teamSection}>
+                    <div style={{...styles.teamLogo, ...styles.opponentLogo}}>
+                      ⚽
                     </div>
-                    <div className="font-semibold text-gray-900 text-sm">{match.opponent}</div>
+                    <div style={styles.teamName}>{match.opponent}</div>
                   </div>
                 </div>
 
                 {/* Match Details */}
-                <div className="space-y-3 border-t pt-4">
-                  <div className="flex items-center space-x-2 text-gray-600">
-                    <Calendar className="w-4 h-4" />
-                    <span className="text-sm font-medium">{match.date}</span>
+                <div style={styles.detailsContainer}>
+                  <div style={styles.detailItem}>
+                    <Calendar style={styles.detailIcon} />
+                    <span style={styles.detailText}>{match.date}</span>
                   </div>
-                  <div className="flex items-center space-x-2 text-gray-600">
-                    <Clock className="w-4 h-4" />
-                    <span className="text-sm font-medium">{match.time}</span>
+                  <div style={styles.detailItem}>
+                    <Clock style={styles.detailIcon} />
+                    <span style={styles.detailText}>{match.time}</span>
                   </div>
-                  <div className="flex items-center space-x-2 text-gray-600">
-                    <MapPin className="w-4 h-4" />
-                    <span className="text-sm font-medium">{match.location}</span>
+                  <div style={styles.detailItem}>
+                    <MapPin style={styles.detailIcon} />
+                    <span style={styles.detailText}>{match.location}</span>
                   </div>
                 </div>
 
                 {/* Action Button */}
-                <button className="w-full mt-4 bg-yellow-400 text-blue-900 py-2 px-4 rounded-lg font-semibold hover:bg-yellow-300 transition-colors text-sm">
+                <button 
+                  style={{
+                    ...styles.mapButton,
+                    ...(hoveredButton === match.id ? styles.mapButtonHover : {})
+                  }}
+                  onMouseEnter={() => setHoveredButton(match.id)}
+                  onMouseLeave={() => setHoveredButton(null)}
+                  onFocus={(e) => e.target.style.boxShadow = styles.mapButtonFocus.boxShadow}
+                  onBlur={(e) => e.target.style.boxShadow = 'none'}
+                >
                   View on Map
                 </button>
               </div>
@@ -117,8 +356,17 @@ const UpcomingMatches = () => {
         </div>
 
         {/* View All Button */}
-        <div className="text-center mt-12">
-          <button className="bg-blue-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-700 transition-colors">
+        <div style={styles.viewAllContainer}>
+          <button 
+            style={{
+              ...styles.viewAllButton,
+              ...(hoveredViewAllButton ? styles.viewAllButtonHover : {})
+            }}
+            onMouseEnter={() => setHoveredViewAllButton(true)}
+            onMouseLeave={() => setHoveredViewAllButton(false)}
+            onFocus={(e) => e.target.style.boxShadow = styles.viewAllButtonFocus.boxShadow}
+            onBlur={(e) => e.target.style.boxShadow = 'none'}
+          >
             View Full Schedule
           </button>
         </div>

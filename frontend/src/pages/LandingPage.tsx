@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Header from '../components/LandingPage/Header';
 import Hero from '../components/LandingPage/Hero';
+import UpcomingMatches from '../components/LandingPage/UpcomingMatches';
 import axios from 'axios';
 
 const LandingPage = () => {
@@ -15,6 +16,7 @@ const LandingPage = () => {
     <div>
       <Header />
       <Hero />
+      <UpcomingMatches />
     </div>
   );
 };
