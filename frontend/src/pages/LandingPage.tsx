@@ -2,21 +2,24 @@ import { useEffect, useState } from 'react';
 import Header from '../components/LandingPage/Header';
 import Hero from '../components/LandingPage/Hero';
 import UpcomingMatches from '../components/LandingPage/UpcomingMatches';
+import OurPartners from '../components/LandingPage/OurPartners';
+import AchievementsShowcase from '../components/LandingPage/AchievementsShowcase';
+import Programs from '../components/LandingPage/Programs';
+import Coaches from '../components/LandingPage/Coaches';
+import Footer from '../components/LandingPage/Footer';
 import axios from 'axios';
 
 const LandingPage = () => {
-  const [text, setText] = useState("Welcome to the site!");
-  const [image, setImage] = useState<string | null>(null);
-
-  useEffect(() => {
-    setImage("http://localhost:5000/uploads/sample.jpg"); // Example static path
-  }, []);
-
   return (
     <div>
       <Header />
       <Hero />
       <UpcomingMatches />
+      <Coaches />
+      <Programs />
+      <AchievementsShowcase />
+      <OurPartners />
+      <Footer />
     </div>
   );
 };

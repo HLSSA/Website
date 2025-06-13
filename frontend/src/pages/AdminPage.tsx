@@ -1,14 +1,14 @@
 // src/pages/AdminPage.tsx
 import { useState } from 'react';
 import LoginForm from '../components/LoginForm';
-import Coaches from '../components/Coaches';
-import Achievements from '../components/Achievements';
-import Partners from '../components/Partners';
-import Testinomials from '../components/Testinomials';
-import Touranments from '../components/Touranments';
-import AdminsForm from '../components/AdminsForm';
-import AboutForm from '../components/AboutForm';
-import Matches from '../components/Matches';
+import Coaches from '../components/AdminPage/Coaches';
+import Achievements from '../components/AdminPage/Achievements';
+import Partners from '../components/AdminPage/Partners';
+import Testinomials from '../components/AdminPage/Testinomials';
+import Touranments from '../components/AdminPage/Touranments';
+import AdminsForm from '../components/AdminPage/AdminsForm';
+import AboutForm from '../components/AdminPage/AboutForm';
+import Matches from '../components/AdminPage/Matches';
 
 import styled from 'styled-components';
 

@@ -228,7 +228,7 @@ const Header: React.FC = () => {
               Home
             </a>
             <a 
-              href="#about" 
+              href="about" 
               style={navLinkStyles}
               onMouseEnter={handleLinkHover}
               onMouseLeave={handleLinkLeave}
