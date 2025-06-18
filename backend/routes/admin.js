@@ -1505,7 +1505,7 @@ router.delete('/tournaments/:id', verifyToken, async (req, res) => {
 // Create new match
 router.post('/matches', verifyToken, upload.single('opponent_image'), async (req, res) => {
   try {
-    const { opponent_name, datetime, location } = req.body;
+    const { opponent_name, datetime, location, result } = req.body;
     
     if (!opponent_name || !datetime || !location) {
       return res.status(400).json({ error: 'Opponent name, datetime, and location are required' });
@@ -1522,7 +1522,8 @@ router.post('/matches', verifyToken, upload.single('opponent_image'), async (req
         opponent_name,
         opponent_image: imageUrl,
         datetime,
-        location
+        location,
+        result
       }])
       .select();
 
@@ -1614,7 +1615,7 @@ router.get('/matches/:id', async (req, res) => {
 router.put('/matches/:id', verifyToken, upload.single('opponent_image'), async (req, res) => {
   try {
     const { id } = req.params;
-    const { opponent_name, datetime, location } = req.body;
+    const { opponent_name, datetime, location, result } = req.body;
     
     // First check if match exists
     const { data: existingMatch, error: fetchError } = await supabase
@@ -1635,6 +1636,7 @@ router.put('/matches/:id', verifyToken, upload.single('opponent_image'), async (
     if (opponent_name) updateData.opponent_name = opponent_name;
     if (datetime) updateData.datetime = datetime;
     if (location) updateData.location = location;
+    if (result) updateData.result = result;
     
     // Handle image upload
     if (req.file) {

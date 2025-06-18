@@ -2,27 +2,16 @@ import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 
-interface Match {
-  id: string;
-  opponent_name: string;
-  opponent_image?: string;
-  datetime: string;
-  location: string;
-}
-
-interface FormData {
-  opponent_name: string;
-  datetime: string;
-  location: string;
-}
+import { Match, MatchFormData } from '../../types/matches.types';
 
 const Matches = () => {
   const [matches, setMatches] = useState<Match[]>([]);
   const [upcomingMatches, setUpcomingMatches] = useState<Match[]>([]);
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<MatchFormData>({
     opponent_name: '',
     datetime: '',
-    location: ''
+    location: '',
+    result: '',
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -95,7 +84,7 @@ const Matches = () => {
 
   // Clear form and reset states
   const resetForm = () => {
-    setFormData({ opponent_name: '', datetime: '', location: '' });
+    setFormData({ opponent_name: '', datetime: '', location: '', result: '' });
     setImageFile(null);
     setImagePreview(null);
     setEditingId(null);
@@ -123,8 +112,9 @@ const Matches = () => {
       form.append('opponent_name', formData.opponent_name);
       form.append('datetime', formData.datetime);
       form.append('location', formData.location);
+      form.append('result', formData.result);
       
-      if (imageFile) {
+      if (imageFile) {  
         form.append('opponent_image', imageFile);
       }
 
@@ -132,7 +122,9 @@ const Matches = () => {
       
       if (editingId !== null) {
         // Update existing match
-        response = await axios.put(`${API_URL}/matches/${editingId}`, form, { headers });
+        response = await axios.put(`${API_URL}/matches/${editingId}`, form, {
+          headers: headers
+        });
         setSubmitSuccess('Match updated successfully!');
       } else {
         // Create new match
@@ -202,7 +194,8 @@ const Matches = () => {
     setFormData({
       opponent_name: match.opponent_name,
       datetime: formattedDatetime,
-      location: match.location
+      location: match.location,
+      result: match.result || ""
     });
     setEditingId(match.id);
     setImageFile(null);
@@ -295,6 +288,20 @@ const Matches = () => {
               onChange={handleChange}
               disabled={submitLoading}
               placeholder="Enter match location"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="result">Match Result</label>
+            <input
+              type="text"
+              id="result"
+              className="input"
+              name="result"
+              value={formData.result}
+              onChange={handleChange}
+              disabled={submitLoading}
+              placeholder="Enter match result"
             />
           </div>
 

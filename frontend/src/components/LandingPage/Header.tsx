@@ -220,7 +220,7 @@ const Header: React.FC = () => {
           {/* Desktop Navigation */}
           <nav style={desktopNavStyles}>
             <a 
-              href="#home" 
+              href="/" 
               style={navLinkStyles}
               onMouseEnter={handleLinkHover}
               onMouseLeave={handleLinkLeave}
@@ -236,7 +236,7 @@ const Header: React.FC = () => {
               About
             </a>
             <a 
-              href="#achievements" 
+              href="achievements" 
               style={navLinkStyles}
               onMouseEnter={handleLinkHover}
               onMouseLeave={handleLinkLeave}
@@ -244,7 +244,7 @@ const Header: React.FC = () => {
               Achievements
             </a>
             <a 
-              href="#matches" 
+              href="matches" 
               style={navLinkStyles}
               onMouseEnter={handleLinkHover}
               onMouseLeave={handleLinkLeave}

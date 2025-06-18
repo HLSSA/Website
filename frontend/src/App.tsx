@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import AdminPage from './pages/AdminPage';
 import AboutPage from './pages/AboutPage';
+import AchievementsPage from './pages/AchievementsPage';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/admin" element={<AdminPage />} />
       <Route path="/about" element={<AboutPage />} />
+      <Route path="/achievements" element={<AchievementsPage />} />
     </Routes>
   );
 }
