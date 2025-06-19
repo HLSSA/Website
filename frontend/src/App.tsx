@@ -5,6 +5,8 @@ import LandingPage from './pages/LandingPage';
 import AdminPage from './pages/AdminPage';
 import AboutPage from './pages/AboutPage';
 import AchievementsPage from './pages/AchievementsPage';
+import MatchesPage from './pages/MatchesPage';
+import News from './components/News/News';
 
 function App() {
   return (
@@ -13,6 +15,8 @@ function App() {
       <Route path="/admin" element={<AdminPage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/achievements" element={<AchievementsPage />} />
+      <Route path="/matches" element={<MatchesPage/>} />
+      <Route path="/news" element={<News/>} />
     </Routes>
   );
 }

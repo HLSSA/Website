@@ -1,17 +1,16 @@
 import { useEffect, useState } from 'react';
 import Header from '../components/LandingPage/Header';
-import {Achievements} from '../components/AchievementPage/Achievements';
 import Footer from '../components/LandingPage/Footer';
-// import '../styles/AchievementsPage.css';
+import Matches from '../components/MatchesPage/Matches';
 
-const AchievementsPage = () => {
+const MatchesPage = () => {
   return (
     <div>
       <Header />
-      <Achievements />
+      <Matches />
       <Footer />
     </div>
   );
 };
 
-export default AchievementsPage;
+export default MatchesPage;
