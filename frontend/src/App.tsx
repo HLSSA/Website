@@ -6,7 +6,7 @@ import AdminPage from './pages/AdminPage';
 import AboutPage from './pages/AboutPage';
 import AchievementsPage from './pages/AchievementsPage';
 import MatchesPage from './pages/MatchesPage';
-import News from './components/News/News';
+import NewsPage from './pages/NewsPage';
 
 function App() {
   return (
@@ -16,7 +16,7 @@ function App() {
       <Route path="/about" element={<AboutPage />} />
       <Route path="/achievements" element={<AchievementsPage />} />
       <Route path="/matches" element={<MatchesPage/>} />
-      <Route path="/news" element={<News/>} />
+      <Route path="/news" element={<NewsPage/>} />
     </Routes>
   );
 }

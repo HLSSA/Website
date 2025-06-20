@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Calendar, Clock, User, ChevronRight, Search, Filter } from 'lucide-react';
+import Footer from '../components/Footer';
+import Header from '../components/Header';
 
 const NewsPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -95,7 +97,7 @@ const NewsPage = () => {
 
   return (
     <div style={{ fontFamily: 'Arial, sans-serif', lineHeight: '1.6', color: '#333' }}>
-
+      <Header />
       {/* Hero Section */}
       <section style={{ 
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
@@ -103,7 +105,7 @@ const NewsPage = () => {
         padding: '4rem 0',
         textAlign: 'center'
       }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', marginTop: '93px', padding: '0 2rem' }}>
           <h1 style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '1rem', textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
             Latest News & Updates
           </h1>
@@ -356,76 +358,8 @@ const NewsPage = () => {
         </div>
       </section>
 
-      {/* Newsletter Signup */}
-      <section style={{ padding: '3rem 0', background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)', color: 'white' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem', textAlign: 'center' }}>
-          <h2 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>Stay Updated</h2>
-          <p style={{ fontSize: '1.1rem', marginBottom: '2rem', opacity: 0.9 }}>
-            Subscribe to our newsletter and never miss the latest news and updates
-          </p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', maxWidth: '400px', margin: '0 auto' }}>
-            <input
-              type="email"
-              placeholder="Enter your email"
-              style={{
-                flex: 1,
-                padding: '0.75rem 1rem',
-                border: 'none',
-                borderRadius: '25px',
-                fontSize: '1rem',
-                outline: 'none'
-              }}
-            />
-            <button style={{
-              background: '#ffd700',
-              color: '#1e3c72',
-              border: 'none',
-              padding: '0.75rem 2rem',
-              borderRadius: '25px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              fontSize: '1rem'
-            }}>
-              Subscribe
-            </button>
-          </div>
-        </div>
-      </section>
-
       {/* Footer */}
-      <footer style={{ background: '#1a1a1a', color: 'white', padding: '3rem 0 1rem' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem', marginBottom: '2rem' }}>
-            <div>
-              <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>BELLA</h3>
-              <p style={{ opacity: 0.8, lineHeight: '1.6' }}>
-                Join the champions and forge your legacy on the field. Excellence in training, passion in play.
-              </p>
-            </div>
-            <div>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem' }}>Quick Links</h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <a href="#" style={{ color: 'white', textDecoration: 'none', opacity: 0.8 }}>About Us</a>
-                <a href="#" style={{ color: 'white', textDecoration: 'none', opacity: 0.8 }}>Training Programs</a>
-                <a href="#" style={{ color: 'white', textDecoration: 'none', opacity: 0.8 }}>Match Schedule</a>
-                <a href="#" style={{ color: 'white', textDecoration: 'none', opacity: 0.8 }}>Contact</a>
-              </div>
-            </div>
-            <div>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '1rem' }}>Contact Info</h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', opacity: 0.8 }}>
-                <p>123 Champions Lane</p>
-                <p>Sports City, SC 12345</p>
-                <p>Phone: (555) 123-4567</p>
-                <p>Email: info@bella-sports.com</p>
-              </div>
-            </div>
-          </div>
-          <div style={{ borderTop: '1px solid #333', paddingTop: '1rem', textAlign: 'center', opacity: 0.8 }}>
-            <p>&copy; 2025 BELLA Sports Academy. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

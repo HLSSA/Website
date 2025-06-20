@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import Header from '../components/LandingPage/Header';
+import Header from '../components/Header';
 import {Achievements} from '../components/AchievementPage/Achievements';
-import Footer from '../components/LandingPage/Footer';
+import Footer from '../components/Footer';
 // import '../styles/AchievementsPage.css';
 
 const AchievementsPage = () => {

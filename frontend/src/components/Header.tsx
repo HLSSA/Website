@@ -48,7 +48,7 @@ const Header: React.FC = () => {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '16px 0',
+    padding: '10px 0',
   };
 
   const logoSectionStyles: React.CSSProperties = {
@@ -109,6 +109,7 @@ const Header: React.FC = () => {
     textDecoration: 'none',
     fontWeight: '500',
     transition: 'color 0.2s ease',
+    fontSize: '18px',
   };
 
   const headerActionsStyles: React.CSSProperties = {
@@ -207,13 +208,13 @@ const Header: React.FC = () => {
           {/* Logo */}
           <div style={logoSectionStyles}>
             <img 
-              src="/logo.png" 
+              src="https://i.ibb.co/JWPpTbt9/hlssa-optimized-1000.png" 
               alt="HLSSA Logo" 
-              style={{width: '70px', height: '60px'}}
+              style={{width: '110px', height: '90px', objectFit: 'contain'}}
             />
             <div>
               <h1 style={titleStyles}>HLSSA</h1>
-              <p style={subtitleStyles}>Little Stars Soccer Academy</p>
+              <p style={subtitleStyles}>Hyderabad Little Stars Soccer Academy</p>
             </div>
           </div>
 
@@ -252,7 +253,7 @@ const Header: React.FC = () => {
               Matches
             </a>
             <a 
-              href="#team" 
+              href="team" 
               style={navLinkStyles}
               onMouseEnter={handleLinkHover}
               onMouseLeave={handleLinkLeave}
@@ -260,12 +261,12 @@ const Header: React.FC = () => {
               Our Team
             </a>
             <a 
-              href="#contact" 
+              href="news" 
               style={navLinkStyles}
               onMouseEnter={handleLinkHover}
               onMouseLeave={handleLinkLeave}
             >
-              Contact
+              News
             </a>
           </nav>
 
@@ -297,7 +298,7 @@ const Header: React.FC = () => {
           <div style={mobileMenuStyles}>
             <nav style={mobileNavStyles}>
               <a 
-                href="#home" 
+                href="home" 
                 style={mobileNavLinkStyles}
                 onMouseEnter={handleLinkHover}
                 onMouseLeave={handleLinkLeave}
@@ -305,7 +306,7 @@ const Header: React.FC = () => {
                 Home
               </a>
               <a 
-                href="#about" 
+                href="about" 
                 style={mobileNavLinkStyles}
                 onMouseEnter={handleLinkHover}
                 onMouseLeave={handleLinkLeave}
@@ -313,7 +314,7 @@ const Header: React.FC = () => {
                 About
               </a>
               <a 
-                href="#achievements" 
+                href="achievements" 
                 style={mobileNavLinkStyles}
                 onMouseEnter={handleLinkHover}
                 onMouseLeave={handleLinkLeave}
@@ -321,7 +322,7 @@ const Header: React.FC = () => {
                 Achievements
               </a>
               <a 
-                href="#matches" 
+                href="matches" 
                 style={mobileNavLinkStyles}
                 onMouseEnter={handleLinkHover}
                 onMouseLeave={handleLinkLeave}
@@ -329,7 +330,7 @@ const Header: React.FC = () => {
                 Matches
               </a>
               <a 
-                href="#team" 
+                href="team" 
                 style={mobileNavLinkStyles}
                 onMouseEnter={handleLinkHover}
                 onMouseLeave={handleLinkLeave}
@@ -337,12 +338,12 @@ const Header: React.FC = () => {
                 Our Team
               </a>
               <a 
-                href="#contact" 
+                href="news" 
                 style={mobileNavLinkStyles}
                 onMouseEnter={handleLinkHover}
                 onMouseLeave={handleLinkLeave}
               >
-                Contact
+                News
               </a>
               <a
                 href="tel:+917993994704"

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import Header from '../components/LandingPage/Header';
-import Footer from '../components/LandingPage/Footer';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import Matches from '../components/MatchesPage/Matches';
 
 const MatchesPage = () => {
