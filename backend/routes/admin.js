@@ -31,7 +31,7 @@ const verifyToken = (req, res, next) => {
 };
 
 // === Upload Utility ===
-async function uploadImageToSupabase(file, folder = 'coaches') {
+async function uploadImageToSupabase(file, folder = 'news') {
   if (!file) return null;
   
   const filename = `${folder}/${uuidv4()}-${file.originalname}`;
@@ -597,6 +597,7 @@ router.get('/coaches', async (req, res) => {
       .from('coaches')
       .select('*')
       .order('id', { ascending: true });
+      
 
     if (error) {
       console.error('Supabase error:', error);
@@ -620,6 +621,43 @@ router.get('/coaches', async (req, res) => {
   }
 });
 
+
+
+// GET all active coaches
+router.get('/coaches/active', async (req, res) => {
+  try {
+    // Fetch coaches from Supabase
+    const { data, error } = await supabase
+      .from('coaches')
+      .select('*')
+      .eq('is_active', true) // Only active coaches
+      .order('id', { ascending: true });
+
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: 'Failed to fetch coaches' });
+    }
+
+    // Format the response data to match frontend expectations
+    const coaches = data.map(coach => ({
+      id: coach.id,
+      name: coach.name,
+      role: coach.role,
+      phone: coach.phone_number, // Frontend expects "phone"
+      description: coach.description,
+      image: coach.image
+    }));
+
+    res.json(coaches);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
 // GET single coach by ID
 router.get('/coaches/:id', async (req, res) => {
   try {
@@ -629,6 +667,7 @@ router.get('/coaches/:id', async (req, res) => {
       .from('coaches')
       .select('*')
       .eq('id', id)
+      .eq('is_active', true) // Ensure it's not deleted
       .single();
     
     if (error) {
@@ -791,9 +830,10 @@ router.delete('/coaches/:id', verifyToken, async (req, res) => {
     }
 
     // Delete coach from database
+    // Soft delete coach
     const { error } = await supabase
       .from('coaches')
-      .delete()
+      .update({ is_active: false })
       .eq('id', id);
 
     if (error) {
@@ -868,6 +908,30 @@ router.get('/partners', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+// Get all  active partners
+router.get('/partners/active', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('partners')
+      .select('*')
+      .eq('is_active', true)
+      .order('id', { ascending: true });
+    
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    res.json(data);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 
 // GET single partner by ID
 router.get('/partners/:id', async (req, res) => {
@@ -958,6 +1022,7 @@ router.delete('/partners/:id', verifyToken, async (req, res) => {
       .from('partners')
       .select('*')
       .eq('id', id)
+      .eq('is_active', true)
       .single();
 
     if (findError || !existingPartner) {
@@ -968,7 +1033,8 @@ router.delete('/partners/:id', verifyToken, async (req, res) => {
     const { error } = await supabase
       .from('partners')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
+      .eq('is_active', true);
 
     if (error) {
       console.error('Supabase error:', error);
@@ -1702,5 +1768,239 @@ router.delete('/matches/:id', verifyToken, async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+
+// ====== NEWS MANAGEMENT ROUTES ======
+
+// Get all news
+router.get('/news', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('news')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    res.json(data);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get single news item by ID
+router.get('/news/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const { data, error } = await supabase
+      .from('news')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (error) {
+      console.error('Supabase error:', error);
+      if (error.code === 'PGRST116') {
+        return res.status(404).json({ error: 'News not found' });
+      }
+      return res.status(500).json({ error: error.message });
+    }
+    
+    res.json(data);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Create new news item
+router.post('/news', verifyToken, upload.single('image'), async (req, res) => {
+  try {
+    const { title, excerpt, date, author, category, fullStory, article_url, featured, isactive } = req.body;
+    
+    if (!title || !excerpt) {
+      return res.status(400).json({ error: 'Title and excerpt are required' });
+    }
+    
+    let imageUrl = null;
+    if (req.file) {
+      imageUrl = await uploadImageToSupabase(req.file, 'news');
+    }
+
+    const { data, error } = await supabase
+      .from('news')
+      .insert([{
+        title,
+        excerpt,
+        image: imageUrl,
+        date,
+        author,
+        category,
+        fullStory,
+        article_url,
+        featured: featured === 'true' || featured === true,
+        isactive: isactive === 'true' || isactive === true
+      }])
+      .select();
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    res.status(201).json(data[0]);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update news item
+router.put('/news/:id', verifyToken, upload.single('image'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, excerpt, date, author, category, fullStory, article_url, featured, isactive } = req.body;
+    
+    // First check if news exists
+    const { data: existingNews, error: fetchError } = await supabase
+      .from('news')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (fetchError) {
+      if (fetchError.code === 'PGRST116') {
+        return res.status(404).json({ error: 'News not found' });
+      }
+      return res.status(500).json({ error: fetchError.message });
+    }
+    
+    // Prepare update object
+    const updateData = {};
+    if (title) updateData.title = title;
+    if (excerpt) updateData.excerpt = excerpt;
+    if (date) updateData.date = date;
+    if (author) updateData.author = author;
+    if (category) updateData.category = category;
+    if (fullStory) updateData.fullStory = fullStory;
+    if (article_url) updateData.article_url = article_url;
+    if (featured !== undefined) updateData.featured = featured === 'true' || featured === true;
+    if (isactive !== undefined) updateData.isactive = isactive === 'true' || isactive === true;
+    
+    // Handle image upload
+    if (req.file) {
+      const imageUrl = await uploadImageToSupabase(req.file, 'news');
+      updateData.image = imageUrl;
+    }
+    
+    // If no fields to update
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ error: 'No fields to update' });
+    }
+
+    const { data, error } = await supabase
+      .from('news')
+      .update(updateData)
+      .eq('id', id)
+      .select();
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    res.json(data[0]);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete news item
+router.delete('/news/:id', verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // First check if news exists
+    const { data: existingNews, error: fetchError } = await supabase
+      .from('news')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (fetchError) {
+      if (fetchError.code === 'PGRST116') {
+        return res.status(404).json({ error: 'News not found' });
+      }
+      return res.status(500).json({ error: fetchError.message });
+    }
+
+    const { error } = await supabase
+      .from('news')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    res.json({ message: 'News deleted successfully', deletedNews: existingNews });
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get featured news
+router.get('/news/featured/list', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('news')
+      .select('*')
+      .eq('featured', true)
+      .eq('isactive', true)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    res.json(data);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get active news
+router.get('/news/active/list', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('news')
+      .select('*')
+      .eq('isactive', true)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    res.json(data);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 
 module.exports = router;

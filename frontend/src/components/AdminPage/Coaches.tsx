@@ -8,7 +8,7 @@ import { Coach, CoachFormData } from '../../types/coaches.type';
 
 const Coaches = () => {
   const token = localStorage.getItem('adminToken');
-  const { coaches, loading, error, fetchCoaches, setCoaches } = useCoaches(token);
+  const { coaches, loading, error, fetchCoaches, setCoaches, fetchAllCoaches} = useCoaches(token);
 
   const [formData, setFormData] = useState<CoachFormData>({
     name: '',

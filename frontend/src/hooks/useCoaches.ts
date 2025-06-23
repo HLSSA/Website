@@ -20,6 +20,21 @@ const useCoaches = (token: string | null) => {
       setLoading(true);
       setError(null);
 
+      const response = await axios.get(`${API_URL}/coaches/active`, { headers });
+      setCoaches(response.data);
+    } catch (err: any) {
+      console.error('Error fetching coaches:', err);
+      setError(err.response?.data?.error || err.message || 'Failed to load coaches');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchAllCoaches = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
       const response = await axios.get(`${API_URL}/coaches`, { headers });
       setCoaches(response.data);
     } catch (err: any) {
@@ -31,10 +46,10 @@ const useCoaches = (token: string | null) => {
   };
 
   useEffect(() => {
-    fetchCoaches();
+    fetchAllCoaches();
   }, [token]);
 
-  return { coaches, loading, error, fetchCoaches, setCoaches };
+  return { coaches, loading, error, fetchCoaches, setCoaches, fetchAllCoaches };
 };
 
 export default useCoaches;

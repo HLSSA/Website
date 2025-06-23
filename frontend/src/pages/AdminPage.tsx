@@ -9,7 +9,7 @@ import Touranments from '../components/AdminPage/Touranments';
 import AdminsForm from '../components/AdminPage/AdminsForm';
 import AboutForm from '../components/AdminPage/AboutForm';
 import Matches from '../components/AdminPage/Matches';
-
+import NewsForm from '../components/AdminPage/NewsForm';
 import styled from 'styled-components';
 
 const sections = {
@@ -17,10 +17,11 @@ const sections = {
   Coaches: <Coaches />,
   Achievements: <Achievements />,
   Partners: <Partners />,
+  Matches: <Matches />,
   Testimonials: <Testinomials />,
   Tournaments: <Touranments />,
+  News: <NewsForm />,
   Admins: <AdminsForm />,
-  Matches: <Matches />,
 };
 
 const AdminPage = () => {
