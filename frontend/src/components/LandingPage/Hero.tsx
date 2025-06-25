@@ -196,13 +196,15 @@ const StyledWrapper = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 .hero-bg-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: blur(3px);
+  transform: scale(1.1);
 }
 
 /* Main container */
@@ -257,6 +259,7 @@ const StyledWrapper = styled.div`
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
 
 /* Title styling */
@@ -265,6 +268,7 @@ const StyledWrapper = styled.div`
   font-weight: bold;
   margin-bottom: 24px;
   line-height: 1.1;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
 @media (min-width: 1024px) {
@@ -276,6 +280,7 @@ const StyledWrapper = styled.div`
 .title-accent {
   color: #facc15;
   display: block;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .title-gradient {
@@ -283,15 +288,17 @@ const StyledWrapper = styled.div`
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  text-shadow: none;
 }
 
 /* Description */
 .hero-description {
   font-size: 20px;
-  color: #dbeafe;
+  color: #f1f5f9;
   margin-bottom: 32px;
   max-width: 512px;
   line-height: 1.75;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
 }
 
 /* Buttons */
@@ -318,18 +325,20 @@ const StyledWrapper = styled.div`
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
 }
 
 .btn-primary:hover {
   background-color: #fde047;
   transform: scale(1.05);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
 }
 
 .btn-secondary {
-  border: 2px solid white;
+  border: 2px solid rgba(255, 255, 255, 0.9);
   color: white;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
   padding: 16px 32px;
   border-radius: 9999px;
   font-weight: bold;
@@ -340,11 +349,13 @@ const StyledWrapper = styled.div`
   align-items: center;
   justify-content: center;
   gap: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
 
 .btn-secondary:hover {
   background-color: white;
   color: #1e3a8a;
+  border-color: white;
 }
 
 .play-icon {
@@ -361,6 +372,12 @@ const StyledWrapper = styled.div`
 
 .stat-item {
   text-align: center;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 20px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .stat-number {
@@ -368,11 +385,14 @@ const StyledWrapper = styled.div`
   font-weight: bold;
   color: #facc15;
   margin-bottom: 8px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .stat-label {
-  color: #dbeafe;
+  color: #f1f5f9;
   font-size: 14px;
+  font-weight: 500;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
 }
 
 /* Hero visual elements */
@@ -394,11 +414,12 @@ const StyledWrapper = styled.div`
 /* Floating cards */
 .floating-card {
   position: absolute;
-  background-color: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(8px);
-  padding: 16px;
-  border-radius: 16px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .card-1 {
@@ -427,6 +448,7 @@ const StyledWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .card-icon-green {
@@ -446,6 +468,7 @@ const StyledWrapper = styled.div`
 .card-title {
   font-weight: bold;
   color: #111827;
+  font-size: 16px;
 }
 
 .card-subtitle {
@@ -459,10 +482,11 @@ const StyledWrapper = styled.div`
   top: 50%;
   right: -32px;
   background-color: #facc15;
-  padding: 16px;
-  border-radius: 16px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
   animation: pulse 2s ease-in-out infinite;
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .star-icon {
@@ -491,16 +515,18 @@ const StyledWrapper = styled.div`
 .scroll-mouse {
   width: 24px;
   height: 40px;
-  border: 2px solid white;
+  border: 2px solid rgba(255, 255, 255, 0.8);
   border-radius: 20px;
   display: flex;
   justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
 }
 
 .scroll-dot {
   width: 4px;
   height: 12px;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.9);
   border-radius: 2px;
   margin-top: 8px;
   animation: pulse 1.5s ease-in-out infinite;
@@ -508,6 +534,7 @@ const StyledWrapper = styled.div`
 
 .scroll-text {
   font-size: 14px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
 }
 
 `;

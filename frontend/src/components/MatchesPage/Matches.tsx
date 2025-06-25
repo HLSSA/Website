@@ -177,22 +177,22 @@ const Matches: React.FC = () => {
   const MatchCard: React.FC<MatchCardProps> = ({ match, isPast = false }) => (
     <div className="match-card">
       {/* Home/Away Badge */}
-      <div className="badge-container">
-        <span className={`badge ${match.homeAway === 'HOME' ? 'home-badge' : 'away-badge'}`}>
+      <div className="match-card-header">
+        <span className={`badge ${match.homeAway === 'HOME' ? 'badge-home' : 'badge-away'}`}>
           {match.homeAway}
         </span>
         {isPast && match.result && (
-          <span className={`badge ${match.result === 'WIN' ? 'win-badge' : 'loss-badge'}`}>
+          <span className={`badge ${match.result === 'WIN' ? 'badge-win' : 'badge-loss'}`}>
             {match.result}
           </span>
         )}
       </div>
 
       {/* Teams Section */}
-      <div className="teams-container">
+      <div className="teams-section">
         {/* Home Team */}
-        <div className="team-section">
-          <div className="team-logo">
+        <div className="team">
+          <div className="team-logo hlssa-logo">
             <span className="team-logo-text">HLSSA</span>
           </div>
           <span className="team-name">HLSSA</span>
@@ -202,16 +202,16 @@ const Matches: React.FC = () => {
         <div className="vs-section">
           <span className="vs-text">VS</span>
           {isPast && match.score && (
-            <div className="score-container">
+            <div className="score-display">
               <span className="score-text">{match.score}</span>
             </div>
           )}
         </div>
 
         {/* Away Team */}
-        <div className="team-section">
-          <div className="away-team-logo">
-            <span className="away-logo-text">{match.awayTeamLogo}</span>
+        <div className="team">
+          <div className="team-logo away-logo">
+            <span className="team-logo-emoji">{match.awayTeamLogo}</span>
           </div>
           <span className="team-name">{match.awayTeam}</span>
         </div>
@@ -219,60 +219,66 @@ const Matches: React.FC = () => {
 
       {/* Match Details */}
       <div className="match-details">
-        <div className="detail-row">
-          <Calendar className="icon" />
+        <div className="match-detail">
+          <Calendar className="detail-icon" />
           <span className="detail-text">{match.date}</span>
         </div>
-        <div className="detail-row">
-          <Clock className="icon" />
+        <div className="match-detail">
+          <Clock className="detail-icon" />
           <span className="detail-text">{match.time}</span>
         </div>
-        <div className="detail-row">
-          <MapPin className="icon" />
+        <div className="match-detail">
+          <MapPin className="detail-icon" />
           <span className="detail-text">{match.venue}</span>
         </div>
       </div>
-
-      {/* Action Button */}
-      {!isPast && (
-        <button className="action-button">
-          View on Map
-        </button>
-      )}
     </div>
   );
 
   return (
-    <div className="container">
-      {/* Header Section */}
-      <div className="header">
-        <div className="header-content">
-          <h1 className="header-title">
-            {activeTab === 'upcoming' ? 'Upcoming Matches' : 'Past Matches'}
-          </h1>
-          <p className="header-subtitle">
-            {activeTab === 'upcoming' 
-              ? 'Follow our journey as we compete against the best teams in Hyderabad'
-              : 'Relive our victories and learn from our challenges'
-            }
-          </p>
+    <div className="matches-container">
+      {/* Header Section with Background Image */}
+      <div className="header-section">
+        <div className="header-overlay">
+          <div className="header-content">
+            {/* Badge */}
+            <div className="championship-badge">
+              <span className="badge-text">
+                🏆 Championship Journey
+              </span>
+            </div>
+            
+            {/* Main Title */}
+            <h1 className="main-title">
+              {activeTab === 'upcoming' ? 'Upcoming' : 'Past'}{' '}
+              <span className="title-highlight">Matches</span>
+            </h1>
+            
+            {/* Subtitle */}
+            <p className="subtitle">
+              {activeTab === 'upcoming' 
+                ? 'Follow our journey as we compete against the best teams in Hyderabad. Every match is a step towards excellence.'
+                : 'Relive our victories and learn from our challenges. Each game tells a story of growth and determination.'
+              }
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="main-content">
         {/* Navigation Tabs */}
-        <div className="tab-container">
-          <div className="tab-wrapper">
+        <div className="tabs-container">
+          <div className="tabs-wrapper">
             <button
               onClick={() => setActiveTab('upcoming')}
-              className={`tab-button ${activeTab === 'upcoming' ? 'active-tab' : 'inactive-tab'}`}
+              className={`tab-button ${activeTab === 'upcoming' ? 'tab-active' : ''}`}
             >
               Upcoming Matches
             </button>
             <button
               onClick={() => setActiveTab('past')}
-              className={`tab-button ${activeTab === 'past' ? 'active-tab' : 'inactive-tab'}`}
+              className={`tab-button ${activeTab === 'past' ? 'tab-active' : ''}`}
             >
               Past Matches
             </button>
@@ -288,8 +294,8 @@ const Matches: React.FC = () => {
 
         {/* View Full Schedule Button */}
         {activeTab === 'upcoming' && (
-          <div className="view-schedule-container">
-            <button className="view-schedule-button">
+          <div className="schedule-button-container">
+            <button className="schedule-button">
               View Full Schedule
             </button>
           </div>

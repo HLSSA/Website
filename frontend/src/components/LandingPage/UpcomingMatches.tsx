@@ -33,7 +33,6 @@ const UpcomingMatches = () => {
   ];
 
   const [hoveredCard, setHoveredCard] = useState(null);
-  const [hoveredButton, setHoveredButton] = useState(null);
   const [hoveredViewAllButton, setHoveredViewAllButton] = useState(false);
 
   // Add CSS styles and keyframe animation
@@ -196,8 +195,7 @@ const UpcomingMatches = () => {
     // Details section styles
     detailsContainer: {
       borderTop: '1px solid #e5e7eb',
-      paddingTop: '1rem',
-      marginBottom: '1rem'
+      paddingTop: '1rem'
     },
     detailItem: {
       display: 'flex',
@@ -214,27 +212,6 @@ const UpcomingMatches = () => {
     detailText: {
       fontSize: '0.875rem',
       fontWeight: '500'
-    },
-    
-    // Button styles
-    mapButton: {
-      width: '100%',
-      padding: '0.5rem 1rem',
-      backgroundColor: '#facc15',
-      color: '#1e3a8a',
-      border: 'none',
-      borderRadius: '8px',
-      fontSize: '0.875rem',
-      fontWeight: '600',
-      cursor: 'pointer',
-      transition: 'background-color 0.2s ease',
-      outline: 'none'
-    },
-    mapButtonHover: {
-      backgroundColor: '#fde047'
-    },
-    mapButtonFocus: {
-      boxShadow: '0 0 0 2px #facc15'
     },
     
     // View all button styles
@@ -336,20 +313,6 @@ const UpcomingMatches = () => {
                     <span style={styles.detailText}>{match.location}</span>
                   </div>
                 </div>
-
-                {/* Action Button */}
-                <button 
-                  style={{
-                    ...styles.mapButton,
-                    ...(hoveredButton === match.id ? styles.mapButtonHover : {})
-                  }}
-                  onMouseEnter={() => setHoveredButton(match.id)}
-                  onMouseLeave={() => setHoveredButton(null)}
-                  onFocus={(e) => e.target.style.boxShadow = styles.mapButtonFocus.boxShadow}
-                  onBlur={(e) => e.target.style.boxShadow = 'none'}
-                >
-                  View on Map
-                </button>
               </div>
             </div>
           ))}

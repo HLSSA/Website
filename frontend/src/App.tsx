@@ -7,6 +7,7 @@ import AboutPage from './pages/AboutPage';
 import AchievementsPage from './pages/AchievementsPage';
 import MatchesPage from './pages/MatchesPage';
 import NewsPage from './pages/NewsPage';
+import OurTeam from './pages/Ourteam';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Route path="/about" element={<AboutPage />} />
       <Route path="/achievements" element={<AchievementsPage />} />
       <Route path="/matches" element={<MatchesPage/>} />
+      <Route path="/team" element={<OurTeam/>} />
       <Route path="/news" element={<NewsPage/>} />
     </Routes>
   );
