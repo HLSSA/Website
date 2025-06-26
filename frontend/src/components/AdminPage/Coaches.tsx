@@ -4,25 +4,27 @@ import { useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 import useCoaches from '../../hooks/useCoaches';
 import './admin.css';
-import { Coach, CoachFormData } from '../../types/coaches.type';
+import { Person, PersonFormData } from '../../types/coaches.type';
 
 const Coaches = () => {
   const token = localStorage.getItem('adminToken');
-  const { coaches, loading, error, fetchCoaches, setCoaches, fetchAllCoaches} = useCoaches(token);
+  const { coaches, players, loading, error, fetchCoaches, fetchPlayers, setCoaches, setPlayers, fetchAllCoaches, fetchAllPlayers } = useCoaches(token);
 
-  const [formData, setFormData] = useState<CoachFormData>({
+  const [formData, setFormData] = useState<PersonFormData>({
     name: '',
     role: '',
-    phone: '',
-    description: ''
+    category: 'Coach',
+    age: ''
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingCategory, setEditingCategory] = useState<'Coach' | 'Player'>('Coach');
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
-  const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ id: number; category: 'Coach' | 'Player' } | null>(null);
+  const [activeTab, setActiveTab] = useState<'Coach' | 'Player'>('Coach');
 
   const API_URL = 'http://localhost:5000/api/admin';
 
@@ -30,9 +32,14 @@ const Coaches = () => {
     'Authorization': `Bearer ${token}`
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ 
+      ...prev, 
+      [name]: value,
+      // Reset age when switching to Coach
+      ...(name === 'category' && value === 'Coach' ? { age: '' } : {})
+    }));
   };
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -46,10 +53,11 @@ const Coaches = () => {
   };
 
   const resetForm = () => {
-    setFormData({ name: '', role: '', phone: '', description: '' });
+    setFormData({ name: '', role: '', category: 'Coach', age: '' });
     setImageFile(null);
     setImagePreview(null);
     setEditingId(null);
+    setEditingCategory('Coach');
     setSubmitError(null);
     setSubmitSuccess(null);
   };
@@ -64,6 +72,12 @@ const Coaches = () => {
 
     if (submitLoading) return;
 
+    // Validate age for players
+    if (formData.category === 'Player' && !formData.age) {
+      setSubmitError('Age category is required for players');
+      return;
+    }
+
     setSubmitLoading(true);
     setSubmitError(null);
     setSubmitSuccess(null);
@@ -72,52 +86,65 @@ const Coaches = () => {
       const form = new FormData();
       form.append('name', formData.name);
       form.append('role', formData.role);
-      form.append('phone_number', formData.phone);
-      form.append('description', formData.description);
+      
+      if (formData.category === 'Player') {
+        form.append('age', formData.age);
+      }
 
       if (imageFile) {
         form.append('image', imageFile);
       }
 
       let response;
+      const endpoint = formData.category === 'Coach' ? 'coaches' : 'players';
 
       if (editingId !== null) {
-        response = await axios.put(`${API_URL}/coaches/${editingId}`, form, { headers });
-        setSubmitSuccess('Coach updated successfully!');
+        response = await axios.put(`${API_URL}/${endpoint}/${editingId}`, form, { headers });
+        setSubmitSuccess(`${formData.category} updated successfully!`);
       } else {
-        response = await axios.post(`${API_URL}/coaches`, form, { headers });
-        setSubmitSuccess('New coach added successfully!');
+        response = await axios.post(`${API_URL}/${endpoint}`, form, { headers });
+        setSubmitSuccess(`New ${formData.category.toLowerCase()} added successfully!`);
       }
 
       const responseData = response.data;
-      const updatedCoach: Coach = {
+      const updatedPerson: Person = {
         id: responseData.id,
         name: responseData.name,
         role: responseData.role,
-        phone: responseData.phone || responseData.phone_number,
-        description: responseData.description,
-        image: responseData.image
+        category: responseData.category,
+        age: responseData.age,
+        image: responseData.image,
+        is_active: responseData.is_active
       };
 
       if (editingId !== null) {
-        setCoaches(prev => prev.map(coach => coach.id === editingId ? updatedCoach : coach));
+        if (formData.category === 'Coach') {
+          setCoaches(prev => prev.map(coach => coach.id === editingId ? updatedPerson : coach));
+        } else {
+          setPlayers(prev => prev.map(player => player.id === editingId ? updatedPerson : player));
+        }
       } else {
-        setCoaches(prev => [...prev, updatedCoach]);
+        if (formData.category === 'Coach') {
+          setCoaches(prev => [...prev, updatedPerson]);
+        } else {
+          setPlayers(prev => [...prev, updatedPerson]);
+        }
       }
 
       resetForm();
       fetchCoaches();
+      fetchPlayers();
     } catch (err: any) {
-      console.error('Error saving coach:', err);
-      setSubmitError(err.response?.data?.error || err.message || 'An error occurred while saving the coach');
+      console.error('Error saving person:', err);
+      setSubmitError(err.response?.data?.error || err.message || `An error occurred while saving the ${formData.category.toLowerCase()}`);
     } finally {
       setSubmitLoading(false);
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: number, category: 'Coach' | 'Player') => {
     if (!token) {
-      setSubmitError('You must be logged in to delete coaches');
+      setSubmitError('You must be logged in to delete');
       return;
     }
 
@@ -128,30 +155,36 @@ const Coaches = () => {
     setSubmitSuccess(null);
 
     try {
-      await axios.delete(`${API_URL}/coaches/${id}`, { headers });
+      const endpoint = category === 'Coach' ? 'coaches' : 'players';
+      await axios.delete(`${API_URL}/${endpoint}/${id}`, { headers });
 
-      setCoaches(prev => prev.filter(coach => coach.id !== id));
-      setSubmitSuccess('Coach deleted successfully!');
-
+      if (category === 'Coach') {
+        setCoaches(prev => prev.filter(coach => coach.id !== id));
+      } else {
+        setPlayers(prev => prev.filter(player => player.id !== id));
+      }
+      
+      setSubmitSuccess(`${category} deleted successfully!`);
       setDeleteConfirm(null);
     } catch (err: any) {
-      console.error('Error deleting coach:', err);
-      setSubmitError(err.response?.data?.error || err.message || 'An error occurred while deleting the coach');
+      console.error('Error deleting:', err);
+      setSubmitError(err.response?.data?.error || err.message || `An error occurred while deleting the ${category.toLowerCase()}`);
     } finally {
       setSubmitLoading(false);
     }
   };
 
-  const handleEdit = (coach: Coach) => {
+  const handleEdit = (person: Person) => {
     setFormData({
-      name: coach.name,
-      role: coach.role,
-      phone: coach.phone,
-      description: coach.description
+      name: person.name,
+      role: person.role,
+      category: person.category,
+      age: person.age || ''
     });
-    setEditingId(coach.id);
+    setEditingId(person.id);
+    setEditingCategory(person.category);
     setImageFile(null);
-    setImagePreview(coach.image || null);
+    setImagePreview(person.image || null);
     setSubmitError(null);
     setSubmitSuccess(null);
 
@@ -162,10 +195,15 @@ const Coaches = () => {
     resetForm();
   };
 
+  const currentList = activeTab === 'Coach' ? coaches : players;
+  const currentLoading = loading;
+
   return (
     <div className="container">
       <form className="form" onSubmit={handleSubmit}>
-        <h1 className="title">{editingId !== null ? 'Edit Coach' : 'Add Coach'}</h1>
+        <h1 className="title">
+          {editingId !== null ? `Edit ${editingCategory}` : `Add ${formData.category}`}
+        </h1>
 
         {submitSuccess && (
           <div className="success-message">
@@ -180,6 +218,22 @@ const Coaches = () => {
         )}
 
         <div className="form-group">
+          <label htmlFor="category">Category</label>
+          <select
+            required
+            id="category"
+            className="input"
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            disabled={submitLoading || editingId !== null}
+          >
+            <option value="Coach">Coach</option>
+            <option value="Player">Player</option>
+          </select>
+        </div>
+
+        <div className="form-group">
           <label htmlFor="name">Name</label>
           <input
             required
@@ -190,7 +244,7 @@ const Coaches = () => {
             value={formData.name}
             onChange={handleChange}
             disabled={submitLoading}
-            placeholder="Enter coach name"
+            placeholder={`Enter ${formData.category.toLowerCase()} name`}
           />
         </div>
 
@@ -205,42 +259,32 @@ const Coaches = () => {
             value={formData.role}
             onChange={handleChange}
             disabled={submitLoading}
-            placeholder="Enter coach role (e.g. Head Coach)"
+            placeholder={`Enter ${formData.category.toLowerCase()} role (e.g. ${formData.category === 'Coach' ? 'Head Coach, Assistant Coach' : 'Forward, Defender, Goalkeeper'})`}
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="phone">Phone</label>
-          <input
-            required
-            type="text"
-            id="phone"
-            className="input"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            disabled={submitLoading}
-            placeholder="Enter phone number"
-          />
-        </div>
+        {formData.category === 'Player' && (
+          <div className="form-group">
+            <label htmlFor="age">Age Category</label>
+            <select
+              required
+              id="age"
+              className="input"
+              name="age"
+              value={formData.age}
+              onChange={handleChange}
+              disabled={submitLoading}
+            >
+              <option value="">Select age category</option>
+              <option value="under 12">Under 12</option>
+              <option value="under 15">Under 15</option>
+              <option value="under 18">Under 18</option>
+            </select>
+          </div>
+        )}
 
         <div className="form-group">
-          <label htmlFor="description">Description</label>
-          <textarea
-            required
-            id="description"
-            className="input description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            disabled={submitLoading}
-            placeholder="Enter coach description and qualifications"
-            rows={4}
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="image">Coach Image</label>
+          <label htmlFor="image">{formData.category} Image</label>
           <input
             type="file"
             id="image"
@@ -259,7 +303,7 @@ const Coaches = () => {
 
         <div className="button-group">
           <button className="submit" type="submit" disabled={submitLoading}>
-            {submitLoading ? (editingId !== null ? 'Updating...' : 'Submitting...') : (editingId !== null ? 'Update Coach' : 'Add Coach')}
+            {submitLoading ? (editingId !== null ? 'Updating...' : 'Submitting...') : (editingId !== null ? `Update ${editingCategory}` : `Add ${formData.category}`)}
           </button>
 
           {editingId !== null && (
@@ -271,48 +315,85 @@ const Coaches = () => {
       </form>
 
       <div className="coaches-list">
-        <h2>Coaches List</h2>
+        <div className="tab-buttons">
+          <button 
+            className={`tab-button ${activeTab === 'Coach' ? 'active' : ''}`}
+            onClick={() => setActiveTab('Coach')}
+            type="button"
+          >
+            Coaches ({coaches.length})
+          </button>
+          <button 
+            className={`tab-button ${activeTab === 'Player' ? 'active' : ''}`}
+            onClick={() => setActiveTab('Player')}
+            type="button"
+          >
+            Players ({players.length})
+          </button>
+        </div>
 
-        {loading ? (
-          <div className="loading">Loading coaches...</div>
+        <h2>{activeTab}s List</h2>
+
+        {currentLoading ? (
+          <div className="loading">Loading {activeTab.toLowerCase()}s...</div>
         ) : error ? (
           <div className="error-message">{error}</div>
-        ) : coaches.length === 0 ? (
-          <div className="empty-message">No coaches available</div>
+        ) : currentList.length === 0 ? (
+          <div className="empty-message">No {activeTab.toLowerCase()}s available</div>
         ) : (
           <ul className="coaches">
-            {coaches.map(coach => (
-              <li key={coach.id} className="coach-item">
+            {currentList.map(person => (
+              <li key={person.id} className="coach-item">
                 <div className="coach-info">
-                  {coach.image && (
+                  {person.image && (
                     <div className="coach-image">
-                      <img src={coach.image} alt={coach.name} />
+                      <img src={person.image} alt={person.name} />
                     </div>
                   )}
                   <div className="coach-details">
-                    <h3 className="coach-name">{coach.name}</h3>
-                    <div className="coach-role"><strong>Role:</strong> {coach.role}</div>
-                    <div className="coach-phone"><strong>Phone:</strong> {coach.phone}</div>
-                    <div className="coach-description"><strong>Description:</strong> {coach.description}</div>
+                    <h3 className="coach-name">{person.name}</h3>
+                    <div className="coach-role"><strong>Role:</strong> {person.role}</div>
+                    <div className="coach-category"><strong>Category:</strong> {person.category}</div>
+                    {person.category === 'Player' && person.age && (
+                      <div className="coach-age"><strong>Age Category:</strong> {person.age}</div>
+                    )}
+                    <div className="coach-status">
+                      <strong>Status:</strong> 
+                      <span className={`status ${person.is_active ? 'active' : 'inactive'}`}>
+                        {person.is_active ? 'Active' : 'Inactive'}
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className="action-buttons">
-                  <button className="edit-btn" onClick={() => handleEdit(coach)} disabled={submitLoading}>
+                  <button className="edit-btn" onClick={() => handleEdit(person)} disabled={submitLoading}>
                     Edit
                   </button>
 
-                  {deleteConfirm === coach.id ? (
+                  {deleteConfirm?.id === person.id && deleteConfirm?.category === person.category ? (
                     <div className="delete-confirm">
                       <span>Are you sure?</span>
-                      <button className="confirm-yes" onClick={() => handleDelete(coach.id)} disabled={submitLoading}>
+                      <button 
+                        className="confirm-yes" 
+                        onClick={() => handleDelete(person.id, person.category)} 
+                        disabled={submitLoading}
+                      >
                         Yes
                       </button>
-                      <button className="confirm-no" onClick={() => setDeleteConfirm(null)} disabled={submitLoading}>
+                      <button 
+                        className="confirm-no" 
+                        onClick={() => setDeleteConfirm(null)} 
+                        disabled={submitLoading}
+                      >
                         No
                       </button>
                     </div>
                   ) : (
-                    <button className="delete-btn" onClick={() => setDeleteConfirm(coach.id)} disabled={submitLoading}>
+                    <button 
+                      className="delete-btn" 
+                      onClick={() => setDeleteConfirm({ id: person.id, category: person.category })} 
+                      disabled={submitLoading}
+                    >
                       Delete
                     </button>
                   )}

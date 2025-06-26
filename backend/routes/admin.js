@@ -584,9 +584,6 @@ router.delete('/about/cleanup', verifyToken, async (req, res) => {
 
 
 
-
-
-
 // ====== COACH MANAGEMENT ROUTES ======
 
 // GET all coaches
@@ -596,6 +593,7 @@ router.get('/coaches', async (req, res) => {
     const { data, error } = await supabase
       .from('coaches')
       .select('*')
+      .eq('category', 'Coach')
       .order('id', { ascending: true });
       
 
@@ -609,9 +607,9 @@ router.get('/coaches', async (req, res) => {
       id: coach.id,
       name: coach.name,
       role: coach.role,
-      phone: coach.phone_number, // Frontend expects "phone"
-      description: coach.description,
-      image: coach.image
+      category: coach.category,
+      image: coach.image,
+      is_active: coach.is_active
     }));
 
     res.json(coaches);
@@ -621,18 +619,16 @@ router.get('/coaches', async (req, res) => {
   }
 });
 
-
-
 // GET all active coaches
 router.get('/coaches/active', async (req, res) => {
   try {
-    // Fetch coaches from Supabase
+    // Fetch active coaches from Supabase
     const { data, error } = await supabase
       .from('coaches')
       .select('*')
-      .eq('is_active', true) // Only active coaches
+      .eq('category', 'Coach')
+      .eq('is_active', true)
       .order('id', { ascending: true });
-
 
     if (error) {
       console.error('Supabase error:', error);
@@ -644,9 +640,9 @@ router.get('/coaches/active', async (req, res) => {
       id: coach.id,
       name: coach.name,
       role: coach.role,
-      phone: coach.phone_number, // Frontend expects "phone"
-      description: coach.description,
-      image: coach.image
+      category: coach.category,
+      image: coach.image,
+      is_active: coach.is_active
     }));
 
     res.json(coaches);
@@ -655,8 +651,6 @@ router.get('/coaches/active', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-
 
 // GET single coach by ID
 router.get('/coaches/:id', async (req, res) => {
@@ -667,7 +661,8 @@ router.get('/coaches/:id', async (req, res) => {
       .from('coaches')
       .select('*')
       .eq('id', id)
-      .eq('is_active', true) // Ensure it's not deleted
+      .eq('category', 'Coach')
+      .eq('is_active', true)
       .single();
     
     if (error) {
@@ -684,9 +679,9 @@ router.get('/coaches/:id', async (req, res) => {
       id: data.id,
       name: data.name,
       role: data.role,
-      phone: data.phone_number, // Frontend expects "phone"
-      description: data.description,
-      image: data.image
+      category: data.category,
+      image: data.image,
+      is_active: data.is_active
     };
     
     res.json(coach);
@@ -699,12 +694,12 @@ router.get('/coaches/:id', async (req, res) => {
 // POST create new coach
 router.post('/coaches', verifyToken, upload.single('image'), async (req, res) => {
   try {
-    const { name, role, phone_number, description } = req.body;
+    const { name, role } = req.body;
 
     // Validate required fields
-    if (!name || !role || !phone_number || !description) {
+    if (!name || !role) {
       return res.status(400).json({ 
-        error: 'Name, role, phone number, and description are required' 
+        error: 'Name and role are required' 
       });
     }
 
@@ -720,9 +715,9 @@ router.post('/coaches', verifyToken, upload.single('image'), async (req, res) =>
       .insert([{ 
         name, 
         role, 
-        phone_number, 
-        description,
-        image: imageUrl
+        category: 'Coach',
+        image: imageUrl,
+        is_active: true
       }])
       .select();
 
@@ -736,9 +731,9 @@ router.post('/coaches', verifyToken, upload.single('image'), async (req, res) =>
       id: data[0].id,
       name: data[0].name,
       role: data[0].role,
-      phone: data[0].phone_number, // Frontend expects "phone"
-      description: data[0].description,
-      image: data[0].image
+      category: data[0].category,
+      image: data[0].image,
+      is_active: data[0].is_active
     };
 
     res.status(201).json(newCoach);
@@ -752,12 +747,12 @@ router.post('/coaches', verifyToken, upload.single('image'), async (req, res) =>
 router.put('/coaches/:id', verifyToken, upload.single('image'), async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, role, phone_number, description } = req.body;
+    const { name, role } = req.body;
 
     // Validate required fields
-    if (!name || !role || !phone_number || !description) {
+    if (!name || !role) {
       return res.status(400).json({ 
-        error: 'Name, role, phone number, and description are required' 
+        error: 'Name and role are required' 
       });
     }
 
@@ -766,6 +761,7 @@ router.put('/coaches/:id', verifyToken, upload.single('image'), async (req, res)
       .from('coaches')
       .select('*')
       .eq('id', id)
+      .eq('category', 'Coach')
       .single();
 
     if (findError || !existingCoach) {
@@ -784,11 +780,10 @@ router.put('/coaches/:id', verifyToken, upload.single('image'), async (req, res)
       .update({ 
         name, 
         role, 
-        phone_number, 
-        description,
         image: imageUrl
       })
       .eq('id', id)
+      .eq('category', 'Coach')
       .select();
 
     if (error) {
@@ -801,9 +796,9 @@ router.put('/coaches/:id', verifyToken, upload.single('image'), async (req, res)
       id: data[0].id,
       name: data[0].name,
       role: data[0].role,
-      phone: data[0].phone_number, // Frontend expects "phone"
-      description: data[0].description,
-      image: data[0].image
+      category: data[0].category,
+      image: data[0].image,
+      is_active: data[0].is_active
     };
 
     res.json(updatedCoach);
@@ -813,7 +808,7 @@ router.put('/coaches/:id', verifyToken, upload.single('image'), async (req, res)
   }
 });
 
-// DELETE coach
+// DELETE coach (soft delete)
 router.delete('/coaches/:id', verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
@@ -823,18 +818,19 @@ router.delete('/coaches/:id', verifyToken, async (req, res) => {
       .from('coaches')
       .select('*')
       .eq('id', id)
+      .eq('category', 'Coach')
       .single();
 
     if (findError || !existingCoach) {
       return res.status(404).json({ error: 'Coach not found' });
     }
 
-    // Delete coach from database
     // Soft delete coach
     const { error } = await supabase
       .from('coaches')
       .update({ is_active: false })
-      .eq('id', id);
+      .eq('id', id)
+      .eq('category', 'Coach');
 
     if (error) {
       console.error('Supabase error:', error);
@@ -848,6 +844,338 @@ router.delete('/coaches/:id', verifyToken, async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+
+
+// ====== PLAYER MANAGEMENT ROUTES ======
+
+// GET all players
+router.get('/players', async (req, res) => {
+  try {
+    // Fetch players from Supabase
+    const { data, error } = await supabase
+      .from('coaches')
+      .select('*')
+      .eq('category', 'Player')
+      .order('id', { ascending: true });
+      
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: 'Failed to fetch players' });
+    }
+
+    // Format the response data to match frontend expectations
+    const players = data.map(player => ({
+      id: player.id,
+      name: player.name,
+      role: player.role,
+      age: player.age,
+      category: player.category,
+      image: player.image,
+      is_active: player.is_active
+    }));
+
+    res.json(players);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// GET all active players
+router.get('/players/active', async (req, res) => {
+  try {
+    // Fetch active players from Supabase
+    const { data, error } = await supabase
+      .from('coaches')
+      .select('*')
+      .eq('category', 'Player')
+      .eq('is_active', true)
+      .order('id', { ascending: true });
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: 'Failed to fetch players' });
+    }
+
+    // Format the response data to match frontend expectations
+    const players = data.map(player => ({
+      id: player.id,
+      name: player.name,
+      role: player.role,
+      age: player.age,
+      category: player.category,
+      image: player.image,
+      is_active: player.is_active
+    }));
+
+    res.json(players);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// GET players by age category
+router.get('/players/age/:ageCategory', async (req, res) => {
+  try {
+    const { ageCategory } = req.params;
+    
+    // Validate age category
+    const validAgeCategories = ['under 12', 'under 15', 'under 18'];
+    if (!validAgeCategories.includes(ageCategory)) {
+      return res.status(400).json({ error: 'Invalid age category. Must be "under 12", "under 15", or "under 18"' });
+    }
+
+    const { data, error } = await supabase
+      .from('coaches')
+      .select('*')
+      .eq('category', 'Player')
+      .eq('age', ageCategory)
+      .eq('is_active', true)
+      .order('id', { ascending: true });
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: 'Failed to fetch players' });
+    }
+
+    // Format the response data
+    const players = data.map(player => ({
+      id: player.id,
+      name: player.name,
+      role: player.role,
+      age: player.age,
+      category: player.category,
+      image: player.image,
+      is_active: player.is_active
+    }));
+
+    res.json(players);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// GET single player by ID
+router.get('/players/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const { data, error } = await supabase
+      .from('coaches')
+      .select('*')
+      .eq('id', id)
+      .eq('category', 'Player')
+      .eq('is_active', true)
+      .single();
+    
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: 'Failed to fetch player' });
+    }
+    
+    if (!data) {
+      return res.status(404).json({ error: 'Player not found' });
+    }
+    
+    // Format the response data
+    const player = {
+      id: data.id,
+      name: data.name,
+      role: data.role,
+      age: data.age,
+      category: data.category,
+      image: data.image,
+      is_active: data.is_active
+    };
+    
+    res.json(player);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// POST create new player
+router.post('/players', verifyToken, upload.single('image'), async (req, res) => {
+  try {
+    const { name, role, age } = req.body;
+
+    // Validate required fields
+    if (!name || !role || !age) {
+      return res.status(400).json({ 
+        error: 'Name, role, and age are required' 
+      });
+    }
+
+    // Validate age category
+    const validAgeCategories = ['under 12', 'under 15', 'under 18'];
+    if (!validAgeCategories.includes(age)) {
+      return res.status(400).json({ 
+        error: 'Invalid age category. Must be "under 12", "under 15", or "under 18"' 
+      });
+    }
+
+    let imageUrl = null;
+    if (req.file) {
+      // Upload image to Supabase storage
+      imageUrl = await uploadImageToSupabase(req.file);
+    }
+
+    // Insert new player into database
+    const { data, error } = await supabase
+      .from('coaches')
+      .insert([{ 
+        name, 
+        role, 
+        age,
+        category: 'Player',
+        image: imageUrl,
+        is_active: true
+      }])
+      .select();
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: 'Failed to create player' });
+    }
+
+    // Format the response
+    const newPlayer = {
+      id: data[0].id,
+      name: data[0].name,
+      role: data[0].role,
+      age: data[0].age,
+      category: data[0].category,
+      image: data[0].image,
+      is_active: data[0].is_active
+    };
+
+    res.status(201).json(newPlayer);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// PUT update player
+router.put('/players/:id', verifyToken, upload.single('image'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, role, age } = req.body;
+
+    // Validate required fields
+    if (!name || !role || !age) {
+      return res.status(400).json({ 
+        error: 'Name, role, and age are required' 
+      });
+    }
+
+    // Validate age category
+    const validAgeCategories = ['under 12', 'under 15', 'under 18'];
+    if (!validAgeCategories.includes(age)) {
+      return res.status(400).json({ 
+        error: 'Invalid age category. Must be "under 12", "under 15", or "under 18"' 
+      });
+    }
+
+    // Check if player exists
+    const { data: existingPlayer, error: findError } = await supabase
+      .from('coaches')
+      .select('*')
+      .eq('id', id)
+      .eq('category', 'Player')
+      .single();
+
+    if (findError || !existingPlayer) {
+      return res.status(404).json({ error: 'Player not found' });
+    }
+
+    // Handle image update if provided
+    let imageUrl = existingPlayer.image;
+    if (req.file) {
+      imageUrl = await uploadImageToSupabase(req.file);
+    }
+
+    // Update player in database
+    const { data, error } = await supabase
+      .from('coaches')
+      .update({ 
+        name, 
+        role, 
+        age,
+        image: imageUrl
+      })
+      .eq('id', id)
+      .eq('category', 'Player')
+      .select();
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: 'Failed to update player' });
+    }
+
+    // Format the response
+    const updatedPlayer = {
+      id: data[0].id,
+      name: data[0].name,
+      role: data[0].role,
+      age: data[0].age,
+      category: data[0].category,
+      image: data[0].image,
+      is_active: data[0].is_active
+    };
+
+    res.json(updatedPlayer);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// DELETE player (soft delete)
+router.delete('/players/:id', verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check if player exists
+    const { data: existingPlayer, error: findError } = await supabase
+      .from('coaches')
+      .select('*')
+      .eq('id', id)
+      .eq('category', 'Player')
+      .single();
+
+    if (findError || !existingPlayer) {
+      return res.status(404).json({ error: 'Player not found' });
+    }
+
+    // Soft delete player
+    const { error } = await supabase
+      .from('coaches')
+      .update({ is_active: false })
+      .eq('id', id)
+      .eq('category', 'Player');
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: 'Failed to delete player' });
+    }
+
+    // Return success message
+    res.json({ message: 'Player deleted successfully' });
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
 
 
 
