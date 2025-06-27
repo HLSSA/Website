@@ -6,7 +6,7 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const adminRoutes = require('./routes/admin'); // Example route
+const adminRoutes = require('./routes/admin'); 
 
 const app = express();
 

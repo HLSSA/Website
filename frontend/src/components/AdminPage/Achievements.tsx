@@ -318,12 +318,17 @@ const Achievements = () => {
                   {(achievement.image || achievement.video) && (
                     <div className="item-image">
                       {achievement.image ? (
-                        <img src={achievement.image} alt={achievement.title} />
+                        <img src={achievement.image} alt={achievement.title} className="uploaded-media" />
                       ) : achievement.video ? (
-                        <video controls>
-                          <source src={achievement.video} />
-                          Your browser does not support the video tag.
-                        </video>
+                        <div className="video-container">
+                          <video controls className="uploaded-media">
+                            <source 
+                              src={achievement.video} 
+                              type={`video/${achievement.video.split('.').pop()?.toLowerCase() === 'mp4' ? 'mp4' : 'webm'}`} 
+                            />
+                            Your browser does not support the video tag.
+                          </video>
+                        </div>
                       ) : null}
                     </div>
                   )}

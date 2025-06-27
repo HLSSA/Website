@@ -357,6 +357,7 @@ body {
 .about-container {
   min-height: 100vh;
   background-color: #f9fafb;
+  margin-top: 40px;
 }
 
 .container {

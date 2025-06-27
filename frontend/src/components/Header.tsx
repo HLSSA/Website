@@ -49,6 +49,7 @@ const Header: React.FC = () => {
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: '10px 0',
+    gap: '20px',
   };
 
   const logoSectionStyles: React.CSSProperties = {
@@ -268,10 +269,19 @@ const Header: React.FC = () => {
             >
               News
             </a>
+
           </nav>
 
           {/* CTA Button & Mobile Menu */}
           <div style={headerActionsStyles}>
+            <a 
+              href="shop" 
+              style={ctaButtonStyles}
+              onMouseEnter={handleLinkHover}
+              onMouseLeave={handleLinkLeave}
+            >
+              Shop Now
+            </a>
             <a
               href="tel:+917993994704"
               style={ctaButtonStyles}
@@ -344,6 +354,14 @@ const Header: React.FC = () => {
                 onMouseLeave={handleLinkLeave}
               >
                 News
+              </a>
+              <a 
+                href="shop" 
+                style={mobileNavLinkStyles}
+                onMouseEnter={handleLinkHover}
+                onMouseLeave={handleLinkLeave}
+              >
+                Shop
               </a>
               <a
                 href="tel:+917993994704"

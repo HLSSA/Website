@@ -85,7 +85,12 @@ const Hero = () => {
                 </div>
               </div>
 
+              <div className="floating-star">
+                  <Star className="star-icon" />
+              </div>
+
               <div className="floating-card card-2">
+                
                 <div className="card-content">
                   <div className="card-icon card-icon-blue">
                     <Users className="icon" />
@@ -97,9 +102,6 @@ const Hero = () => {
                 </div>
               </div>
               
-              <div className="floating-star">
-                <Star className="star-icon" />
-              </div>
             </div>
           </div>
         </div>
@@ -212,8 +214,8 @@ const StyledWrapper = styled.div`
   position: relative;
   z-index: 10;
   max-width: 1280px;
-  margin: 0 auto;
-  padding: 128px 16px;
+  margin: 0;
+  padding: 64px 16px;
 }
 
 /* Grid layout */
@@ -230,13 +232,13 @@ const StyledWrapper = styled.div`
   }
   
   .hero-container {
-    padding: 128px 32px;
+    padding: 64px 16px;
   }
 }
 
 @media (min-width: 640px) {
   .hero-container {
-    padding: 128px 24px;
+    padding: 64px 24px;
   }
 }
 
@@ -481,6 +483,7 @@ const StyledWrapper = styled.div`
   position: absolute;
   top: 50%;
   right: -32px;
+  margin-top: 64px;
   background-color: #facc15;
   padding: 20px;
   border-radius: 20px;

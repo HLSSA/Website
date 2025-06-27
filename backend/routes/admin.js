@@ -34,13 +34,21 @@ const verifyToken = (req, res, next) => {
 async function uploadImageToSupabase(file, folder = 'news') {
   if (!file) return null;
   
-  const filename = `${folder}/${uuidv4()}-${file.originalname}`;
+  // Sanitize the filename - remove special characters and spaces
+  const sanitizedFilename = file.originalname
+    .toLowerCase()
+    .replace(/[^a-z0-9.]/g, '-')  // Replace special chars with hyphens
+    .replace(/\-+/g, '-')         // Replace multiple hyphens with single
+    .replace(/^\-|\-$/g, '');     // Remove leading/trailing hyphens
+    
+  const filename = `${folder}/${uuidv4()}-${sanitizedFilename}`;
   
   const { error } = await supabase.storage
     .from('media')
     .upload(filename, file.buffer, {
       contentType: file.mimetype,
       cacheControl: '3600',
+      upsert: true
     });
 
   if (error) {

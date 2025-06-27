@@ -20,7 +20,7 @@ function App() {
       <Route path="/matches" element={<MatchesPage/>} />
       <Route path="/team" element={<OurTeam/>} />
       <Route path="/news" element={<NewsPage/>} />
-      <Route path="/shope" element={<SoccerAcademyProducts />} />
+      <Route path="/shop" element={<SoccerAcademyProducts />} />
     </Routes>
   );
 }
