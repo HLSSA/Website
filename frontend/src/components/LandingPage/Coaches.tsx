@@ -1,181 +1,223 @@
-import { useState } from 'react';
-import { Star, Award, Users, Calendar } from 'lucide-react';
+import React, { useRef } from 'react';
 
-const CoachingStaff = () => {
-  const [hoveredCoach, setHoveredCoach] = useState(null);
+const CoachesOnlyPage = () => {
+  const coachScrollRef = useRef(null);
 
   const coaches = [
     {
-      id: 1,
-      name: "Mohammed Faz Khan",
+      name: "Mohammed Rashid",
       role: "Head Coach",
+      phone: "+91-9876543210",
       experience: "15+ Years",
-      certifications: ["UEFA 'A' License", "AFC Pro License"],
-      specialization: "Youth Development & Tactical Training",
-      achievements: ["Led team to 3 State Championships", "Developed 20+ professional players"],
-      image: "https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-      philosophy: "Every player has the potential to be great. My role is to unlock that potential through structured training and mentorship."
+      description: "Experienced head coach with over 15 years in professional football. Specializes in youth development and tactical training with a proven track record of developing young talent.",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face"
     },
     {
-      id: 2,
-      name: "Mohammed Aman Alam",
+      name: "Ahmed Ali Khan",
       role: "Technical Director",
+      phone: "+91-9876543211",
       experience: "12+ Years",
-      certifications: ["UEFA 'B' License", "AFC Youth Coaching"],
-      specialization: "Technical Skills & Ball Mastery",
-      achievements: ["Former professional player", "Technical development expert"],
-      image: "https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-      philosophy: "Technical excellence is the foundation of great football. We focus on building skills that last a lifetime."
+      description: "Technical director with extensive experience in skill development and ball mastery techniques. Former professional player with deep understanding of modern football.",
+      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face"
     },
     {
-      id: 3,
-      name: "Syed Sahaan",
+      name: "Syed Salman",
       role: "Youth Coach",
+      phone: "+91-9876543212",
       experience: "8+ Years",
-      certifications: ["AFC 'C' License", "Grassroots Coaching"],
-      specialization: "Youth Development & Character Building",
-      achievements: ["U-16 League Champions coach", "Community development leader"],
-      image: "https://images.pexels.com/photos/1040881/pexels-photo-1040881.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-      philosophy: "Football teaches life lessons. Discipline, teamwork, and perseverance on the field translate to success in life."
+      description: "Passionate youth coach dedicated to character building and grassroots development. Specializes in working with young players aged 8-16.",
+      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=face"
     },
     {
-      id: 4,
-      name: "Mohammed Muhibullah",
+      name: "Ahmed Muhammad",
       role: "Fitness Coach",
+      phone: "+91-9876543213",
       experience: "10+ Years",
-      certifications: ["Sports Science Degree", "Strength & Conditioning"],
-      specialization: "Physical Conditioning & Injury Prevention",
-      achievements: ["Reduced injury rates by 60%", "Fitness protocol designer"],
-      image: "https://images.pexels.com/photos/1040882/pexels-photo-1040882.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop",
-      philosophy: "A strong body supports a sharp mind. Physical fitness is the platform for technical and tactical excellence."
+      description: "Certified fitness coach with expertise in sports science and injury prevention. Focuses on physical conditioning and performance optimization.",
+      image: "https://images.unsplash.com/photo-1566492031773-4f4e44671d66?w=400&h=400&fit=crop&crop=face"
+    },
+    {
+      name: "Sarah Wilson",
+      role: "Assistant Coach",
+      phone: "+91-9876543214",
+      experience: "6+ Years",
+      description: "Assistant coach specializing in mental conditioning and player psychology.",
+      image: "https://images.unsplash.com/photo-1494790108755-2616b612b1c5?w=400&h=400&fit=crop&crop=face"
     }
   ];
 
+  const handleImageError = (e) => {
+    e.target.src = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face';
+  };
+
+  const scroll = (ref, direction) => {
+    const scrollAmount = 300;
+    if (ref.current) {
+      ref.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const CoachCard = ({ coach }) => (
+    <div className="coach-card">
+      <div className="coach-image-container">
+        <img 
+          src={coach.image} 
+          alt={`${coach.name} - ${coach.role}`} 
+          className="coach-image" 
+          loading="lazy"
+          onError={handleImageError}
+        />
+        <div className="coach-overlay">
+          <div className="coach-details">
+            <div className="coach-name">{coach.name}</div>
+            <div className="coach-role">{coach.role}</div>
+            <div className="coach-experience">{coach.experience}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <style jsx>{`
-        /* Main section styles */
-        .coaching-staff-section {
-          padding: 80px 0;
-          background-color: white;
+    <div className="team-page">
+      <style>{`
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        .team-page {
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+          background: transparent;
           min-height: 100vh;
+          color: #333;
         }
 
-        .coaching-container {
-          max-width: 1280px;
-          margin: 0 auto;
-          padding: 0 16px;
-        }
-
-        @media (min-width: 640px) {
-          .coaching-container {
-            padding: 0 24px;
-          }
-        }
-
-        @media (min-width: 1024px) {
-          .coaching-container {
-            padding: 0 32px;
-          }
-        }
-
-        /* Header section */
-        .coaching-header {
+        .hero-section {
+          background: transparent;
+          color: #333;
+          padding: 80px 20px 40px 20px;
           text-align: center;
-          margin-bottom: 64px;
         }
 
-        .coaching-main-title {
-          font-size: 2.25rem;
-          font-weight: 700;
-          color: #111827;
-          margin-bottom: 16px;
-          line-height: 1.2;
+        .hero-content h1 {
+          font-size: clamp(2.5rem, 5vw, 4rem);
+          font-weight: 800;
+          margin-bottom: 1rem;
+          color: #1e293b;
         }
 
-        .coaching-main-subtitle {
-          font-size: 1.25rem;
-          color: #4b5563;
-          max-width: 512px;
+        .hero-content p {
+          font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+          color: #64748b;
+          max-width: 600px;
           margin: 0 auto;
-          line-height: 1.6;
         }
 
-        /* Coaches grid */
-        .coaches-grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 32px;
+        .main-content {
+          background: transparent;
+          padding: 40px 0;
         }
 
-        @media (min-width: 768px) {
-          .coaches-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
+        .scrollable-section {
+          margin-bottom: 60px;
+          padding: 0 20px;
         }
 
-        @media (min-width: 1024px) {
-          .coaches-grid {
-            grid-template-columns: repeat(4, 1fr);
-          }
+        .section-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 30px;
+          max-width: 1400px;
+          margin-left: auto;
+          margin-right: auto;
         }
 
-        /* Coach card - Fixed hover animation */
-        .coach-card {
-          background-color: white;
-          border-radius: 16px;
-          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          overflow: hidden;
-          height: 450px;
-          position: relative;
+        .section-title {
+          font-size: clamp(1.8rem, 3vw, 2.5rem);
+          font-weight: 700;
+          color: #1e293b;
+          margin: 0;
+        }
+
+        .scroll-controls {
+          display: flex;
+          gap: 8px;
+        }
+
+        .scroll-btn {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          border: 2px solid #e2e8f0;
+          background: white;
+          color: #64748b;
           cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 18px;
+          font-weight: bold;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .scroll-btn:hover {
+          background: #3b82f6;
+          color: white;
+          border-color: #3b82f6;
+          transform: translateY(-2px);
+        }
+
+        .scrollable-container {
+          overflow-x: auto;
+          overflow-y: hidden;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+          padding-bottom: 10px;
+        }
+
+        .scrollable-container::-webkit-scrollbar {
+          display: none;
+        }
+
+        .cards-row {
+          display: flex;
+          gap: 24px;
+          padding: 0 20px;
+          width: fit-content;
+        }
+
+        .coach-card {
+          background: transparent;
+          border-radius: 16px;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          cursor: pointer;
+          position: relative;
+          width: 280px;
+          height: 360px;
+          flex-shrink: 0;
+          border: none;
+          box-shadow: none;
         }
 
         .coach-card:hover {
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
           transform: translateY(-8px);
         }
 
-        /* Card content containers - Fixed positioning */
-        .card-content {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .card-front {
-          opacity: 1;
-          transform: rotateY(0deg);
-          backface-visibility: hidden;
-        }
-
-        .card-back {
-          opacity: 0;
-          transform: rotateY(180deg);
-          backface-visibility: hidden;
-          background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-          color: white;
-        }
-
-        .coach-card:hover .card-front {
-          opacity: 0;
-          transform: rotateY(-180deg);
-        }
-
-        .coach-card:hover .card-back {
-          opacity: 1;
-          transform: rotateY(0deg);
-        }
-
-        /* Coach image */
         .coach-image-container {
           position: relative;
-          height: 256px;
+          width: 100%;
+          height: 100%;
           overflow: hidden;
+          border-radius: 16px;
+          background: transparent;
         }
 
         .coach-image {
@@ -183,371 +225,134 @@ const CoachingStaff = () => {
           height: 100%;
           object-fit: cover;
           transition: transform 0.3s ease;
+          background: transparent;
+          border-radius: 16px;
         }
 
         .coach-card:hover .coach-image {
           transform: scale(1.05);
         }
 
-        .image-overlay {
+        .coach-overlay {
           position: absolute;
-          top: 0;
+          bottom: 0;
           left: 0;
           right: 0;
-          bottom: 0;
-          background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
-        }
-
-        .coach-name-overlay {
-          position: absolute;
-          bottom: 16px;
-          left: 16px;
+          background: linear-gradient(transparent, rgba(30, 41, 59, 0.85));
+          padding: 30px 20px 20px 20px;
           color: white;
-          z-index: 2;
+          border-radius: 0 0 16px 16px;
         }
 
         .coach-name {
-          font-size: 1.125rem;
+          font-size: 1.3rem;
           font-weight: 700;
-          margin: 0 0 4px 0;
-          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+          margin-bottom: 4px;
+          text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
 
-        .coach-role-overlay {
-          font-size: 0.875rem;
-          color: #e5e7eb;
-          margin: 0;
-          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Coach info section */
-        .coach-info {
-          padding: 24px;
-          background-color: white;
-        }
-
-        .experience-info {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          margin-bottom: 12px;
-        }
-
-        .experience-icon {
-          width: 16px;
-          height: 16px;
-          color: #2563eb;
-          flex-shrink: 0;
-        }
-
-        .experience-text {
-          font-size: 0.875rem;
+        .coach-role {
+          font-size: 1rem;
           font-weight: 500;
-          color: #4b5563;
+          opacity: 0.9;
+          text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
 
-        .specialization-info {
-          margin-bottom: 16px;
+        .coach-experience {
+          font-size: 0.9rem;
+          opacity: 0.8;
+          margin-top: 4px;
+          text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
 
-        .specialization-label {
-          font-size: 0.875rem;
-          color: #4b5563;
-          font-weight: 500;
-          margin: 0 0 8px 0;
-        }
-
-        .specialization-text {
-          font-size: 0.875rem;
-          color: #111827;
-          margin: 0;
-          line-height: 1.4;
-        }
-
-        /* Certifications */
-        .certifications {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 6px;
-        }
-
-        .certification-badge {
-          display: inline-block;
-          background-color: #dbeafe;
-          color: #1e40af;
-          font-size: 0.75rem;
-          padding: 4px 8px;
-          border-radius: 50px;
-          font-weight: 500;
-          border: 1px solid #bfdbfe;
-        }
-
-        /* Card back content - Fixed styling */
-        .card-back-content {
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          padding: 24px;
-          background: transparent;
-        }
-
-        .achievements-section {
-          background: transparent;
-        }
-
-        .coach-name-back {
-          font-size: 1.25rem;
-          font-weight: 700;
-          margin: 0 0 8px 0;
-          color: white;
-        }
-
-        .coach-role-back {
-          color: #bfdbfe;
-          margin: 0 0 20px 0;
-          font-size: 0.875rem;
-        }
-
-        .achievements {
-          margin-bottom: 20px;
-        }
-
-        .achievements-title {
-          font-size: 0.875rem;
-          font-weight: 600;
-          margin: 0 0 12px 0;
-          display: flex;
-          align-items: center;
-          color: white;
-        }
-
-        .achievement-icon {
-          width: 16px;
-          height: 16px;
-          margin-right: 8px;
-          color: #fbbf24;
-        }
-
-        .achievements-list {
-          font-size: 0.875rem;
-          list-style: none;
-          padding: 0;
-          margin: 0;
-        }
-
-        .achievement-item {
-          color: #dbeafe;
-          margin-bottom: 6px;
-          line-height: 1.4;
-          padding-left: 8px;
-        }
-
-        .philosophy-section {
-          margin-top: auto;
-          padding-top: 16px;
-          border-top: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .philosophy-title {
-          font-size: 0.875rem;
-          font-weight: 600;
-          margin: 0 0 8px 0;
-          color: white;
-        }
-
-        .philosophy-text {
-          font-size: 0.875rem;
-          color: #dbeafe;
-          font-style: italic;
-          margin: 0;
-          line-height: 1.5;
-        }
-
-        /* Stats section */
-        .stats-section {
-          margin-top: 80px;
-          background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-          border-radius: 20px;
-          padding: 40px 32px;
-          border: 1px solid #e2e8f0;
-        }
-
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 32px;
-          text-align: center;
-        }
-
-        @media (min-width: 768px) {
-          .stats-grid {
-            grid-template-columns: repeat(4, 1fr);
-          }
-        }
-
-        .stat-item {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 16px;
-          border-radius: 12px;
-          background-color: white;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-          transition: transform 0.2s ease;
-        }
-
-        .stat-item:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-
-        .stat-number {
-          font-size: 1.875rem;
-          font-weight: 700;
-          color: #2563eb;
-          margin-bottom: 8px;
-          line-height: 1;
-        }
-
-        .stat-label {
-          color: #4b5563;
-          font-size: 0.875rem;
-          line-height: 1.4;
-          font-weight: 500;
-        }
-
-        /* Mobile responsiveness */
+        /* Responsive Design */
         @media (max-width: 768px) {
-          .coaching-main-title {
-            font-size: 1.875rem;
+          .hero-section {
+            padding: 60px 15px 40px 15px;
           }
-          
+
+          .scrollable-section {
+            padding: 0 15px;
+          }
+
+          .section-header {
+            flex-direction: column;
+            gap: 20px;
+            align-items: flex-start;
+          }
+
+          .scroll-controls {
+            align-self: center;
+          }
+
+          .cards-row {
+            padding: 0 10px;
+            gap: 16px;
+          }
+
           .coach-card {
-            height: 400px;
+            width: 240px;
+            height: 320px;
           }
-          
-          .card-back-content {
-            padding: 20px;
+        }
+
+        @media (max-width: 480px) {
+          .cards-row {
+            gap: 12px;
           }
-          
-          .achievement-item {
-            font-size: 0.8rem;
+
+          .coach-card {
+            width: 220px;
+            height: 300px;
+          }
+
+          .scroll-btn {
+            width: 36px;
+            height: 36px;
+            font-size: 16px;
           }
         }
       `}</style>
 
-      <section id="team" className="coaching-staff-section">
-        <div className="coaching-container">
-          <div className="coaching-header">
-            <h2 className="coaching-main-title">Our Elite Coaching Staff</h2>
-            <p className="coaching-main-subtitle">
-              Shaping the Future of Football with Experience and Passion
-            </p>
-          </div>
+      <div className="hero-section">
+        <div className="hero-content">
+          <h1>Our Elite Coaching Staff</h1>
+          <p>Shaping the Future of Football with Experience and Passion</p>
+        </div>
+      </div>
 
-          <div className="coaches-grid">
-            {coaches.map((coach) => (
-              <div
-                key={coach.id}
-                className="coach-card"
-                onMouseEnter={() => setHoveredCoach(coach.id)}
-                onMouseLeave={() => setHoveredCoach(null)}
+      <div className="main-content">
+        <div className="scrollable-section">
+          <div className="section-header">
+            <h2 className="section-title">Coaching Staff</h2>
+            <div className="scroll-controls">
+              <button 
+                className="scroll-btn left"
+                onClick={() => scroll(coachScrollRef, 'left')}
+                aria-label="Scroll left"
               >
-                {/* Card Front */}
-                <div className="card-content card-front">
-                  <div className="coach-image-container">
-                    <img
-                      src={coach.image}
-                      alt={coach.name}
-                      className="coach-image"
-                    />
-                    <div className="image-overlay"></div>
-                    <div className="coach-name-overlay">
-                      <h3 className="coach-name">{coach.name}</h3>
-                      <p className="coach-role-overlay">{coach.role}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="coach-info">
-                    <div className="experience-info">
-                      <Calendar className="experience-icon" />
-                      <span className="experience-text">{coach.experience}</span>
-                    </div>
-                    
-                    <div className="specialization-info">
-                      <p className="specialization-label">Specialization:</p>
-                      <p className="specialization-text">{coach.specialization}</p>
-                    </div>
-
-                    <div className="certifications">
-                      {coach.certifications.map((cert, index) => (
-                        <span key={index} className="certification-badge">
-                          {cert}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Card Back (Hover State) */}
-                <div className="card-content card-back">
-                  <div className="card-back-content">
-                    <div className="achievements-section">
-                      <div className='achievements-section-content'>
-                      <h3 className="coach-name-back">{coach.name}</h3>
-                      <p className="coach-role-back">{coach.role}</p>
-                      
-                      <div className="achievements">
-                        <p className="achievements-title">
-                          <Award className="achievement-icon" />
-                          Key Achievements
-                        </p>
-                        <ul className="achievements-list">
-                          {coach.achievements.map((achievement, index) => (
-                            <li key={index} className="achievement-item">• {achievement}</li>
-                          ))}
-                        </ul>
-                      </div>
-                      </div>
-                    </div>
-                    
-                    <div className="philosophy-section">
-                      <p className="philosophy-title">Philosophy</p>
-                      <p className="philosophy-text">"{coach.philosophy}"</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+                ←
+              </button>
+              <button 
+                className="scroll-btn right"
+                onClick={() => scroll(coachScrollRef, 'right')}
+                aria-label="Scroll right"
+              >
+                →
+              </button>
+            </div>
           </div>
-
-          {/* Stats Section */}
-          <div className="stats-section">
-            <div className="stats-grid">
-              <div className="stat-item">
-                <div className="stat-number">50+</div>
-                <div className="stat-label">Years Combined Experience</div>
-              </div>
-              <div className="stat-item">
-                <div className="stat-number">15+</div>
-                <div className="stat-label">Professional Certifications</div>
-              </div>
-              <div className="stat-item">
-                <div className="stat-number">500+</div>
-                <div className="stat-label">Players Developed</div>
-              </div>
-              <div className="stat-item">
-                <div className="stat-number">25+</div>
-                <div className="stat-label">Trophies Won</div>
-              </div>
+          <div className="scrollable-container" ref={coachScrollRef}>
+            <div className="cards-row">
+              {coaches.map((coach, index) => (
+                <CoachCard key={index} coach={coach} />
+              ))}
             </div>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 };
 
-export default CoachingStaff;
+export default CoachesOnlyPage;

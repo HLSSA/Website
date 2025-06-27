@@ -8,6 +8,7 @@ import AchievementsPage from './pages/AchievementsPage';
 import MatchesPage from './pages/MatchesPage';
 import NewsPage from './pages/NewsPage';
 import OurTeam from './pages/Ourteam';
+import SoccerAcademyProducts from './pages/shope';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
       <Route path="/matches" element={<MatchesPage/>} />
       <Route path="/team" element={<OurTeam/>} />
       <Route path="/news" element={<NewsPage/>} />
+      <Route path="/shope" element={<SoccerAcademyProducts />} />
     </Routes>
   );
 }
