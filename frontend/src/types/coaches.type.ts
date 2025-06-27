@@ -8,6 +8,7 @@ export interface Person {
     age?: string; // Only for players: "under 12", "under 15", "under 18"
     image?: string;
     is_active: boolean;
+    jersey_no?: string;
   }
   
   export interface PersonFormData {
@@ -15,6 +16,7 @@ export interface Person {
     role: string;
     category: 'Coach' | 'Player';
     age: string; // Will be empty for coaches
+    jersey_no: string;
   }
   
   // Legacy types for backward compatibility
@@ -25,6 +27,7 @@ export interface Person {
   export interface Player extends Person {
     category: 'Player';
     age: string;
+    jersey_no: string;
   }
   
   // Legacy form data type

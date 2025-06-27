@@ -14,7 +14,8 @@ const Coaches = () => {
     name: '',
     role: '',
     category: 'Coach',
-    age: ''
+    age: '',
+    jersey_no: ''
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -53,7 +54,7 @@ const Coaches = () => {
   };
 
   const resetForm = () => {
-    setFormData({ name: '', role: '', category: 'Coach', age: '' });
+    setFormData({ name: '', role: '', category: 'Coach', age: '', jersey_no: '' });
     setImageFile(null);
     setImagePreview(null);
     setEditingId(null);
@@ -83,27 +84,34 @@ const Coaches = () => {
     setSubmitSuccess(null);
 
     try {
-      const form = new FormData();
-      form.append('name', formData.name);
-      form.append('role', formData.role);
-      
+      const formDataToSend = new FormData();
+      formDataToSend.append('name', formData.name);
+      formDataToSend.append('role', formData.role);
+      formDataToSend.append('category', formData.category);
       if (formData.category === 'Player') {
-        form.append('age', formData.age);
+        if (formData.age) formDataToSend.append('age', formData.age);
+        if (formData.jersey_no) formDataToSend.append('jersey_no', formData.jersey_no);
       }
 
       if (imageFile) {
-        form.append('image', imageFile);
+        formDataToSend.append('image', imageFile);
       }
 
       let response;
-      const endpoint = formData.category === 'Coach' ? 'coaches' : 'players';
-
       if (editingId !== null) {
-        response = await axios.put(`${API_URL}/${endpoint}/${editingId}`, form, { headers });
-        setSubmitSuccess(`${formData.category} updated successfully!`);
+        // Update existing coach/player
+        response = await axios.put(
+          `${API_URL}/${editingCategory.toLowerCase()}s/${editingId}`, 
+          formDataToSend,
+          { headers: { ...headers, 'Content-Type': 'multipart/form-data' } }
+        );
       } else {
-        response = await axios.post(`${API_URL}/${endpoint}`, form, { headers });
-        setSubmitSuccess(`New ${formData.category.toLowerCase()} added successfully!`);
+        // Add new coach/player
+        response = await axios.post(
+          `${API_URL}/${formData.category.toLowerCase()}s`,
+          formDataToSend,
+          { headers: { ...headers, 'Content-Type': 'multipart/form-data' } }
+        );
       }
 
       const responseData = response.data;
@@ -113,6 +121,7 @@ const Coaches = () => {
         role: responseData.role,
         category: responseData.category,
         age: responseData.age,
+        jersey_no: responseData.jersey_no,
         image: responseData.image,
         is_active: responseData.is_active
       };
@@ -179,7 +188,8 @@ const Coaches = () => {
       name: person.name,
       role: person.role,
       category: person.category,
-      age: person.age || ''
+      age: person.age || '',
+      jersey_no: person.jersey_no || ''
     });
     setEditingId(person.id);
     setEditingCategory(person.category);
@@ -264,6 +274,23 @@ const Coaches = () => {
         </div>
 
         {formData.category === 'Player' && (
+        <div className="form-group">
+          <label htmlFor="jersey_no">Jersey Number</label>
+          <input
+            required
+            type="text"
+            id="jersey_no"
+            className="input"
+            name="jersey_no"
+            value={formData.jersey_no}
+            onChange={handleChange}
+            disabled={submitLoading}
+            placeholder="Enter player's jersey number"
+          />
+        </div>
+        )}
+
+        {formData.category === 'Player' && (
           <div className="form-group">
             <label htmlFor="age">Age Category</label>
             <select
@@ -276,9 +303,9 @@ const Coaches = () => {
               disabled={submitLoading}
             >
               <option value="">Select age category</option>
-              <option value="under 12">Under 12</option>
-              <option value="under 15">Under 15</option>
+              <option value="under 16">Under 16</option>
               <option value="under 18">Under 18</option>
+              <option value="under 20">Under 20</option>
             </select>
           </div>
         )}
@@ -356,6 +383,9 @@ const Coaches = () => {
                     <div className="coach-category"><strong>Category:</strong> {person.category}</div>
                     {person.category === 'Player' && person.age && (
                       <div className="coach-age"><strong>Age Category:</strong> {person.age}</div>
+                    )}
+                    {person.category === 'Player' && person.jersey_no && (
+                      <div className="coach-jersey"><strong>Jersey Number:</strong> {person.jersey_no}</div>
                     )}
                     <div className="coach-status">
                       <strong>Status:</strong> 

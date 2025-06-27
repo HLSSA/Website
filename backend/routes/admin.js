@@ -609,7 +609,8 @@ router.get('/coaches', async (req, res) => {
       role: coach.role,
       category: coach.category,
       image: coach.image,
-      is_active: coach.is_active
+      is_active: coach.is_active,
+      jersey_no: coach.jersey_no
     }));
 
     res.json(coaches);
@@ -642,7 +643,8 @@ router.get('/coaches/active', async (req, res) => {
       role: coach.role,
       category: coach.category,
       image: coach.image,
-      is_active: coach.is_active
+      is_active: coach.is_active,
+      jersey_no: coach.jersey_no
     }));
 
     res.json(coaches);
@@ -681,7 +683,8 @@ router.get('/coaches/:id', async (req, res) => {
       role: data.role,
       category: data.category,
       image: data.image,
-      is_active: data.is_active
+      is_active: data.is_active,
+      jersey_no: data.jersey_no
     };
     
     res.json(coach);
@@ -733,7 +736,8 @@ router.post('/coaches', verifyToken, upload.single('image'), async (req, res) =>
       role: data[0].role,
       category: data[0].category,
       image: data[0].image,
-      is_active: data[0].is_active
+      is_active: data[0].is_active,
+      jersey_no: data[0].jersey_no
     };
 
     res.status(201).json(newCoach);
@@ -874,7 +878,8 @@ router.get('/players', async (req, res) => {
       age: player.age,
       category: player.category,
       image: player.image,
-      is_active: player.is_active
+      is_active: player.is_active,
+      jersey_no: player.jersey_no
     }));
 
     res.json(players);
@@ -908,7 +913,8 @@ router.get('/players/active', async (req, res) => {
       age: player.age,
       category: player.category,
       image: player.image,
-      is_active: player.is_active
+      is_active: player.is_active,
+      jersey_no: player.jersey_no
     }));
 
     res.json(players);
@@ -924,9 +930,9 @@ router.get('/players/age/:ageCategory', async (req, res) => {
     const { ageCategory } = req.params;
     
     // Validate age category
-    const validAgeCategories = ['under 12', 'under 15', 'under 18'];
+    const validAgeCategories = ['under 16', 'under 18', 'under 20'];
     if (!validAgeCategories.includes(ageCategory)) {
-      return res.status(400).json({ error: 'Invalid age category. Must be "under 12", "under 15", or "under 18"' });
+      return res.status(400).json({ error: 'Invalid age category. Must be "under 16", "under 18", or "under 20"' });
     }
 
     const { data, error } = await supabase
@@ -950,7 +956,8 @@ router.get('/players/age/:ageCategory', async (req, res) => {
       age: player.age,
       category: player.category,
       image: player.image,
-      is_active: player.is_active
+      is_active: player.is_active,
+      jersey_no: player.jersey_no
     }));
 
     res.json(players);
@@ -990,7 +997,8 @@ router.get('/players/:id', async (req, res) => {
       age: data.age,
       category: data.category,
       image: data.image,
-      is_active: data.is_active
+      is_active: data.is_active,
+      jersey_no: data.jersey_no
     };
     
     res.json(player);
@@ -1013,10 +1021,10 @@ router.post('/players', verifyToken, upload.single('image'), async (req, res) =>
     }
 
     // Validate age category
-    const validAgeCategories = ['under 12', 'under 15', 'under 18'];
+    const validAgeCategories = ['under 16', 'under 18', 'under 20'];
     if (!validAgeCategories.includes(age)) {
       return res.status(400).json({ 
-        error: 'Invalid age category. Must be "under 12", "under 15", or "under 18"' 
+        error: 'Invalid age category. Must be "under 16", "under 18", or "under 20"' 
       });
     }
 
@@ -1035,7 +1043,8 @@ router.post('/players', verifyToken, upload.single('image'), async (req, res) =>
         age,
         category: 'Player',
         image: imageUrl,
-        is_active: true
+        is_active: true,
+        jersey_no: req.body.jersey_no
       }])
       .select();
 
@@ -1052,7 +1061,8 @@ router.post('/players', verifyToken, upload.single('image'), async (req, res) =>
       age: data[0].age,
       category: data[0].category,
       image: data[0].image,
-      is_active: data[0].is_active
+      is_active: data[0].is_active,
+      jersey_no: data[0].jersey_no
     };
 
     res.status(201).json(newPlayer);
@@ -1076,10 +1086,10 @@ router.put('/players/:id', verifyToken, upload.single('image'), async (req, res)
     }
 
     // Validate age category
-    const validAgeCategories = ['under 12', 'under 15', 'under 18'];
+    const validAgeCategories = ['under 16', 'under 18', 'under 20'];
     if (!validAgeCategories.includes(age)) {
       return res.status(400).json({ 
-        error: 'Invalid age category. Must be "under 12", "under 15", or "under 18"' 
+        error: 'Invalid age category. Must be "under 16", "under 18", or "under 20"' 
       });
     }
 
@@ -1108,7 +1118,8 @@ router.put('/players/:id', verifyToken, upload.single('image'), async (req, res)
         name, 
         role, 
         age,
-        image: imageUrl
+        image: imageUrl,
+        jersey_no: req.body.jersey_no
       })
       .eq('id', id)
       .eq('category', 'Player')
@@ -1127,7 +1138,8 @@ router.put('/players/:id', verifyToken, upload.single('image'), async (req, res)
       age: data[0].age,
       category: data[0].category,
       image: data[0].image,
-      is_active: data[0].is_active
+      is_active: data[0].is_active,
+      jersey_no: data[0].jersey_no
     };
 
     res.json(updatedPlayer);
