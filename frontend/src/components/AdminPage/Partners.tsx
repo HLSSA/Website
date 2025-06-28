@@ -5,10 +5,11 @@ import axios from 'axios';
 import usePartners from '../../hooks/usePartners';
 import './admin.css';
 import { Partner, PartnerFormData } from '../../types/partners.type';
+import Cookies from 'js-cookie';
 
 const Partners = () => {
-  const token = localStorage.getItem('adminToken');
-  const { partners, loading, error, fetchPartners, setPartners } = usePartners(token);
+  const token = Cookies.get('adminToken');
+  const { partners, loading, error, fetchPartners, setPartners } = usePartners(token || null);
 
   const [formData, setFormData] = useState<PartnerFormData>({
     name: '',

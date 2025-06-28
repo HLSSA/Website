@@ -1,6 +1,7 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 import './admin.css';
+import Cookies from 'js-cookie';
 
 interface AboutData {
   name: string;
@@ -33,7 +34,7 @@ const AboutForm = () => {
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
 
   const API_URL = 'http://localhost:5000/api/admin';
-  const token = localStorage.getItem('adminToken');
+  const token = Cookies.get('adminToken');
 
   // API headers with authorization
   const headers = {

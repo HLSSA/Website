@@ -4,12 +4,13 @@ import { useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 import useAchievements from '../../hooks/useAchievements';
 import './admin.css';
+import Cookies from 'js-cookie';
 
 import { Achievement, AchievementFormData } from '../../types/achievement.type';
 
 const Achievements = () => {
-  const token = localStorage.getItem('adminToken');
-  const { achievements, loading, error, fetchAchievements, setAchievements } = useAchievements(token);
+  const token = Cookies.get('adminToken');
+  const { achievements, loading, error, fetchAchievements, setAchievements } = useAchievements(token || null);
 
   const [formData, setFormData] = useState<AchievementFormData>({
     title: '',

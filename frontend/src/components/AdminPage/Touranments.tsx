@@ -5,10 +5,11 @@ import axios from 'axios';
 import useTournaments from '../../hooks/useTournaments';
 import './admin.css';
 import { Tournament, TournamentFormData } from '../../types/tournaments.type';
+import Cookies from 'js-cookie';
 
 const Tournaments = () => {
-  const token = localStorage.getItem('adminToken');
-  const { tournaments, loading, error, fetchTournaments, setTournaments } = useTournaments(token);
+  const token = Cookies.get('adminToken');
+  const { tournaments, loading, error, fetchTournaments, setTournaments } = useTournaments(token || null);
 
   const [formData, setFormData] = useState<TournamentFormData>({
     name: '',

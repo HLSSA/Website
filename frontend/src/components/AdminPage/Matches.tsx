@@ -5,10 +5,11 @@ import axios from 'axios';
 import useMatches from '../../hooks/useMatches';
 import './admin.css';
 import { Match, MatchFormData } from '../../types/matches.type';
+import Cookies from 'js-cookie';
 
 const Matches = () => {
-  const token = localStorage.getItem('adminToken');
-  const { matches, upcomingMatches, loading, error, fetchMatches, fetchUpcomingMatches } = useMatches(token);
+  const token = Cookies.get('adminToken');
+  const { matches, upcomingMatches, loading, error, fetchMatches, fetchUpcomingMatches } = useMatches(token || null);
 
   const [formData, setFormData] = useState<MatchFormData>({
     opponent_name: '',

@@ -5,10 +5,11 @@ import axios from 'axios';
 import useNews from '../../hooks/useNews';
 import './admin.css';
 import { NewsArticle, NewsFormData } from '../../types/news.type';
+import Cookies from 'js-cookie';
 
 const News = () => {
-  const token = localStorage.getItem('adminToken');
-  const { news, loading, error, fetchNews, setNews } = useNews(token);
+  const token = Cookies.get('adminToken');
+  const { news, loading, error, fetchNews, setNews } = useNews(token || null);
   const formRef = useRef<HTMLFormElement>(null);
 
   const [formData, setFormData] = useState<NewsFormData>({

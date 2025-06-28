@@ -277,8 +277,8 @@ const Header: React.FC = () => {
             <a 
               href="shop" 
               style={ctaButtonStyles}
-              onMouseEnter={handleLinkHover}
-              onMouseLeave={handleLinkLeave}
+              onMouseEnter={handleButtonHover}
+              onMouseLeave={handleButtonLeave}
             >
               Shop Now
             </a>

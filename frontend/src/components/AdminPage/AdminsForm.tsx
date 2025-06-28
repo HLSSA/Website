@@ -1,7 +1,7 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 import './admin.css';
-
+import Cookies from 'js-cookie';
 import { Admin, AdminFormData } from '../../types/admin.type';
 
 const Admins = () => {
@@ -23,7 +23,7 @@ const Admins = () => {
   // Get token from localStorage and handle potential null value
   const getToken = () => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('adminToken');
+      return Cookies.get('adminToken');
     }
     return null;
   };

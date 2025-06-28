@@ -5,10 +5,11 @@ import axios from 'axios';
 import useTestimonials from '../../hooks/useTestimonials';
 import './admin.css';
 import { Testimonial, TestimonialFormData } from '../../types/testimonials.type';
+import Cookies from 'js-cookie';
 
 const Testimonials = () => {
-  const token = localStorage.getItem('adminToken');
-  const { testimonials, loading, error, fetchTestimonials, setTestimonials } = useTestimonials(token);
+  const token = Cookies.get('adminToken');
+  const { testimonials, loading, error, fetchTestimonials, setTestimonials } = useTestimonials(token || null);
 
   const [formData, setFormData] = useState<TestimonialFormData>({
     name: '',

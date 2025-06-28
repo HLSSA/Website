@@ -11,6 +11,7 @@ import AboutForm from '../components/AdminPage/AboutForm';
 import Matches from '../components/AdminPage/Matches';
 import NewsForm from '../components/AdminPage/NewsForm';
 import styled from 'styled-components';
+import Cookies from 'js-cookie';
 
 const sections = {
   About: <AboutForm />,
@@ -26,18 +27,18 @@ const sections = {
 
 const AdminPage = () => {
   const [token, setToken] = useState<string | null>(
-    localStorage.getItem('adminToken') || null
+    Cookies.get('adminToken') || null
   );
   const [activeSection, setActiveSection] = useState<keyof typeof sections>('About');
 
   const handleLoginSuccess = (token: string) => {
-    localStorage.setItem('adminToken', token);
+    Cookies.set('adminToken', token, {expires: 1});
     setToken(token);
   };
 
   const handleLogout = () => {
     setToken(null);
-    localStorage.removeItem('adminToken');
+    Cookies.remove('adminToken');
   };
 
   if (!token) return <LoginForm onLoginSuccess={handleLoginSuccess} />;
@@ -81,7 +82,9 @@ export default AdminPage;
 
 const Container = styled.div`
   padding: 2rem;
+  margin-top: 6rem;
   font-family: sans-serif;
+
 `;
 
 const Header = styled.div`

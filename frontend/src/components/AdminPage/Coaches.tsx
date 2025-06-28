@@ -5,10 +5,11 @@ import axios from 'axios';
 import useCoaches from '../../hooks/useCoaches';
 import './admin.css';
 import { Person, PersonFormData } from '../../types/coaches.type';
+import Cookies from 'js-cookie';
 
 const Coaches = () => {
-  const token = localStorage.getItem('adminToken');
-  const { coaches, players, loading, error, fetchCoaches, fetchPlayers, setCoaches, setPlayers, fetchAllCoaches, fetchAllPlayers } = useCoaches(token);
+  const token = Cookies.get('adminToken');
+  const { coaches, players, loading, error, fetchCoaches, fetchPlayers, setCoaches, setPlayers, fetchAllCoaches, fetchAllPlayers } = useCoaches(token || null);
 
   const [formData, setFormData] = useState<PersonFormData>({
     name: '',
