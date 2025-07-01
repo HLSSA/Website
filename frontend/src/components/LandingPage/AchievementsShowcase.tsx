@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { X, Trophy, Medal, Star, Award } from 'lucide-react';
+import { X, Trophy, Medal, Star, Award, } from 'lucide-react';
 import useAchievements from '../../hooks/useAchievements';
 import { Achievement } from '../../types/achievement.type';
 import './AchievementsShowcase.css';
+import Error from '../Error';
+import Loader from '../Loader';
 
 const AchievementsShowcase = () => {
   const [selectedAchievement, setSelectedAchievement] = useState<Achievement | null>(null);
@@ -59,7 +61,7 @@ const AchievementsShowcase = () => {
         <div className="container">
           <div className="section-header">
             <h2 className="section-title">Our Achievements</h2>
-            <p className="section-description">Loading achievements...</p>
+            <Loader />
           </div>
         </div>
       </section>
@@ -73,9 +75,7 @@ const AchievementsShowcase = () => {
         <div className="container">
           <div className="section-header">
             <h2 className="section-title">Our Achievements</h2>
-            <p className="section-description">
-              Unable to load achievements at the moment. Please try again later.
-            </p>
+            <Error />
           </div>
         </div>
       </section>

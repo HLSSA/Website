@@ -201,8 +201,8 @@ const OurTeamPage = () => {
     <div className="team-page">
       <div className="hero-section">
         <div className="hero-content">
-          <h1>Our Elite Team</h1>
-          <p>Meet the dedicated professionals shaping the future of football</p>
+          <h1 className="hero-title">Our Elite Team</h1>
+          <p className="hero-description">Meet the dedicated professionals shaping the future of football</p>
         </div>
       </div>
 

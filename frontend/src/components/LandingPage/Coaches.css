@@ -6,13 +6,13 @@
 
   .team-page {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background: transparent;
+    background: white;
     min-height: 100vh;
     color: #333;
   }
 
   .hero-section {
-    background: white;
+    background: white !important;
     color: #333;
     padding: 80px 20px 40px 20px;
     text-align: center;
@@ -33,7 +33,7 @@
   }
 
   .main-content {
-    background: transparent;
+    background: white;
     padding: 40px 0;
   }
 

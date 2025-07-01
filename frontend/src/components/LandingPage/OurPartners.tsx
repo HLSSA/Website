@@ -84,13 +84,6 @@ const OurPartners = () => {
                   </div>
                   <div className="partner-info">
                     <h3 className="partner-name">{partner.name}</h3>
-                    {partner.description && (
-                      <p className="partner-description">
-                        {partner.description.length > 100 
-                          ? `${partner.description.substring(0, 100)}...` 
-                          : partner.description}
-                      </p>
-                    )}
                   </div>
                 </div>
               ))}

@@ -1,6 +1,8 @@
 import React, { useRef } from 'react';
 import './Coaches.css';
 import useCoaches from '../../hooks/useCoaches';
+import Loader from '../Loader';
+import Error from '../Error';
 
 const CoachesOnlyPage = () => {
   const coachScrollRef = useRef(null);
@@ -50,6 +52,7 @@ const CoachesOnlyPage = () => {
           </div>
         </div>
         <div className="main-content">
+          <Loader />
           <div className="loading-message">Loading coaches...</div>
         </div>
       </div>
@@ -66,6 +69,7 @@ const CoachesOnlyPage = () => {
           </div>
         </div>
         <div className="main-content">
+          <Error />
           <div className="error-message">Error loading coaches: {error}</div>
         </div>
       </div>
@@ -75,12 +79,15 @@ const CoachesOnlyPage = () => {
   return (
     <div className="team-page">
       
-
       <div className="main-content">
+        <div className="hero-section">
+          <div className="hero-content">
+            <h1>Our Elite Coaching Staff</h1>
+            <p>Shaping the Future of Football with Experience and Passion</p>
+          </div>
+        </div>
         <div className="scrollable-section">
           <div className="section-header">
-          <h1>Our Elite Coaching Staff</h1>
-          <p>Shaping the Future of Football with Experience and Passion</p>
             <div className="scroll-controls">
               <button 
                 className="scroll-btn left"

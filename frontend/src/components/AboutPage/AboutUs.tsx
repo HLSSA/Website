@@ -109,7 +109,7 @@ const AboutUs: React.FC = () => {
           <h1 className="hero-title">
             Crafting Hyderabad's
             <span className="highlight">Football Future,</span>
-            <span className="gradient-text">
+            <span className="highlight">
               One Player at a Time.
             </span>
           </h1>
@@ -437,6 +437,7 @@ body {
   font-weight: bold;
   margin-bottom: 32px;
   line-height: 1.1;
+  color: #ffffff;
 }
 
 .hero-title .highlight {
