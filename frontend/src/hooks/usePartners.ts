@@ -11,9 +11,7 @@ const usePartners = (token: string | null) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const headers = {
-    'Authorization': `Bearer ${token}`
-  };
+  const headers = {};
 
   const fetchPartners = async () => {
     try {

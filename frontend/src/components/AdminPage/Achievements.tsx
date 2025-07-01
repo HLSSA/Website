@@ -42,8 +42,11 @@ const Achievements = () => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       setImageFile(file);
-      setVideoFile(null);
-      setVideoPreview(null);
+      
+      // Don't clear video file when image is selected
+      // Only clear video preview if we want to show only one preview at a time
+      // setVideoFile(null);
+      // setVideoPreview(null);
 
       const previewUrl = URL.createObjectURL(file);
       setImagePreview(previewUrl);
@@ -54,8 +57,11 @@ const Achievements = () => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       setVideoFile(file);
-      setImageFile(null);
-      setImagePreview(null);
+      
+      // Don't clear image file when video is selected
+      // Image is still required for video thumbnail
+      // setImageFile(null);
+      // setImagePreview(null);
 
       const previewUrl = URL.createObjectURL(file);
       setVideoPreview(previewUrl);
@@ -83,9 +89,16 @@ const Achievements = () => {
 
     if (submitLoading) return;
 
-    // Validate that either image or video is provided for new achievements
+    // Validate that image is always provided (required for both image and video uploads)
+    if (editingId === null && !imageFile) {
+      setSubmitError('Please upload an image (required for both images and videos)');
+      return;
+    }
+    
+    // For new achievements, either image or video must be provided
+    // (image is already required above, so this is just for backward compatibility)
     if (editingId === null && !imageFile && !videoFile) {
-      setSubmitError('Please upload either an image or video file');
+      setSubmitError('Please upload at least an image file');
       return;
     }
 
@@ -247,7 +260,7 @@ const Achievements = () => {
         </div>
 
         <div className="media-upload-section">
-          <p className="media-info">Upload either an image OR a video (not both)</p>
+          <p className="media-info">Upload image only OR a video with image for preview</p>
 
           <div className="form-group">
             <label htmlFor="image">Achievement Image</label>
@@ -257,7 +270,8 @@ const Achievements = () => {
               accept="image/*"
               className="file-input"
               onChange={handleImageChange}
-              disabled={submitLoading || videoFile !== null}
+              disabled={submitLoading}
+              required={editingId === null} // Required for new entries
             />
 
             {imagePreview && (
@@ -275,7 +289,7 @@ const Achievements = () => {
               accept="video/*"
               className="file-input"
               onChange={handleVideoChange}
-              disabled={submitLoading || imageFile !== null}
+              disabled={submitLoading}
             />
 
             {videoPreview && (

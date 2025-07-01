@@ -1,340 +1,167 @@
-import { useState, useEffect } from 'react';
+import React from 'react';
 import { Calendar, Clock, MapPin } from 'lucide-react';
+import useMatches from '../../hooks/useMatches';
+import { Match } from '../../types/matches.type';
+import './UpcomingMatches.css';
+import { useNavigate } from 'react-router-dom';
 
-const UpcomingMatches = () => {
-  const matches = [
-    {
-      id: 1,
-      opponent: "Sunrise FC",
-      date: "28 JUN 2025",
-      time: "4:30 PM",
-      location: "Gachibowli Stadium, Hyderabad",
-      isHome: true,
-      status: "upcoming"
-    },
-    {
-      id: 2,
-      opponent: "Victory United",
-      date: "05 JUL 2025",
-      time: "6:00 PM",
-      location: "Kompally Sports Complex",
-      isHome: false,
-      status: "upcoming"
-    },
-    {
-      id: 3,
-      opponent: "Elite Academy",
-      date: "12 JUL 2025",
-      time: "5:15 PM",
-      location: "HLSSA Home Ground",
-      isHome: true,
-      status: "upcoming"
-    },
-  ];
+interface MatchCardProps {
+  match: Match;
+}
 
-  const [hoveredCard, setHoveredCard] = useState(null);
-  const [hoveredViewAllButton, setHoveredViewAllButton] = useState(false);
+const UpcomingMatches: React.FC = () => {
+  const navigate = useNavigate();
+  const { upcomingMatches, loading, error } = useMatches();
 
-  // Add CSS styles and keyframe animation
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-      }
-      
-      .pulse-animation {
-        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-      }
-    `;
-    document.head.appendChild(style);
-    
-    return () => {
-      if (document.head.contains(style)) {
-        document.head.removeChild(style);
-      }
-    };
-  }, []);
-
-  const styles = {
-    // Section styles
-    section: {
-      padding: '5rem 0',
-      backgroundColor: '#f9fafb'
-    },
-    
-    // Container styles
-    container: {
-      maxWidth: '1200px',
-      margin: '0 auto',
-      padding: '0 1rem'
-    },
-    
-    // Header styles
-    header: {
-      textAlign: 'center',
-      marginBottom: '4rem'
-    },
-    title: {
-      fontSize: '2.5rem',
-      fontWeight: 'bold',
-      color: '#111827',
-      marginBottom: '1rem',
-      lineHeight: '1.2'
-    },
-    subtitle: {
-      fontSize: '1.25rem',
-      color: '#6b7280',
-      maxWidth: '32rem',
-      margin: '0 auto'
-    },
-    
-    // Grid styles
-    matchesGrid: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-      gap: '1.5rem',
-      marginBottom: '3rem'
-    },
-    
-    // Card styles
-    matchCard: {
-      backgroundColor: 'white',
-      borderRadius: '12px',
-      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-      overflow: 'hidden',
-      transition: 'all 0.3s ease',
-      cursor: 'pointer'
-    },
-    matchCardHover: {
-      transform: 'translateY(-4px)',
-      boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
-    },
-    
-    // Card content styles
-    cardContent: {
-      padding: '1.5rem'
-    },
-    
-    // Match header styles
-    matchHeader: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      marginBottom: '1rem'
-    },
-    badge: {
-      padding: '0.25rem 0.75rem',
-      borderRadius: '9999px',
-      fontSize: '0.75rem',
-      fontWeight: '600',
-      textTransform: 'uppercase'
-    },
-    homeBadge: {
-      backgroundColor: '#dcfce7',
-      color: '#166534'
-    },
-    awayBadge: {
-      backgroundColor: '#dbeafe',
-      color: '#1e40af'
-    },
-    statusDot: {
-      width: '8px',
-      height: '8px',
-      backgroundColor: '#4ade80',
-      borderRadius: '50%'
-    },
-    
-    // Teams section styles
-    teamsContainer: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      marginBottom: '1.5rem',
-      padding: '0 1rem'
-    },
-    teamSection: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      flex: '1'
-    },
-    teamLogo: {
-      width: '48px',
-      height: '48px',
-      borderRadius: '50%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginBottom: '0.5rem'
-    },
-    hlssaLogo: {
-      background: 'linear-gradient(135deg, #2563eb, #1e40af)',
-      color: 'white',
-      fontWeight: 'bold',
-      fontSize: '0.75rem'
-    },
-    opponentLogo: {
-      backgroundColor: '#e5e7eb',
-      fontSize: '1.25rem'
-    },
-    teamName: {
-      fontSize: '0.875rem',
-      fontWeight: '600',
-      color: '#111827',
-      textAlign: 'center'
-    },
-    vsText: {
-      fontSize: '1.5rem',
-      fontWeight: 'bold',
-      color: '#9ca3af',
-      margin: '0 1rem'
-    },
-    
-    // Details section styles
-    detailsContainer: {
-      borderTop: '1px solid #e5e7eb',
-      paddingTop: '1rem'
-    },
-    detailItem: {
-      display: 'flex',
-      alignItems: 'center',
-      marginBottom: '0.75rem',
-      color: '#6b7280'
-    },
-    detailIcon: {
-      width: '16px',
-      height: '16px',
-      marginRight: '0.5rem',
-      flexShrink: 0
-    },
-    detailText: {
-      fontSize: '0.875rem',
-      fontWeight: '500'
-    },
-    
-    // View all button styles
-    viewAllContainer: {
-      textAlign: 'center'
-    },
-    viewAllButton: {
-      padding: '0.75rem 2rem',
-      backgroundColor: '#2563eb',
-      color: 'white',
-      border: 'none',
-      borderRadius: '9999px',
-      fontSize: '1rem',
-      fontWeight: '600',
-      cursor: 'pointer',
-      transition: 'background-color 0.2s ease',
-      outline: 'none'
-    },
-    viewAllButtonHover: {
-      backgroundColor: '#1d4ed8'
-    },
-    viewAllButtonFocus: {
-      boxShadow: '0 0 0 2px #93c5fd'
-    }
+  const formatDate = (datetime: string) => {
+    const date = new Date(datetime);
+    return date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }).toUpperCase();
   };
 
-  return (
-    <section style={styles.section}>
-      <div style={styles.container}>
-        {/* Header */}
-        <div style={styles.header}>
-          <h2 style={styles.title}>Upcoming Matches</h2>
-          <p style={styles.subtitle}>
-            Follow our journey as we compete against the best teams in Hyderabad
-          </p>
-        </div>
+  const formatTime = (datetime: string) => {
+    const date = new Date(datetime);
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
 
-        {/* Matches Grid */}
-        <div style={styles.matchesGrid}>
-          {matches.map((match) => (
-            <div
-              key={match.id}
-              style={{
-                ...styles.matchCard,
-                ...(hoveredCard === match.id ? styles.matchCardHover : {})
-              }}
-              onMouseEnter={() => setHoveredCard(match.id)}
-              onMouseLeave={() => setHoveredCard(null)}
-            >
-              <div style={styles.cardContent}>
-                {/* Match Header */}
-                <div style={styles.matchHeader}>
-                  <span style={{
-                    ...styles.badge,
-                    ...(match.isHome ? styles.homeBadge : styles.awayBadge)
-                  }}>
-                    {match.isHome ? 'HOME' : 'AWAY'}
-                  </span>
-                  <div 
-                    style={styles.statusDot}
-                    className="pulse-animation"
-                  />
-                </div>
-
-                {/* Teams Section */}
-                <div style={styles.teamsContainer}>
-                  {/* HLSSA Team */}
-                  <div style={styles.teamSection}>
-                    <div style={{...styles.teamLogo, ...styles.hlssaLogo}}>
-                      HLSSA
-                    </div>
-                    <div style={styles.teamName}>HLSSA</div>
-                  </div>
-                  
-                  {/* VS */}
-                  <div style={styles.vsText}>VS</div>
-                  
-                  {/* Opponent Team */}
-                  <div style={styles.teamSection}>
-                    <div style={{...styles.teamLogo, ...styles.opponentLogo}}>
-                      ⚽
-                    </div>
-                    <div style={styles.teamName}>{match.opponent}</div>
-                  </div>
-                </div>
-
-                {/* Match Details */}
-                <div style={styles.detailsContainer}>
-                  <div style={styles.detailItem}>
-                    <Calendar style={styles.detailIcon} />
-                    <span style={styles.detailText}>{match.date}</span>
-                  </div>
-                  <div style={styles.detailItem}>
-                    <Clock style={styles.detailIcon} />
-                    <span style={styles.detailText}>{match.time}</span>
-                  </div>
-                  <div style={styles.detailItem}>
-                    <MapPin style={styles.detailIcon} />
-                    <span style={styles.detailText}>{match.location}</span>
-                  </div>
-                </div>
-              </div>
+  const MatchCard: React.FC<MatchCardProps> = ({ match }) => {
+    return (
+      <div className="match-card">
+        {/* Teams Section */}
+        <div className="teams-section">
+          {/* HLSSA Team */}
+          <div className="team">
+            <div className="team-logo hlssa-logo">
+              <img 
+                src="https://i.ibb.co/JWPpTbt9/hlssa-optimized-1000.png" 
+                alt="HLSSA Logo"
+                className="team-logo-img"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
+                  if (nextElement) {
+                    nextElement.style.display = 'block';
+                  }
+                }}
+              />
+              <span className="team-logo-text" style={{ display: 'none' }}>HLSSA</span>
             </div>
-          ))}
+            <span className="team-name">HLSSA</span>
+          </div>
+
+          {/* VS Section */}
+          <div className="vs-section">
+            <span className="vs-text">VS</span>
+          </div>
+
+          {/* Opponent Team */}
+          <div className="team">
+            <div className="team-logo away-logo">
+              {match.opponent_image ? (
+                <img 
+                  src={match.opponent_image} 
+                  alt={`${match.opponent_name} Logo`}
+                  className="team-logo-img"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
+                    if (nextElement) {
+                      nextElement.style.display = 'block';
+                    }
+                  }}
+                />
+              ) : null}
+              <span 
+                className="team-logo-emoji" 
+                style={{ display: match.opponent_image ? 'none' : 'block' }}
+              >
+                ⚽
+              </span>
+            </div>
+            <span className="team-name">{match.opponent_name}</span>
+          </div>
         </div>
 
-        {/* View All Button */}
-        <div style={styles.viewAllContainer}>
-          <button 
-            style={{
-              ...styles.viewAllButton,
-              ...(hoveredViewAllButton ? styles.viewAllButtonHover : {})
-            }}
-            onMouseEnter={() => setHoveredViewAllButton(true)}
-            onMouseLeave={() => setHoveredViewAllButton(false)}
-            onFocus={(e) => e.target.style.boxShadow = styles.viewAllButtonFocus.boxShadow}
-            onBlur={(e) => e.target.style.boxShadow = 'none'}
-          >
-            View Full Schedule
+        {/* Match Details */}
+        <div className="match-details">
+          <div className="match-detail">
+            <Calendar className="detail-icon" />
+            <span className="detail-text">{formatDate(match.datetime)}</span>
+          </div>
+          <div className="match-detail">
+            <Clock className="detail-icon" />
+            <span className="detail-text">{formatTime(match.datetime)}</span>
+          </div>
+          <div className="match-detail">
+            <MapPin className="detail-icon" />
+            <span className="detail-text">{match.location}</span>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="upcoming-matches-section">
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Loading matches...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="upcoming-matches-section">
+        <div className="error-container">
+          <p className="error-message">Error loading matches: {error}</p>
+          <button onClick={() => window.location.reload()} className="retry-button">
+            Retry
           </button>
         </div>
       </div>
-    </section>
+    );
+  }
+
+  return (
+    <div className="upcoming-matches-section">
+      <h1 className="section-title">Upcoming Matches</h1>
+      
+      {/* Matches Grid */}
+      <div className="matches-grid">
+        {upcomingMatches.length === 0 ? (
+          <div className="no-matches-container">
+            <div className="no-matches-content">
+              <span className="no-matches-icon">📅</span>
+              <h3>No upcoming matches</h3>
+              <p>Check back soon for upcoming fixtures!</p>
+            </div>
+          </div>
+        ) : (
+          upcomingMatches.map((match) => (
+            <MatchCard key={match.id} match={match} />
+          ))
+        )}
+      </div>
+
+      {/* View Full Schedule Button */}
+      {upcomingMatches.length > 0 && (
+        <div className="schedule-button-container">
+          <button className="schedule-button" onClick={() => navigate('/matches')}>
+            View Full Schedule
+          </button>
+        </div>
+      )}
+    </div>
   );
 };
 

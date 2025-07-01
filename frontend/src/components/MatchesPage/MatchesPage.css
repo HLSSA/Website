@@ -6,6 +6,12 @@
   margin-top: 96px; /* 24 * 4px = 96px for mt-24 */
 }
 
+.home-matches-container {
+  min-height: 100vh;
+  background-color: #f9fafb;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
 /* Header Section */
 .header-section {
   position: relative;
@@ -15,6 +21,11 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+.home-header-section {
+  position: relative;
+  height: 384px; /* 96 * 4px = 384px for h-96 */
 }
 
 .header-overlay {
@@ -125,6 +136,7 @@
   gap: 24px;
   justify-content: center;
   margin-bottom: 48px;
+  margin-top: 60px;
 }
 
 /* Match Card */
@@ -320,5 +332,173 @@
   
   .main-content {
     padding: 32px 16px;
+  }
+}
+
+/* Additional CSS for database integration */
+
+/* Loading and Error States */
+.loading-container, .error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.retry-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.retry-button:hover {
+  background-color: #0056b3;
+}
+
+/* Team Logo Image Styling */
+.team-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+/* Updated team logo container to handle images */
+.team-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hlssa-logo {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+}
+
+.away-logo {
+  background: linear-gradient(135deg, #6c757d, #495057);
+  color: white;
+}
+
+/* No matches state */
+.no-matches-container {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.no-matches-content {
+  text-align: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.no-matches-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.no-matches-content h3 {
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.no-matches-content p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+}
+
+/* Enhanced tab buttons with counts */
+.tab-button {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+  .team-logo {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .team-logo-text {
+    font-size: 0.7rem;
+  }
+  
+  .loading-container, .error-container {
+    min-height: 300px;
+    padding: 1rem;
+  }
+  
+  .no-matches-content {
+    padding: 1.5rem;
+  }
+  
+  .no-matches-icon {
+    font-size: 2.5rem;
+  }
+
+  .header {
+    text-align: 'center';
+    margin-bottom: '4rem';
+    margin-top: 0px;
+    padding-top: 0px;
+  }
+
+  .title {
+    font-size: '2.5rem';
+    font-weight: 'bold';
+    color: '#111827';
+    margin-bottom: '1rem';
+    line-height: '1.2'
+  }
+
+  .subtitle {
+    font-size: '1.25rem';
+    color: '#6b7280';
+    max-width: '32rem';
+    margin: '0 auto';
   }
 }

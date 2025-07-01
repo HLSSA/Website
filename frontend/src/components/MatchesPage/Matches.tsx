@@ -1,20 +1,8 @@
 import React, { useState } from 'react';
 import { Calendar, Clock, MapPin } from 'lucide-react';
+import useMatches from '../../hooks/useMatches';
+import { Match } from '../../types/matches.type';
 import './MatchesPage.css';
-
-interface Match {
-  id: number;
-  homeTeam: string;
-  awayTeam: string;
-  homeAway: 'HOME' | 'AWAY';
-  date: string;
-  time: string;
-  venue: string;
-  homeTeamLogo: string;
-  awayTeamLogo: string;
-  result?: 'WIN' | 'LOSS';
-  score?: string;
-}
 
 interface MatchCardProps {
   match: Match;
@@ -23,217 +11,174 @@ interface MatchCardProps {
 
 const Matches: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
+  
+  const { upcomingMatches, pastMatches, loading, error } = useMatches();
 
-  const upcomingMatches: Match[] = [
-    {
-      id: 1,
-      homeTeam: 'HLSSA',
-      awayTeam: 'Sunrise FC',
-      homeAway: 'HOME',
-      date: '28 JUN 2025',
-      time: '4:30 PM',
-      venue: 'Gachibowli Stadium, Hyderabad',
-      homeTeamLogo: '⚽',
-      awayTeamLogo: '⚽'
-    },
-    {
-      id: 2,
-      homeTeam: 'HLSSA',
-      awayTeam: 'Victory United',
-      homeAway: 'AWAY',
-      date: '05 JUL 2025',
-      time: '6:00 PM',
-      venue: 'Kompally Sports Complex',
-      homeTeamLogo: '⚽',
-      awayTeamLogo: '⚽'
-    },
-    {
-      id: 3,
-      homeTeam: 'HLSSA',
-      awayTeam: 'Elite Academy',
-      homeAway: 'HOME',
-      date: '12 JUL 2025',
-      time: '5:15 PM',
-      venue: 'HLSSA Home Ground',
-      homeTeamLogo: '⚽',
-      awayTeamLogo: '⚽'
-    },
-    {
-      id: 4,
-      homeTeam: 'HLSSA',
-      awayTeam: 'Thunder Sports',
-      homeAway: 'AWAY',
-      date: '19 JUL 2025',
-      time: '7:00 PM',
-      venue: 'Shamshabad Sports Arena',
-      homeTeamLogo: '⚽',
-      awayTeamLogo: '⚽'
-    },
-    {
-      id: 5,
-      homeTeam: 'HLSSA',
-      awayTeam: 'Champions FC',
-      homeAway: 'HOME',
-      date: '26 JUL 2025',
-      time: '4:45 PM',
-      venue: 'HLSSA Home Ground',
-      homeTeamLogo: '⚽',
-      awayTeamLogo: '⚽'
-    },
-    {
-      id: 6,
-      homeTeam: 'HLSSA',
-      awayTeam: 'Rising Stars',
-      homeAway: 'AWAY',
-      date: '02 AUG 2025',
-      time: '6:30 PM',
-      venue: 'Secunderabad Stadium',
-      homeTeamLogo: '⚽',
-      awayTeamLogo: '⚽'
+  const formatDate = (datetime: string) => {
+    const date = new Date(datetime);
+    return date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }).toUpperCase();
+  };
+
+  const formatTime = (datetime: string) => {
+    const date = new Date(datetime);
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
+  // Simplified result formatting - just display the text result as is
+  const formatMatchResult = (result: string) => {
+    if (!result) return null;
+    return result;
+  };
+
+  // Determine match status from result text
+  const getMatchStatus = (result: string) => {
+    if (!result) return null;
+    
+    const resultLower = result.toLowerCase();
+    if (resultLower.includes('won') || resultLower.includes('win')) {
+      return 'WIN';
+    } else if (resultLower.includes('lost') || resultLower.includes('loss')) {
+      return 'LOSS';
+    } else if (resultLower.includes('draw') || resultLower.includes('tie')) {
+      return 'DRAW';
     }
-  ];
+    
+    return null;
+  };
 
-  const pastMatches: Match[] = [
-    {
-      id: 1,
-      homeTeam: 'HLSSA',
-      awayTeam: 'Phoenix United',
-      homeAway: 'HOME',
-      date: '15 MAY 2025',
-      time: '5:00 PM',
-      venue: 'HLSSA Home Ground',
-      result: 'WIN',
-      score: '3-1',
-      homeTeamLogo: '⚽',
-      awayTeamLogo: '⚽'
-    },
-    {
-      id: 2,
-      homeTeam: 'HLSSA',
-      awayTeam: 'Metro FC',
-      homeAway: 'AWAY',
-      date: '22 MAY 2025',
-      time: '6:15 PM',
-      venue: 'Metro Sports Complex',
-      result: 'LOSS',
-      score: '1-2',
-      homeTeamLogo: '⚽',
-      awayTeamLogo: '⚽'
-    },
-    {
-      id: 3,
-      homeTeam: 'HLSSA',
-      awayTeam: 'Galaxy Stars',
-      homeAway: 'HOME',
-      date: '29 MAY 2025',
-      time: '4:30 PM',
-      venue: 'HLSSA Home Ground',
-      result: 'WIN',
-      score: '2-0',
-      homeTeamLogo: '⚽',
-      awayTeamLogo: '⚽'
-    },
-    {
-      id: 4,
-      homeTeam: 'HLSSA',
-      awayTeam: 'Blue Tigers',
-      homeAway: 'AWAY',
-      date: '05 JUN 2025',
-      time: '7:00 PM',
-      venue: 'Tiger Sports Arena',
-      result: 'WIN',
-      score: '4-2',
-      homeTeamLogo: '⚽',
-      awayTeamLogo: '⚽'
-    },
-    {
-      id: 5,
-      homeTeam: 'HLSSA',
-      awayTeam: 'Red Eagles',
-      homeAway: 'HOME',
-      date: '12 JUN 2025',
-      time: '5:30 PM',
-      venue: 'HLSSA Home Ground',
-      result: 'LOSS',
-      score: '0-1',
-      homeTeamLogo: '⚽',
-      awayTeamLogo: '⚽'
-    },
-    {
-      id: 6,
-      homeTeam: 'HLSSA',
-      awayTeam: 'Lightning FC',
-      homeAway: 'AWAY',
-      date: '19 JUN 2025',
-      time: '6:45 PM',
-      venue: 'Lightning Stadium',
-      result: 'WIN',
-      score: '3-2',
-      homeTeamLogo: '⚽',
-      awayTeamLogo: '⚽'
-    }
-  ];
+  const MatchCard: React.FC<MatchCardProps> = ({ match, isPast = false }) => {
+    const matchStatus = isPast ? getMatchStatus(match.result || '') : null;
+    const resultText = isPast ? formatMatchResult(match.result || '') : null;
 
-  const MatchCard: React.FC<MatchCardProps> = ({ match, isPast = false }) => (
-    <div className="match-card">
-      {/* Home/Away Badge */}
-      <div className="match-card-header">
-        <span className={`badge ${match.homeAway === 'HOME' ? 'badge-home' : 'badge-away'}`}>
-          {match.homeAway}
-        </span>
-        {isPast && match.result && (
-          <span className={`badge ${match.result === 'WIN' ? 'badge-win' : 'badge-loss'}`}>
-            {match.result}
-          </span>
+    return (
+      <div className="match-card">
+        {/* Match Status Badge */}
+        {isPast && matchStatus && (
+          <div className="match-card-header">
+            <span className={`badge ${
+              matchStatus === 'WIN' ? 'badge-win' : 
+              matchStatus === 'LOSS' ? 'badge-loss' : 
+              'badge-draw'
+            }`}>
+              {matchStatus}
+            </span>
+          </div>
         )}
-      </div>
 
-      {/* Teams Section */}
-      <div className="teams-section">
-        {/* Home Team */}
-        <div className="team">
-          <div className="team-logo hlssa-logo">
-            <span className="team-logo-text">HLSSA</span>
-          </div>
-          <span className="team-name">HLSSA</span>
-        </div>
-
-        {/* VS and Score */}
-        <div className="vs-section">
-          <span className="vs-text">VS</span>
-          {isPast && match.score && (
-            <div className="score-display">
-              <span className="score-text">{match.score}</span>
+        {/* Teams Section */}
+        <div className="teams-section">
+          {/* HLSSA Team */}
+          <div className="team">
+            <div className="team-logo hlssa-logo">
+              <img 
+                src="https://i.ibb.co/JWPpTbt9/hlssa-optimized-1000.png" 
+                alt="HLSSA Logo"
+                className="team-logo-img"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
+                  if (nextElement) {
+                    nextElement.style.display = 'block';
+                  }
+                }}
+              />
+              <span className="team-logo-text" style={{ display: 'none' }}>HLSSA</span>
             </div>
-          )}
-        </div>
-
-        {/* Away Team */}
-        <div className="team">
-          <div className="team-logo away-logo">
-            <span className="team-logo-emoji">{match.awayTeamLogo}</span>
+            <span className="team-name">HLSSA</span>
           </div>
-          <span className="team-name">{match.awayTeam}</span>
-        </div>
-      </div>
 
-      {/* Match Details */}
-      <div className="match-details">
-        <div className="match-detail">
-          <Calendar className="detail-icon" />
-          <span className="detail-text">{match.date}</span>
+          {/* VS Section */}
+          <div className="vs-section">
+            <span className="vs-text">VS</span>
+          </div>
+
+          {/* Opponent Team */}
+          <div className="team">
+            <div className="team-logo away-logo">
+              {match.opponent_image ? (
+                <img 
+                  src={match.opponent_image} 
+                  alt={`${match.opponent_name} Logo`}
+                  className="team-logo-img"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
+                    if (nextElement) {
+                      nextElement.style.display = 'block';
+                    }
+                  }}
+                />
+              ) : null}
+              <span 
+                className="team-logo-emoji" 
+                style={{ display: match.opponent_image ? 'none' : 'block' }}
+              >
+                ⚽
+              </span>
+            </div>
+            <span className="team-name">{match.opponent_name}</span>
+          </div>
         </div>
-        <div className="match-detail">
-          <Clock className="detail-icon" />
-          <span className="detail-text">{match.time}</span>
-        </div>
-        <div className="match-detail">
-          <MapPin className="detail-icon" />
-          <span className="detail-text">{match.venue}</span>
+
+        {/* Match Result Text for Past Matches */}
+        {isPast && resultText && (
+          <div className="match-result">
+            <p className="result-text">{resultText}</p>
+          </div>
+        )}
+
+        {/* Match Details */}
+        <div className="match-details">
+          <div className="match-detail">
+            <Calendar className="detail-icon" />
+            <span className="detail-text">{formatDate(match.datetime)}</span>
+          </div>
+          <div className="match-detail">
+            <Clock className="detail-icon" />
+            <span className="detail-text">{formatTime(match.datetime)}</span>
+          </div>
+          <div className="match-detail">
+            <MapPin className="detail-icon" />
+            <span className="detail-text">{match.location}</span>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="matches-container">
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Loading matches...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="matches-container">
+        <div className="error-container">
+          <p className="error-message">Error loading matches: {error}</p>
+          <button onClick={() => window.location.reload()} className="retry-button">
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const currentMatches = activeTab === 'upcoming' ? upcomingMatches : pastMatches;
 
   return (
     <div className="matches-container">
@@ -250,11 +195,8 @@ const Matches: React.FC = () => {
             
             {/* Main Title */}
             <h1 className="main-title">
-              {activeTab === 'upcoming' ? 'Upcoming' : 'Past'}{' '}
-              <span className="title-highlight">Matches</span>
+              {activeTab === 'upcoming' ? 'Upcoming' : 'Past'} Matches
             </h1>
-            
-            {/* Subtitle */}
             <p className="subtitle">
               {activeTab === 'upcoming' 
                 ? 'Follow our journey as we compete against the best teams in Hyderabad. Every match is a step towards excellence.'
@@ -274,32 +216,38 @@ const Matches: React.FC = () => {
               onClick={() => setActiveTab('upcoming')}
               className={`tab-button ${activeTab === 'upcoming' ? 'tab-active' : ''}`}
             >
-              Upcoming Matches
+              Upcoming Matches ({upcomingMatches.length})
             </button>
             <button
               onClick={() => setActiveTab('past')}
               className={`tab-button ${activeTab === 'past' ? 'tab-active' : ''}`}
             >
-              Past Matches
+              Past Matches ({pastMatches.length})
             </button>
           </div>
         </div>
 
         {/* Matches Grid */}
         <div className="matches-grid">
-          {(activeTab === 'upcoming' ? upcomingMatches : pastMatches).map((match) => (
-            <MatchCard key={match.id} match={match} isPast={activeTab === 'past'} />
-          ))}
+          {currentMatches.length === 0 ? (
+            <div className="no-matches-container">
+              <div className="no-matches-content">
+                <span className="no-matches-icon">📅</span>
+                <h3>No {activeTab} matches</h3>
+                <p>
+                  {activeTab === 'upcoming' 
+                    ? 'Check back soon for upcoming fixtures!'
+                    : 'No past matches to display yet.'
+                  }
+                </p>
+              </div>
+            </div>
+          ) : (
+            currentMatches.map((match) => (
+              <MatchCard key={match.id} match={match} isPast={activeTab === 'past'} />
+            ))
+          )}
         </div>
-
-        {/* View Full Schedule Button */}
-        {activeTab === 'upcoming' && (
-          <div className="schedule-button-container">
-            <button className="schedule-button">
-              View Full Schedule
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );

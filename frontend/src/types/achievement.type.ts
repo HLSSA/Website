@@ -3,6 +3,7 @@ export interface Achievement {
     title: string;
     description: string;
     category: string;
+    year?: number;
     image?: string;
     video?: string;
 }

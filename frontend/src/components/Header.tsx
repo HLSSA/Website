@@ -85,7 +85,7 @@ const Header: React.FC = () => {
   };
 
   const titleStyles: React.CSSProperties = {
-    fontSize: '20px',
+    fontSize: '32px',
     fontWeight: 'bold',
     color: '#111827',
     lineHeight: '1.2',
@@ -215,7 +215,6 @@ const Header: React.FC = () => {
             />
             <div>
               <h1 style={titleStyles}>HLSSA</h1>
-              <p style={subtitleStyles}>Hyderabad Little Stars Soccer Academy</p>
             </div>
           </div>
 

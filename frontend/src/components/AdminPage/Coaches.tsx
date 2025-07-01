@@ -9,7 +9,7 @@ import Cookies from 'js-cookie';
 
 const Coaches = () => {
   const token = Cookies.get('adminToken');
-  const { coaches, players, loading, error, fetchCoaches, fetchPlayers, setCoaches, setPlayers, fetchAllCoaches, fetchAllPlayers } = useCoaches(token || null);
+  const { coaches, players, loading, error, fetchCoaches, fetchPlayers, setCoaches, setPlayers, fetchAllCoaches, fetchAllPlayers } = useCoaches();
 
   const [formData, setFormData] = useState<PersonFormData>({
     name: '',
@@ -304,9 +304,12 @@ const Coaches = () => {
               disabled={submitLoading}
             >
               <option value="">Select age category</option>
+              <option value="under 10">Under 10</option>
+              <option value="under 12">Under 12</option>
+              <option value="under 14">Under 14</option>
               <option value="under 16">Under 16</option>
               <option value="under 18">Under 18</option>
-              <option value="under 20">Under 20</option>
+              <option value="under 21">Under 21</option>
             </select>
           </div>
         )}
@@ -374,8 +377,8 @@ const Coaches = () => {
               <li key={person.id} className="coach-item">
                 <div className="coach-info">
                   {person.image && (
-                    <div className="coach-image">
-                      <img src={person.image} alt={person.name} />
+                    <div className="item-image">
+                      <img src={person.image} alt={person.name}  />
                     </div>
                   )}
                   <div className="coach-details">

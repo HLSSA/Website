@@ -41,8 +41,8 @@ const Footer: React.FC = () => {
         }
 
         .footer-logo-icon {
-          width: 40px;
-          height: 40px;
+          width: 120px;
+          height: 120px;
           background: linear-gradient(135deg, #3b82f6, #1e40af);
           border-radius: 50%;
           display: flex;
@@ -51,8 +51,8 @@ const Footer: React.FC = () => {
         }
 
         .footer-logo-inner {
-          width: 28px;
-          height: 28px;
+          width: 120px;
+          height: 120px;
           background-color: #fbbf24;
           border-radius: 50%;
           display: flex;
@@ -283,7 +283,11 @@ const Footer: React.FC = () => {
               <div className="footer-logo">
                 <div className="footer-logo-icon">
                   <div className="footer-logo-inner">
-                    <span className="footer-logo-emoji">⚽</span>
+                  <img 
+                    src="https://i.ibb.co/JWPpTbt9/hlssa-optimized-1000.png" 
+                    alt="HLSSA Logo" 
+                    style={{width: '90px', height: '100px', objectFit: 'contain'}}
+                  />
                   </div>
                 </div>
                 <div className="footer-logo-text">

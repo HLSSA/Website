@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Globe, Home, Search, Calendar, Clock, User, ChevronRight, Loader2 } from 'lucide-react';
+import { Globe, Home, Search, Calendar, Clock, User, ChevronRight, Loader2, X } from 'lucide-react';
+import useNews from '../../hooks/useNews';
 import './News.css';
 
 // News article type for the application
@@ -11,7 +12,8 @@ interface NewsArticle {
   time: string;
   author: string;
   category: string;
-  url?: string;
+  story: string;
+  article_url?: string;
   image: string;
   featured?: boolean;
 }
@@ -21,73 +23,28 @@ const NewsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [apiNews, setApiNews] = useState<NewsArticle[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [apiLoading, setApiLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
   const [totalPages, setTotalPages] = useState(1);
+  
+  // Modal state
+  const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Use the custom hook for database news
+  const { 
+    news: dbNews, 
+    featuredNews, 
+    loading: dbLoading, 
+    error: dbError, 
+    fetchNews 
+  } = useNews();
 
   const newsPerPage = 20;
 
-  const adminNews: NewsArticle[] = [
-    {
-      id: '1',
-      title: "HLSSA Academy Champions League Victory",
-      excerpt: "Our U-18 team secured a magnificent 3-1 victory in the regional championship final, showcasing exceptional teamwork and skill.",
-      date: "2025-06-20",
-      time: "18:30",
-      author: "Coach Martinez",
-      category: "Academy",
-      featured: true,
-      image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=250&fit=crop"
-    },
-    {
-      id: '2',
-      title: "New Training Facilities Inaugurated",
-      excerpt: "State-of-the-art training facilities have been officially opened, featuring modern equipment and enhanced safety measures.",
-      date: "2025-06-18",
-      time: "14:00",
-      author: "Director Johnson",
-      category: "Facilities",
-      featured: false,
-      image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=250&fit=crop"
-    },
-    {
-      id: '3',
-      title: "Summer Camp Registration Now Open",
-      excerpt: "Registration for our intensive summer football camp is now open for ages 8-16. Limited spots available.",
-      date: "2025-06-15",
-      time: "10:00",
-      author: "Admin Team",
-      category: "Programs",
-      featured: false,
-      image: "https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=400&h=250&fit=crop"
-    },
-    {
-      id: '4',
-      title: "Alumni Success Story: Pro Contract",
-      excerpt: "Former HLSSA student Ahmed Hassan signs professional contract with Premier League club.",
-      date: "2025-06-12",
-      time: "16:45",
-      author: "Media Team",
-      category: "Alumni",
-      featured: false,
-      image: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=400&h=250&fit=crop"
-    },
-    {
-      id: '5',
-      title: "Community Outreach Program Launch",
-      excerpt: "HLSSA Academy launches community football program to support underprivileged youth in local neighborhoods.",
-      date: "2025-06-10",
-      time: "11:20",
-      author: "Community Team",
-      category: "Community",
-      featured: false,
-      image: "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=400&h=250&fit=crop"
-    }
-  ];
-
   const fetchApiNews = useCallback(async (page = 1): Promise<void> => {
-    setLoading(true);
-    setError(null);
+    setApiLoading(true);
+    setApiError(null);
 
     try {
       // Calculate date 30 days ago
@@ -105,7 +62,10 @@ const NewsPage: React.FC = () => {
         'european football',
         'la liga',
         'serie a',
-        'bundesliga'
+        'bundesliga',
+        'english premier league',
+        'Ronaldo',
+        'Messi',
       ];
 
       const allNews: NewsArticle[] = [];
@@ -137,6 +97,7 @@ const NewsPage: React.FC = () => {
                     author: article.source.name || 'Unknown',
                     category: query.includes('india') ? 'Indian Football' : 'International',
                     url: article.url,
+                    story: '', // API news doesn't have story content
                     image: article.urlToImage || 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=250&fit=crop',
                     featured: false
                   };
@@ -169,6 +130,7 @@ const NewsPage: React.FC = () => {
                   author: 'The Guardian',
                   category: 'Football',
                   url: article.webUrl,
+                  story: '', // API news doesn't have story content
                   image: article.fields?.thumbnail || 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=250&fit=crop',
                   featured: false
                 };
@@ -181,88 +143,26 @@ const NewsPage: React.FC = () => {
         }
       }
 
-      // If both APIs fail, use mock data
-      if (allNews.length === 0) {
-        const mockNews: NewsArticle[] = [
-          {
-            id: 'mock-1',
-            title: "Indian National Football Team Prepares for Asian Cup Qualifiers",
-            excerpt: "The Blue Tigers are intensifying their training sessions ahead of the crucial Asian Cup qualifying matches scheduled for next month.",
-            date: "2025-06-22",
-            time: "14:30",
-            author: "Sports Desk",
-            category: "Indian Football",
-            url: "#",
-            image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=250&fit=crop",
-            featured: false
-          },
-          {
-            id: 'mock-2',
-            title: "ISL 2025 Season Set to Begin with Record Number of Teams",
-            excerpt: "The Indian Super League is expanding with 12 teams competing in the upcoming season, promising more exciting football action.",
-            date: "2025-06-21",
-            time: "12:15",
-            author: "ISL Media",
-            category: "Indian Football",
-            url: "#",
-            image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=250&fit=crop",
-            featured: false
-          },
-          {
-            id: 'mock-3',
-            title: "Premier League Transfer Window: Major Signings Expected",
-            excerpt: "Several top clubs are preparing substantial offers for world-class players as the summer transfer window approaches.",
-            date: "2025-06-20",
-            time: "16:45",
-            author: "Transfer News",
-            category: "International",
-            url: "#",
-            image: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=400&h=250&fit=crop",
-            featured: false
-          },
-          {
-            id: 'mock-4',
-            title: "Champions League Final Preparations Underway",
-            excerpt: "Both teams are making final preparations for what promises to be an epic Champions League final showdown.",
-            date: "2025-06-19",
-            time: "18:00",
-            author: "UEFA Media",
-            category: "International",
-            url: "#",
-            image: "https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=400&h=250&fit=crop",
-            featured: false
-          },
-          {
-            id: 'mock-5',
-            title: "Women's Football in India Gains Momentum",
-            excerpt: "The Indian women's football team continues to make strides with improved infrastructure and growing support base.",
-            date: "2025-06-18",
-            time: "11:30",
-            author: "Women's Football Desk",
-            category: "Indian Football",
-            url: "#",
-            image: "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=400&h=250&fit=crop",
-            featured: false
-          }
-        ];
-        allNews.push(...mockNews);
+      // If both APIs fail, we'll handle it in the error state
+
+      if (allNews.length > 0) {
+        // Remove duplicates and sort by date
+        const uniqueNews = allNews.filter((article, index, self) =>
+          index === self.findIndex(a => a.title === article.title)
+        ).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+        setApiNews(uniqueNews);
+        setTotalPages(Math.ceil(uniqueNews.length / newsPerPage));
+        console.log(`Loaded ${uniqueNews.length} articles`);
+      } else {
+        throw new Error('No news articles could be loaded from any source');
       }
-
-      // Remove duplicates and sort by date
-      const uniqueNews = allNews.filter((article, index, self) =>
-        index === self.findIndex(a => a.title === article.title)
-      ).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-      setApiNews(uniqueNews);
-      setTotalPages(Math.ceil(uniqueNews.length / newsPerPage));
-
-      console.log(`Loaded ${uniqueNews.length} articles`);
     } catch (err) {
       console.error('All APIs failed:', err);
-      setError('Unable to load news at the moment. Please try again later.');
+      setApiError('Unable to load news at the moment. Please try again later.');
       setApiNews([]);
     } finally {
-      setLoading(false);
+      setApiLoading(false);
     }
   }, [newsPerPage]);
 
@@ -279,8 +179,35 @@ const NewsPage: React.FC = () => {
     }
   };
 
+  // Format database news to match the NewsArticle interface
+  const formatDbNews = (dbNewsItem: any): NewsArticle => {
+    const createdAt = new Date(dbNewsItem.createdAt || dbNewsItem.created_at);
+    return {
+      id: dbNewsItem._id || dbNewsItem.id,
+      title: dbNewsItem.title,
+      excerpt: dbNewsItem.content ? dbNewsItem.content.substring(0, 200) + '...' : dbNewsItem.excerpt || '',
+      date: createdAt.toISOString().split('T')[0],
+      time: createdAt.toTimeString().substring(0, 5),
+      author: dbNewsItem.author || 'HLSSA Admin',
+      category: dbNewsItem.category || 'Academy',
+      article_url: dbNewsItem.article_url || '',
+      story: dbNewsItem.story || dbNewsItem.content || '',
+      image: dbNewsItem.image || 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=250&fit=crop',
+      featured: dbNewsItem.featured || false
+    };
+  };
+
   const getCurrentNews = useCallback((): NewsArticle[] => {
-    const newsList = activeSection === 'hlssa' ? adminNews : apiNews;
+    let newsList: NewsArticle[] = [];
+    
+    if (activeSection === 'hlssa') {
+      // Use database news for HLSSA section
+      newsList = dbNews.map(formatDbNews);
+    } else {
+      // Use API news for international section
+      newsList = apiNews;
+    }
+
     if (!searchTerm.trim()) return newsList;
 
     const term = searchTerm.toLowerCase();
@@ -288,63 +215,82 @@ const NewsPage: React.FC = () => {
       article.title.toLowerCase().includes(term) ||
       article.excerpt.toLowerCase().includes(term)
     );
-  }, [activeSection, adminNews, apiNews, searchTerm]);
+  }, [activeSection, dbNews, apiNews, searchTerm]);
+
+  // Handle read more button click
+  const handleReadMore = (article: NewsArticle, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // If article has a URL from the database, redirect to it
+    if (article.article_url && article.article_url.trim() !== '' && article.article_url !== '#') {
+      // If URL doesn't have protocol, add https://
+      let url = article.article_url.trim();
+      if (!/^https?:\/\//i.test(url)) {
+        url = 'https://' + url;
+      }
+      // Open in the same tab for external URLs
+      window.location.href = url;
+      return;
+    }
+    
+    // If article has story content, show modal
+    if (article.story && article.story.trim() !== '') {
+      setSelectedArticle(article);
+      setIsModalOpen(true);
+      return;
+    }
+    
+    // If no URL or story, fallback to ID-based URL if available
+    if (article.id) {
+      window.location.href = `/news/${article.id}`;
+    }
+  };
+
+  // Close modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedArticle(null);
+  };
+
+  // Handle modal backdrop click
+  const handleModalBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      closeModal();
+    }
+  };
+
+  // Handle escape key for modal
+  useEffect(() => {
+    const handleEscapeKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isModalOpen) {
+        closeModal();
+      }
+    };
+
+    if (isModalOpen) {
+      document.addEventListener('keydown', handleEscapeKey);
+      document.body.style.overflow = 'hidden'; // Prevent background scroll
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isModalOpen]);
 
   const currentNews = getCurrentNews();
-  const featuredArticle = currentNews.find(article => article.featured) || null;
+  const featuredArticle = activeSection === 'hlssa' 
+    ? (featuredNews.length > 0 ? formatDbNews(featuredNews[0]) : null)
+    : currentNews.find(article => article.featured) || null;
 
-  if (loading) {
+  // Determine loading state
+  const isLoading = activeSection === 'hlssa' ? dbLoading : apiLoading;
+  const currentError = activeSection === 'hlssa' ? dbError : apiError;
+
+  if (isLoading) {
     return (
       <div className="page">
-        <style>{`
-          .page {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f5f5f5;
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-          }
-          .header {
-            background: linear-gradient(135deg, #1256C4 0%, #53A548 100%);
-            color: white;
-            padding: 2rem 0;
-            text-align: center;
-          }
-          .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-          }
-          .title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-          }
-          .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-          }
-          .loading {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 50vh;
-            gap: 1rem;
-            font-size: 1.2rem;
-            color: #1256C4;
-          }
-          .animate-spin {
-            animation: spin 1s linear infinite;
-          }
-          @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-          }
-        `}</style>
-
         <header className="header">
           <div className="header-content">
             <h1 className="title">HLSSA Football Academy</h1>
@@ -356,9 +302,12 @@ const NewsPage: React.FC = () => {
 
         <div className="loading">
           <Loader2 size={32} className="animate-spin" />
-          <p>Loading latest football news...</p>
+          <p>Loading {activeSection === 'hlssa' ? 'HLSSA' : 'international'} news...</p>
           <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>
-            Fetching trending stories from the past 30 days
+            {activeSection === 'hlssa' 
+              ? 'Fetching latest academy updates from database'
+              : 'Fetching trending stories from the past 30 days'
+            }
           </p>
         </div>
       </div>
@@ -451,7 +400,10 @@ const NewsPage: React.FC = () => {
                     <User size={16} /> {featuredArticle.author}
                   </span>
                 </div>
-                <button className="read-more-button">
+                <button 
+                  onClick={(e) => handleReadMore(featuredArticle, e)}
+                  className="read-more-button"
+                >
                   Read Full Story <ChevronRight size={18} />
                 </button>
               </div>
@@ -487,15 +439,26 @@ const NewsPage: React.FC = () => {
                   From the past 30 days • Sorted by relevance
                 </div>
               )}
+              {activeSection === 'hlssa' && (
+                <div style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.25rem' }}>
+                  Latest academy updates • Sorted by date
+                </div>
+              )}
             </div>
           </div>
 
-          {error && (
+          {currentError && (
             <div className="error">
               <h3 style={{ marginTop: 0, color: '#FF6B6B' }}>Failed to Load News</h3>
-              <p>{error}</p>
+              <p>{currentError}</p>
               <button
-                onClick={() => fetchApiNews(currentPage)}
+                onClick={() => {
+                  if (activeSection === 'hlssa') {
+                    fetchNews();
+                  } else {
+                    fetchApiNews(currentPage);
+                  }
+                }}
                 className="retry-button"
               >
                 Retry Loading News
@@ -503,11 +466,16 @@ const NewsPage: React.FC = () => {
             </div>
           )}
 
-          {!error && (
+          {!currentError && (
             <>
               {currentNews.length === 0 ? (
                 <div className="no-results">
-                  <p>No articles found matching your search criteria.</p>
+                  <p>
+                    {activeSection === 'hlssa' 
+                      ? 'No HLSSA news articles found. Check back later for academy updates!'
+                      : 'No articles found matching your search criteria.'
+                    }
+                  </p>
                 </div>
               ) : (
                 <div className="news-grid">
@@ -519,8 +487,11 @@ const NewsPage: React.FC = () => {
                       key={article.id}
                       className="news-card"
                       onClick={() => {
-                        if (article.url && article.url !== '#') {
-                          window.open(article.url, '_blank');
+                        if (article.article_url && article.article_url !== '#' && article.article_url !== '') {
+                          window.open(article.article_url, '_blank');
+                        } else if (article.story && article.story.trim() !== '') {
+                          setSelectedArticle(article);
+                          setIsModalOpen(true);
                         }
                       }}
                     >
@@ -550,9 +521,14 @@ const NewsPage: React.FC = () => {
                             <User size={16} /> {article.author}
                           </span>
                         </div>
-                        <button className="read-more-button">
+                        <a href={article.article_url} target="_blank">
+                        <button 
+                          onClick={(e) => handleReadMore(article, e)}
+                          className="read-more-button"
+                        >
                           Read Full Story <ChevronRight size={18} />
                         </button>
+                        </a>
                       </div>
                     </article>
                   ))}
@@ -584,6 +560,196 @@ const NewsPage: React.FC = () => {
           )}
         </div>
       </section>
+
+      {/* Modal for story content */}
+      {isModalOpen && selectedArticle && (
+        <div className="modal-overlay" onClick={handleModalBackdropClick}>
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2 className="modal-title">{selectedArticle.title}</h2>
+              <button className="modal-close" onClick={closeModal}>
+                <X size={24} />
+              </button>
+            </div>
+            
+            <div className="modal-meta">
+              <span className="modal-meta-item">
+                <Calendar size={16} /> {selectedArticle.date}
+              </span>
+              <span className="modal-meta-item">
+                <Clock size={16} /> {selectedArticle.time}
+              </span>
+              <span className="modal-meta-item">
+                <User size={16} /> {selectedArticle.author}
+              </span>
+              <span className="modal-category-tag">{selectedArticle.category}</span>
+            </div>
+
+            {selectedArticle.image && (
+              <img
+                src={selectedArticle.image}
+                alt={selectedArticle.title}
+                className="modal-image"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=250&fit=crop';
+                }}
+              />
+            )}
+
+            <div className="modal-story">
+              {selectedArticle.story.split('\n').map((paragraph, index) => (
+                <p key={index} className="modal-paragraph">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style jsx>{`
+        /* Modal Styles */
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.7);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+          padding: 1rem;
+        }
+
+        .modal-content {
+          background: white;
+          border-radius: 12px;
+          max-width: 800px;
+          max-height: 90vh;
+          overflow-y: auto;
+          position: relative;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .modal-header {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          padding: 1.5rem 1.5rem 1rem;
+          border-bottom: 1px solid #e5e7eb;
+          position: sticky;
+          top: 0;
+          background: white;
+          border-radius: 12px 12px 0 0;
+        }
+
+        .modal-title {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #1f2937;
+          margin: 0;
+          padding-right: 1rem;
+          line-height: 1.3;
+        }
+
+        .modal-close {
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 0.5rem;
+          border-radius: 8px;
+          color: #6b7280;
+          transition: all 0.2s;
+          flex-shrink: 0;
+        }
+
+        .modal-close:hover {
+          background-color: #f3f4f6;
+          color: #374151;
+        }
+
+        .modal-meta {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1rem;
+          align-items: center;
+          padding: 0 1.5rem 1rem;
+          font-size: 0.875rem;
+          color: #6b7280;
+        }
+
+        .modal-meta-item {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+        }
+
+        .modal-category-tag {
+          background-color: #dbeafe;
+          color: #1e40af;
+          padding: 0.25rem 0.75rem;
+          border-radius: 20px;
+          font-size: 0.75rem;
+          font-weight: 600;
+        }
+
+        .modal-image {
+          width: 100%;
+          height: 300px;
+          object-fit: cover;
+          margin-bottom: 1.5rem;
+        }
+
+        .modal-story {
+          padding: 0 1.5rem 1.5rem;
+        }
+
+        .modal-paragraph {
+          margin-bottom: 1rem;
+          line-height: 1.7;
+          color: #374151;
+          font-size: 1rem;
+        }
+
+        .modal-paragraph:last-child {
+          margin-bottom: 0;
+        }
+
+        /* Responsive modal */
+        @media (max-width: 768px) {
+          .modal-overlay {
+            padding: 0.5rem;
+          }
+
+          .modal-content {
+            max-height: 95vh;
+          }
+
+          .modal-header {
+            padding: 1rem;
+          }
+
+          .modal-title {
+            font-size: 1.25rem;
+          }
+
+          .modal-meta {
+            padding: 0 1rem 1rem;
+            gap: 0.5rem;
+          }
+
+          .modal-story {
+            padding: 0 1rem 1rem;
+          }
+
+          .modal-image {
+            height: 200px;
+          }
+        }
+      `}</style>
     </div>
   );
 };

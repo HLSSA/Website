@@ -9,7 +9,7 @@ import Cookies from 'js-cookie';
 
 const Matches = () => {
   const token = Cookies.get('adminToken');
-  const { matches, upcomingMatches, loading, error, fetchMatches, fetchUpcomingMatches } = useMatches(token || null);
+  const { matches, upcomingMatches, pastMatches, loading, error, fetchMatches, fetchUpcomingMatches, fetchPastMatches } = useMatches(token || null);
 
   const [formData, setFormData] = useState<MatchFormData>({
     opponent_name: '',

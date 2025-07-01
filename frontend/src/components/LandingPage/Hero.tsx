@@ -30,7 +30,7 @@ const Hero = () => {
             </div>
             
             <h1 className="hero-title">
-              Forge Your 
+              <span className="title-gradient-title">Forge Your </span>
               <span className="title-accent">Legacy.</span>
               <span className="title-gradient">
                 Join the Champions.
@@ -247,6 +247,14 @@ const StyledWrapper = styled.div`
   color: white;
 }
 
+.title-gradient-title{
+background: linear-gradient(to right,rgb(255, 255, 255),rgb(255, 255, 255));
+-webkit-background-clip: text;
+background-clip: text;
+color: transparent;
+text-shadow: none;
+}
+
 .hero-badge-container {
   margin-bottom: 24px;
 }
@@ -286,7 +294,7 @@ const StyledWrapper = styled.div`
 }
 
 .title-gradient {
-  background: linear-gradient(to right, #facc15, #fde047);
+  background: linear-gradient(to right,#facc15,#fde047);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

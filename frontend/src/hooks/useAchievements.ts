@@ -6,14 +6,12 @@ import { Achievement } from '../types/achievement.type';
 
 const API_URL = 'http://localhost:5000/api/admin';
 
-const useAchievements = (token: string | null) => {
+const useAchievements = () => {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const headers = {
-    'Authorization': `Bearer ${token}`
-  };
+  const headers = {};
 
   const fetchAchievements = async () => {
     try {
@@ -32,7 +30,7 @@ const useAchievements = (token: string | null) => {
 
   useEffect(() => {
     fetchAchievements();
-  }, [token]);
+  }, []);
 
   return { achievements, loading, error, fetchAchievements, setAchievements };
 };

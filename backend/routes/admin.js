@@ -938,9 +938,9 @@ router.get('/players/age/:ageCategory', async (req, res) => {
     const { ageCategory } = req.params;
     
     // Validate age category
-    const validAgeCategories = ['under 16', 'under 18', 'under 20'];
+    const validAgeCategories = ['under 10', 'under 12', 'under 14', 'under 16', 'under 18', 'under 21'];
     if (!validAgeCategories.includes(ageCategory)) {
-      return res.status(400).json({ error: 'Invalid age category. Must be "under 16", "under 18", or "under 20"' });
+      return res.status(400).json({ error: 'Invalid age category. Must be "under 10", "under 12", "under 14", "under 16", "under 18", "under 21"' });
     }
 
     const { data, error } = await supabase
@@ -1029,10 +1029,10 @@ router.post('/players', verifyToken, upload.single('image'), async (req, res) =>
     }
 
     // Validate age category
-    const validAgeCategories = ['under 16', 'under 18', 'under 20'];
+    const validAgeCategories = ['under 10', 'under 12', 'under 14', 'under 16', 'under 18', 'under 21'];
     if (!validAgeCategories.includes(age)) {
       return res.status(400).json({ 
-        error: 'Invalid age category. Must be "under 16", "under 18", or "under 20"' 
+        error: 'Invalid age category. Must be "under 10", "under 12", "under 14", "under 16", "under 18", "under 21"' 
       });
     }
 
@@ -1094,10 +1094,10 @@ router.put('/players/:id', verifyToken, upload.single('image'), async (req, res)
     }
 
     // Validate age category
-    const validAgeCategories = ['under 16', 'under 18', 'under 20'];
+    const validAgeCategories = ['under 10', 'under 12', 'under 14', 'under 16', 'under 18', 'under 21'];
     if (!validAgeCategories.includes(age)) {
       return res.status(400).json({ 
-        error: 'Invalid age category. Must be "under 16", "under 18", or "under 20"' 
+        error: 'Invalid age category. Must be "under 10", "under 12", "under 14", "under 16", "under 18", "under 21"' 
       });
     }
 
@@ -1972,6 +1972,31 @@ router.get('/matches', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+// Get past matches
+router.get('/matches/past', async (req, res) => {
+  try {
+    const currentDateTime = new Date().toISOString();
+    
+    const { data, error } = await supabase
+      .from('matches')
+      .select('*')
+      .lt('datetime', currentDateTime) // Use 'lt' (less than) instead of 'lte' to exclude current time
+      .order('datetime', { ascending: false }); // Order by most recent first for past matches
+    
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: error.message });
+    }
+    
+    res.json(data || []);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 // Get upcoming matches (next 60 days)
 router.get('/matches/upcoming', async (req, res) => {

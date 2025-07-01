@@ -1,0 +1,448 @@
+/* UpcomingMatches.css */
+
+/* Section Container */
+.upcoming-matches-section {
+    padding: 4rem 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Section Title */
+  .section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 3rem;
+    line-height: 1.2;
+  }
+  
+  /* Matches Grid */
+  .matches-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+  
+  /* Match Card Styles */
+  .match-card {
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    padding: 2rem;
+    border: 1px solid #f3f4f6;
+  }
+  
+  .match-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border-color: #e5e7eb;
+  }
+  
+  /* Teams Section */
+  .teams-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+  }
+  
+  .team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+  }
+  
+  /* Team Logo Styles */
+  .team-logo {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .hlssa-logo {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    color: white;
+  }
+  
+  .away-logo {
+    background-color: #f3f4f6;
+    border: 2px solid #e5e7eb;
+  }
+  
+  .team-logo-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .team-logo-text {
+    font-weight: bold;
+    font-size: 0.8rem;
+    color: white;
+    letter-spacing: 0.5px;
+  }
+  
+  .team-logo-emoji {
+    font-size: 1.5rem;
+  }
+  
+  .team-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+    text-align: center;
+    letter-spacing: 0.25px;
+  }
+  
+  /* VS Section */
+  .vs-section {
+    margin: 0 1.5rem;
+    position: relative;
+  }
+  
+  .vs-text {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #6b7280;
+    letter-spacing: 1px;
+    position: relative;
+  }
+  
+  .vs-text::before,
+  .vs-text::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 20px;
+    height: 2px;
+    background-color: #e5e7eb;
+  }
+  
+  .vs-text::before {
+    left: -30px;
+  }
+  
+  .vs-text::after {
+    right: -30px;
+  }
+  
+  /* Match Details Section */
+  .match-details {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1.5rem;
+    background-color: #fafafa;
+    margin: 0 -2rem -2rem -2rem;
+    padding: 1.5rem 2rem 2rem 2rem;
+  }
+  
+  .match-detail {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    color: #4b5563;
+  }
+  
+  .match-detail:last-child {
+    margin-bottom: 0;
+  }
+  
+  .detail-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+    color: #6b7280;
+  }
+  
+  .detail-text {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #374151;
+  }
+  
+  /* No Matches State */
+  .no-matches-container {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 250px;
+  }
+  
+  .no-matches-content {
+    text-align: center;
+    padding: 3rem;
+    background-color: #f9fafb;
+    border-radius: 16px;
+    border: 2px dashed #d1d5db;
+  }
+  
+  .no-matches-icon {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 1.5rem;
+    opacity: 0.7;
+  }
+  
+  .no-matches-content h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 0.75rem;
+  }
+  
+  .no-matches-content p {
+    color: #6b7280;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  
+  /* Schedule Button */
+  .schedule-button-container {
+    text-align: center;
+  }
+  
+  .schedule-button {
+    padding: 1rem 2.5rem;
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.3);
+  }
+  
+  .schedule-button:hover {
+    background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px 0 rgba(37, 99, 235, 0.4);
+  }
+  
+  .schedule-button:focus {
+    box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.5);
+  }
+  
+  .schedule-button:active {
+    transform: translateY(0);
+  }
+  
+  /* Loading States */
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 250px;
+    color: #6b7280;
+  }
+  
+  .loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #f3f4f6;
+    border-top: 4px solid #2563eb;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1.5rem;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .loading-container p {
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+  
+  /* Error States */
+  .error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 250px;
+    text-align: center;
+    background-color: #fef2f2;
+    border-radius: 16px;
+    padding: 2rem;
+    border: 1px solid #fecaca;
+  }
+  
+  .error-message {
+    color: #dc2626;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+  
+  .retry-button {
+    padding: 0.75rem 1.5rem;
+    background-color: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+  }
+  
+  .retry-button:hover {
+    background-color: #b91c1c;
+    transform: translateY(-1px);
+  }
+  
+  .retry-button:focus {
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.5);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .upcoming-matches-section {
+      padding: 3rem 0;
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+  
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+  
+    .matches-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+  
+    .match-card {
+      padding: 1.5rem;
+    }
+  
+    .teams-section {
+      padding: 0 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+  
+    .team-logo {
+      width: 48px;
+      height: 48px;
+    }
+  
+    .vs-section {
+      margin: 0 1rem;
+    }
+  
+    .vs-text {
+      font-size: 1.1rem;
+    }
+  
+    .vs-text::before,
+    .vs-text::after {
+      width: 15px;
+    }
+  
+    .vs-text::before {
+      left: -25px;
+    }
+  
+    .vs-text::after {
+      right: -25px;
+    }
+  
+    .team-name {
+      font-size: 0.9rem;
+    }
+  
+    .match-details {
+      margin: 0 -1.5rem -1.5rem -1.5rem;
+      padding: 1.25rem 1.5rem 1.5rem 1.5rem;
+    }
+  
+    .schedule-button {
+      padding: 0.875rem 2rem;
+      font-size: 0.95rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .upcoming-matches-section {
+      padding: 2rem 0;
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+  
+    .section-title {
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+  
+    .match-card {
+      padding: 1.25rem;
+    }
+  
+    .teams-section {
+      padding: 0;
+    }
+  
+    .team-logo {
+      width: 42px;
+      height: 42px;
+      margin-bottom: 0.5rem;
+    }
+  
+    .vs-text {
+      font-size: 1rem;
+    }
+  
+    .team-name {
+      font-size: 0.85rem;
+    }
+  
+    .detail-text {
+      font-size: 0.9rem;
+    }
+  
+    .match-details {
+      margin: 0 -1.25rem -1.25rem -1.25rem;
+      padding: 1rem 1.25rem 1.25rem 1.25rem;
+    }
+  
+    .no-matches-content {
+      padding: 2rem 1.5rem;
+    }
+  
+    .no-matches-icon {
+      font-size: 3rem;
+    }
+  
+    .schedule-button {
+      padding: 0.75rem 1.75rem;
+      font-size: 0.9rem;
+    }
+  }

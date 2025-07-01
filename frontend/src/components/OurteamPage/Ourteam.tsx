@@ -1,140 +1,71 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
+import useCoaches from '../../hooks/useCoaches';
+import { Person } from '../../types/coaches.type';
 import './Ourteam.css';
 
 const OurTeamPage = () => {
   const [activeTab, setActiveTab] = useState('players');
-  const u16ScrollRef = useRef(null);
-  const u18ScrollRef = useRef(null);
-  const coachScrollRef = useRef(null);
+  const scrollRefs = useRef<{ [key: string]: React.RefObject<HTMLDivElement | null> }>({});
+  
+  const { coaches, players, loading, error, fetchAll } = useCoaches();
 
-  const coaches = [
-    {
-      name: "Mohammed Rashid",
-      role: "Head Coach",
-      phone: "+91-9876543210",
-      experience: "15+ Years",
-      description: "Experienced head coach with over 15 years in professional football. Specializes in youth development and tactical training with a proven track record of developing young talent.",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face"
-    },
-    {
-      name: "Ahmed Ali Khan",
-      role: "Technical Director",
-      phone: "+91-9876543211",
-      experience: "12+ Years",
-      description: "Technical director with extensive experience in skill development and ball mastery techniques. Former professional player with deep understanding of modern football.",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face"
-    },
-    {
-      name: "Syed Salman",
-      role: "Youth Coach",
-      phone: "+91-9876543212",
-      experience: "8+ Years",
-      description: "Passionate youth coach dedicated to character building and grassroots development. Specializes in working with young players aged 8-16.",
-      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=face"
-    },
-    {
-      name: "Ahmed Muhammad",
-      role: "Fitness Coach",
-      phone: "+91-9876543213",
-      experience: "10+ Years",
-      description: "Certified fitness coach with expertise in sports science and injury prevention. Focuses on physical conditioning and performance optimization.",
-      image: "https://images.unsplash.com/photo-1566492031773-4f4e44671d66?w=400&h=400&fit=crop&crop=face"
-    },
-    {
-      name: "Sarah Wilson",
-      role: "Assistant Coach",
-      phone: "+91-9876543214",
-      experience: "6+ Years",
-      description: "Assistant coach specializing in mental conditioning and player psychology.",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b1c5?w=400&h=400&fit=crop&crop=face"
-    }
-  ];
+  // Define age categories
+  const ageCategories = ['under 10', 'under 12', 'under 14', 'under 16', 'under 18', 'under 21'];
 
-  const playersU16 = [
-    {
-      name: "Arjun Sharma",
-      position: "Midfielder",
-      number: 10,
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face"
-    },
-    {
-      name: "Vikash Kumar",
-      position: "Striker",
-      number: 9,
-      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&crop=face"
-    },
-    {
-      name: "Rahul Verma",
-      position: "Defender",
-      number: 4,
-      image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop&crop=face"
-    },
-    {
-      name: "Amit Singh",
-      position: "Goalkeeper",
-      number: 1,
-      image: "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=400&h=400&fit=crop&crop=face"
-    },
-    {
-      name: "Rohit Patel",
-      position: "Midfielder",
-      number: 6,
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face"
-    },
-    {
-      name: "Karan Singh",
-      position: "Winger",
-      number: 11,
-      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=face"
-    }
-  ];
+  // Group players by age category
+  const playersByAge = useMemo(() => {
+    console.log('Players data:', players); // Debug log
+    const grouped: { [key: string]: Person[] } = {};
+    
+    ageCategories.forEach(age => {
+      const playersInAge = players.filter(player => 
+        player.category === 'Player' && 
+        player.age === age && 
+        player.is_active
+      );
+      if (playersInAge.length > 0) {
+        grouped[age] = playersInAge;
+      }
+    });
+    
+    console.log('Grouped players by age:', grouped); // Debug log
+    return grouped;
+  }, [players]);
 
-  const playersU18 = [
-    {
-      name: "Rohan Patel",
-      position: "Winger",
-      number: 7,
-      image: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=400&h=400&fit=crop&crop=face"
-    },
-    {
-      name: "Suresh Reddy",
-      position: "Midfielder",
-      number: 8,
-      image: "https://images.unsplash.com/photo-1463453091185-61582044d556?w=400&h=400&fit=crop&crop=face"
-    },
-    {
-      name: "Kiran Joshi",
-      position: "Defender",
-      number: 3,
-      image: "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=400&h=400&fit=crop&crop=face"
-    },
-    {
-      name: "Deepak Gupta",
-      position: "Striker",
-      number: 11,
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face"
-    },
-    {
-      name: "Aryan Khan",
-      position: "Defender",
-      number: 5,
-      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&crop=face"
-    },
-    {
-      name: "Rajesh Kumar",
-      position: "Goalkeeper",
-      number: 12,
-      image: "https://images.unsplash.com/photo-1566492031773-4f4e44671d66?w=400&h=400&fit=crop&crop=face"
-    }
-  ];
+  // Filter active coaches
+  const activeCoaches = useMemo(() => {
+    console.log('All coaches:', coaches); // Debug log
+    const active = coaches.filter(coach => 
+      coach.category === 'Coach' && 
+      coach.is_active
+    );
+    console.log('Active coaches:', active); // Debug log
+    return active;
+  }, [coaches]);
 
-  const handleImageError = (e) => {
-    e.target.src = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face';
+  // Create scroll refs for each age category and coaches
+  useEffect(() => {
+    const refs: { [key: string]: React.RefObject<HTMLDivElement | null> } = {};
+    
+    // Create refs for each age category that has players
+    Object.keys(playersByAge).forEach(age => {
+      refs[age] = React.createRef<HTMLDivElement>();
+    });
+    
+    // Create ref for coaches
+    refs['coaches'] = React.createRef<HTMLDivElement>();
+    
+    scrollRefs.current = refs;
+  }, [playersByAge]);
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    e.currentTarget.src = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face';
   };
 
-  const scroll = (ref, direction) => {
+  const scroll = (refKey: string, direction: 'left' | 'right') => {
     const scrollAmount = 300;
-    if (ref.current) {
+    const ref = scrollRefs.current[refKey];
+    if (ref?.current) {
       ref.current.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth'
@@ -142,32 +73,32 @@ const OurTeamPage = () => {
     }
   };
 
-  const PlayerCard = ({ player }) => (
+  const PlayerCard: React.FC<{ player: Person }> = ({ player }) => (
     <div className="player-card">
       <div className="player-image-container">
         <img 
-          src={player.image} 
-          alt={`${player.name} - ${player.position}`} 
+          src={player.image || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face'} 
+          alt={`${player.name} - ${player.role}`} 
           className="player-image" 
           loading="lazy"
           onError={handleImageError}
         />
         <div className="player-overlay">
-          <div className="player-number-large">{player.number}</div>
+          <div className="player-number-large">{player.jersey_no || '0'}</div>
           <div className="player-details">
             <div className="player-name">{player.name}</div>
-            <div className="player-position">{player.position}</div>
+            <div className="player-position">{player.role}</div>
           </div>
         </div>
       </div>
     </div>
   );
 
-  const CoachCard = ({ coach }) => (
+  const CoachCard: React.FC<{ coach: Person }> = ({ coach }) => (
     <div className="coach-card">
       <div className="coach-image-container">
         <img 
-          src={coach.image} 
+          src={coach.image || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face'} 
           alt={`${coach.name} - ${coach.role}`} 
           className="coach-image" 
           loading="lazy"
@@ -177,43 +108,94 @@ const OurTeamPage = () => {
           <div className="coach-details">
             <div className="coach-name">{coach.name}</div>
             <div className="coach-role">{coach.role}</div>
-            <div className="coach-experience">{coach.experience}</div>
+            <div className="coach-experience">{coach.age}</div>
           </div>
         </div>
       </div>
     </div>
   );
 
-  const ScrollableRow = ({ title, items, scrollRef, CardComponent }) => (
+  interface CardComponentProps {
+    [key: string]: Person | undefined;
+    player?: Person;
+    coach?: Person;
+  }
+
+  const ScrollableRow: React.FC<{ 
+    title: string; 
+    items: Person[]; 
+    scrollRefKey: string; 
+    CardComponent: React.FC<CardComponentProps>;
+    isCoach?: boolean;
+  }> = ({ title, items, scrollRefKey, CardComponent, isCoach = false }) => (
     <div className="scrollable-section">
       <div className="section-header">
         <h2 className="section-title">{title}</h2>
         <div className="scroll-controls">
           <button 
             className="scroll-btn left"
-            onClick={() => scroll(scrollRef, 'left')}
+            onClick={() => scroll(scrollRefKey, 'left')}
             aria-label="Scroll left"
           >
             ←
           </button>
           <button 
             className="scroll-btn right"
-            onClick={() => scroll(scrollRef, 'right')}
+            onClick={() => scroll(scrollRefKey, 'right')}
             aria-label="Scroll right"
           >
             →
           </button>
         </div>
       </div>
-      <div className="scrollable-container" ref={scrollRef}>
+      <div className="scrollable-container" ref={scrollRefs.current[scrollRefKey]}>
         <div className="cards-row">
           {items.map((item, index) => (
-            <CardComponent key={index} {...{[CardComponent === PlayerCard ? 'player' : 'coach']: item}} />
+            <div key={`${scrollRefKey}-${index}`}>
+              {isCoach ? (
+                <CardComponent coach={item} />
+              ) : (
+                <CardComponent player={item} />
+              )}
+            </div>
           ))}
         </div>
       </div>
     </div>
   );
+
+  // Helper function to format age category title
+  const formatAgeTitle = (age: string) => {
+    return age.split(' ').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join('-') + ' Team';
+  };
+
+  if (loading) {
+    console.log('Loading...');
+    return (
+      <div className="team-page">
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Loading team data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error('Error loading data:', error);
+    return (
+      <div className="team-page">
+        <div className="error-container">
+          <p className="error-message">Error: {error}</p>
+          <button className="retry-button" onClick={fetchAll}>
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="team-page">
@@ -241,28 +223,41 @@ const OurTeamPage = () => {
         </div>
 
         {activeTab === 'coaches' && (
-          <ScrollableRow 
-            title="Coaching Staff"
-            items={coaches}
-            scrollRef={coachScrollRef}
-            CardComponent={CoachCard}
-          />
+          <>
+            {activeCoaches.length > 0 ? (
+              <ScrollableRow 
+                title="Coaching Staff"
+                items={activeCoaches}
+                scrollRefKey="coaches"
+                CardComponent={CoachCard}
+                isCoach={true}
+              />
+            ) : (
+              <div className="no-data-message">
+                <p>No active coaches found.</p>
+              </div>
+            )}
+          </>
         )}
 
         {activeTab === 'players' && (
           <>
-            <ScrollableRow 
-              title="Under-16 Team"
-              items={playersU16}
-              scrollRef={u16ScrollRef}
-              CardComponent={PlayerCard}
-            />
-            <ScrollableRow 
-              title="Under-18 Team"
-              items={playersU18}
-              scrollRef={u18ScrollRef}
-              CardComponent={PlayerCard}
-            />
+            {Object.keys(playersByAge).length > 0 ? (
+              Object.entries(playersByAge).map(([age, playersInAge]) => (
+                <ScrollableRow 
+                  key={age}
+                  title={formatAgeTitle(age)}
+                  items={playersInAge}
+                  scrollRefKey={age}
+                  CardComponent={PlayerCard}
+                  isCoach={false}
+                />
+              ))
+            ) : (
+              <div className="no-data-message">
+                <p>No active players found.</p>
+              </div>
+            )}
           </>
         )}
       </div>

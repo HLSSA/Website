@@ -1,0 +1,256 @@
+/* OurPartners.css */
+.partners-section {
+  padding: 80px 0;
+  background-color: #f9fafb;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding: 0 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: 0 32px;
+  }
+}
+
+/* Header Styles */
+.header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.main-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: #4b5563;
+  max-width: 672px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Slideshow Container */
+.slideshow-container {
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 64px;
+  position: relative;
+  padding: 20px 0;
+}
+
+/* Add a gradient overlay to make the infinite scroll more natural */
+.slideshow-container::before,
+.slideshow-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 150px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.slideshow-container::before {
+  left: 0;
+  background: linear-gradient(90deg, #f9fafb 0%, rgba(249, 250, 251, 0) 100%);
+}
+
+.slideshow-container::after {
+  right: 0;
+  background: linear-gradient(270deg, #f9fafb 0%, rgba(249, 250, 251, 0) 100%);
+}
+
+/* Partners Slideshow */
+.partners-slideshow {
+  display: flex;
+  gap: 32px;
+  animation: slideLeft 30s linear infinite;
+  width: max-content;
+  min-width: 100%;
+  will-change: transform;
+}
+
+@keyframes slideLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Pause animation on hover */
+.slideshow-container:hover .partners-slideshow {
+  animation-play-state: paused;
+}
+
+/* Partner Card */
+.partner-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 5px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  width: 300px;
+  height: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.partner-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.logo-container {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6;
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+}
+
+.partner-logo {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.partner-card:hover .partner-logo {
+  transform: scale(1.05);
+}
+
+.partner-info {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.partner-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.partner-category {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Benefits Section */
+.benefits-section {
+  margin-top: 80px;
+}
+
+.benefits-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.benefits-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+.benefits-subtitle {
+  font-size: 1.125rem;
+  color: #4b5563;
+  max-width: 640px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .benefits-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.benefit-item {
+  background-color: white;
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.benefit-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.benefit-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 28px;
+}
+
+.benefit-icon.facilities {
+  background-color: #eef2ff;
+  color: #4f46e5;
+}
+
+.benefit-icon.opportunities {
+  background-color: #ecfdf5;
+  color: #10b981;
+}
+
+.benefit-icon.tournaments {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.benefit-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+.benefit-description {
+  color: #6b7280;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+}
