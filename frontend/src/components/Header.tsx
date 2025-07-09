@@ -31,7 +31,7 @@ const Header: React.FC = () => {
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
     backdropFilter: 'blur(8px)',
     WebkitBackdropFilter: 'blur(8px)',
-    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 2, 0, 0.06)',
     position: 'fixed',
     width: '100%',
     top: 0,
@@ -48,61 +48,34 @@ const Header: React.FC = () => {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '10px 0',
+    padding: '12px 0',
     gap: '20px',
+    height: '80px',
   };
 
-  const logoSectionStyles: React.CSSProperties = {
+  const logoLinkStyles: React.CSSProperties = {
+    textDecoration: 'none',
+    transition: 'transform 0.2s ease',
     display: 'flex',
     alignItems: 'center',
-    gap: '12px',
   };
 
-  const logoCircleStyles: React.CSSProperties = {
-    width: '48px',
-    height: '48px',
-    background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+  const logoImageStyles: React.CSSProperties = {
+    width: '80px',
+    height: '60px',
+    objectFit: 'contain',
   };
 
-  const logoInnerStyles: React.CSSProperties = {
-    width: '32px',
-    height: '32px',
-    backgroundColor: '#fbbf24',
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  };
-
-  const logoTextStyles: React.CSSProperties = {
-    color: '#1d4ed8',
-    fontWeight: 'bold',
-    fontSize: '14px',
-  };
-
-  const titleStyles: React.CSSProperties = {
-    fontSize: '32px',
-    fontWeight: 'bold',
-    color: '#111827',
-    lineHeight: '1.2',
-    margin: 0,
-  };
-
-  const subtitleStyles: React.CSSProperties = {
-    fontSize: '12px',
-    color: '#6b7280',
-    margin: 0,
-    display: window.innerWidth >= 640 ? 'block' : 'none',
+  const mobileLogoImageStyles: React.CSSProperties = {
+    width: '70px',
+    height: '50px',
+    objectFit: 'contain',
   };
 
   const desktopNavStyles: React.CSSProperties = {
     display: window.innerWidth >= 768 ? 'flex' : 'none',
     alignItems: 'center',
-    gap: '32px',
+    gap: '24px',
   };
 
   const navLinkStyles: React.CSSProperties = {
@@ -110,13 +83,13 @@ const Header: React.FC = () => {
     textDecoration: 'none',
     fontWeight: '500',
     transition: 'color 0.2s ease',
-    fontSize: '18px',
+    fontSize: '16px',
   };
 
   const headerActionsStyles: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
-    gap: '16px',
+    gap: '12px',
   };
 
   const ctaButtonStyles: React.CSSProperties = {
@@ -125,13 +98,14 @@ const Header: React.FC = () => {
     gap: '8px',
     backgroundColor: '#2563eb',
     color: 'white',
-    padding: '8px 24px',
+    padding: '8px 16px',
     borderRadius: '9999px',
     textDecoration: 'none',
     fontWeight: '500',
     transition: 'background-color 0.2s ease',
     border: 'none',
     cursor: 'pointer',
+    fontSize: '14px',
   };
 
   const mobileMenuButtonStyles: React.CSSProperties = {
@@ -202,21 +176,33 @@ const Header: React.FC = () => {
     e.currentTarget.style.backgroundColor = 'transparent';
   };
 
+  const handleLogoHover = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.currentTarget.style.transform = 'scale(1.05)';
+  };
+
+  const handleLogoLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.currentTarget.style.transform = 'scale(1)';
+  };
+
+  const isDesktop = window.innerWidth >= 768;
+
   return (
     <header style={headerStyles}>
       <div style={containerStyles}>
         <div style={headerContentStyles}>
           {/* Logo */}
-          <div style={logoSectionStyles}>
+          <a 
+            href="/"
+            style={logoLinkStyles}
+            onMouseEnter={handleLogoHover}
+            onMouseLeave={handleLogoLeave}
+          >
             <img 
               src="https://i.ibb.co/JWPpTbt9/hlssa-optimized-1000.png" 
               alt="HLSSA Logo" 
-              style={{width: '110px', height: '90px', objectFit: 'contain'}}
+              style={isDesktop ? logoImageStyles : mobileLogoImageStyles}
             />
-            <div>
-              <h1 style={titleStyles}>HLSSA</h1>
-            </div>
-          </div>
+          </a>
 
           {/* Desktop Navigation */}
           <nav style={desktopNavStyles}>
@@ -229,7 +215,7 @@ const Header: React.FC = () => {
               Home
             </a>
             <a 
-              href="about" 
+              href="/about" 
               style={navLinkStyles}
               onMouseEnter={handleLinkHover}
               onMouseLeave={handleLinkLeave}
@@ -237,7 +223,7 @@ const Header: React.FC = () => {
               About
             </a>
             <a 
-              href="achievements" 
+              href="/achievements" 
               style={navLinkStyles}
               onMouseEnter={handleLinkHover}
               onMouseLeave={handleLinkLeave}
@@ -245,7 +231,7 @@ const Header: React.FC = () => {
               Achievements
             </a>
             <a 
-              href="matches" 
+              href="/matches" 
               style={navLinkStyles}
               onMouseEnter={handleLinkHover}
               onMouseLeave={handleLinkLeave}
@@ -253,7 +239,7 @@ const Header: React.FC = () => {
               Matches
             </a>
             <a 
-              href="team" 
+              href="/team" 
               style={navLinkStyles}
               onMouseEnter={handleLinkHover}
               onMouseLeave={handleLinkLeave}
@@ -261,20 +247,19 @@ const Header: React.FC = () => {
               Our Team
             </a>
             <a 
-              href="news" 
+              href="/news" 
               style={navLinkStyles}
               onMouseEnter={handleLinkHover}
               onMouseLeave={handleLinkLeave}
             >
               News
             </a>
-
           </nav>
 
           {/* CTA Button & Mobile Menu */}
           <div style={headerActionsStyles}>
             <a 
-              href="shop" 
+              href="/shop" 
               style={ctaButtonStyles}
               onMouseEnter={handleButtonHover}
               onMouseLeave={handleButtonLeave}
@@ -307,7 +292,7 @@ const Header: React.FC = () => {
           <div style={mobileMenuStyles}>
             <nav style={mobileNavStyles}>
               <a 
-                href="home" 
+                href="/" 
                 style={mobileNavLinkStyles}
                 onMouseEnter={handleLinkHover}
                 onMouseLeave={handleLinkLeave}
@@ -315,7 +300,7 @@ const Header: React.FC = () => {
                 Home
               </a>
               <a 
-                href="about" 
+                href="/about" 
                 style={mobileNavLinkStyles}
                 onMouseEnter={handleLinkHover}
                 onMouseLeave={handleLinkLeave}
@@ -323,7 +308,7 @@ const Header: React.FC = () => {
                 About
               </a>
               <a 
-                href="achievements" 
+                href="/achievements" 
                 style={mobileNavLinkStyles}
                 onMouseEnter={handleLinkHover}
                 onMouseLeave={handleLinkLeave}
@@ -331,7 +316,7 @@ const Header: React.FC = () => {
                 Achievements
               </a>
               <a 
-                href="matches" 
+                href="/matches" 
                 style={mobileNavLinkStyles}
                 onMouseEnter={handleLinkHover}
                 onMouseLeave={handleLinkLeave}
@@ -339,7 +324,7 @@ const Header: React.FC = () => {
                 Matches
               </a>
               <a 
-                href="team" 
+                href="/team" 
                 style={mobileNavLinkStyles}
                 onMouseEnter={handleLinkHover}
                 onMouseLeave={handleLinkLeave}
@@ -347,7 +332,7 @@ const Header: React.FC = () => {
                 Our Team
               </a>
               <a 
-                href="news" 
+                href="/news" 
                 style={mobileNavLinkStyles}
                 onMouseEnter={handleLinkHover}
                 onMouseLeave={handleLinkLeave}
@@ -355,7 +340,7 @@ const Header: React.FC = () => {
                 News
               </a>
               <a 
-                href="shop" 
+                href="/shop" 
                 style={mobileNavLinkStyles}
                 onMouseEnter={handleLinkHover}
                 onMouseLeave={handleLinkLeave}
@@ -366,11 +351,6 @@ const Header: React.FC = () => {
                 href="tel:+917993994704"
                 style={mobileCtaButtonStyles}
                 onMouseEnter={handleButtonHover}
-
-
-
-
-
                 onMouseLeave={handleButtonLeave}
               >
                 <PhoneIcon />
