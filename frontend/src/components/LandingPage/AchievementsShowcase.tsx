@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, Trophy, Medal, Star, Award, } from 'lucide-react';
 import useAchievements from '../../hooks/useAchievements';
 import { Achievement } from '../../types/achievement.type';
-import './AchievementsShowcase.css';
+import './styles/AchievementsShowcase.css';
 import Error from '../Error';
 import Loader from '../Loader';
 

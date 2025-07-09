@@ -1,6 +1,6 @@
 import React from 'react';
 import usePartners from '../../hooks/usePartners';
-import './OurPartners.css';
+import './styles/OurPartners.css';
 
 const OurPartners = () => {
   const { partners, loading, error } = usePartners(null);

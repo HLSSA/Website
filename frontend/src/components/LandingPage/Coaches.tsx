@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import './Coaches.css';
+import './styles/Coaches.css';
 import useCoaches from '../../hooks/useCoaches';
 import Loader from '../Loader';
 import Error from '../Error';
@@ -45,11 +45,9 @@ const CoachesOnlyPage = () => {
   if (loading) {
     return (
       <div className="team-page">
-        <div className="hero-section">
-          <div className="hero-content">
-            <h1>Our Elite Coaching Staff</h1>
+        <div className="coaches-section">
+            <h1 className="section-title">Our Elite Coaching Staff</h1>
             <p>Shaping the Future of Football with Experience and Passion</p>
-          </div>
         </div>
         <div className="main-content">
           <Loader />
@@ -62,11 +60,9 @@ const CoachesOnlyPage = () => {
   if (error) {
     return (
       <div className="team-page">
-        <div className="hero-section">
-          <div className="hero-content">
-            <h1>Our Elite Coaching Staff</h1>
+        <div className="coaches-section">
+            <h1 className="section-title">Our Elite Coaching Staff</h1>
             <p>Shaping the Future of Football with Experience and Passion</p>
-          </div>
         </div>
         <div className="main-content">
           <Error />
@@ -79,13 +75,9 @@ const CoachesOnlyPage = () => {
   return (
     <div className="team-page">
       
-      <div className="main-content">
-        <div className="hero-section">
-          <div className="hero-content">
-            <h1>Our Elite Coaching Staff</h1>
-            <p>Shaping the Future of Football with Experience and Passion</p>
-          </div>
-        </div>
+      <div className="coaches-section">
+            <h1 className="section-title">Our Elite Coaching Staff</h1>
+            <p className="section-subtitle">Shaping the Future of Football with Experience and Passion</p>
         <div className="scrollable-section">
           <div className="section-header">
             <div className="scroll-controls">

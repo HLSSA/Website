@@ -2,7 +2,7 @@ import React from 'react';
 import { Calendar, Clock, MapPin } from 'lucide-react';
 import useMatches from '../../hooks/useMatches';
 import { Match } from '../../types/matches.type';
-import './UpcomingMatches.css';
+import './styles/UpcomingMatches.css';
 import { useNavigate } from 'react-router-dom';
 
 interface MatchCardProps {

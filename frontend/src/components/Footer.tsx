@@ -338,12 +338,11 @@ const Footer: React.FC = () => {
             <div className="footer-section">
               <h4>Quick Links</h4>
               <ul className="footer-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About Us</a></li>
-                <li><a href="#achievements">Achievements</a></li>
-                <li><a href="#matches">Matches & News</a></li>
-                <li><a href="#team">Our Team</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="/">Home</a></li>
+                <li><a href="about">About Us</a></li>
+                <li><a href="achievements">Achievements</a></li>
+                <li><a href="matches">Matches & News</a></li>
+                <li><a href="team">Our Team</a></li>
               </ul>
             </div>
 
