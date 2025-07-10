@@ -118,6 +118,10 @@ const Programs: React.FC = () => {
         .section-header {
           text-align: center;
           margin-bottom: 60px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
         }
         
         .section-title {
@@ -126,6 +130,7 @@ const Programs: React.FC = () => {
           color: #1e3a8a;
           margin-bottom: 16px;
           margin-top: 0;
+          text-align: center;
         }
         
         .section-subtitle {
@@ -134,6 +139,7 @@ const Programs: React.FC = () => {
           max-width: 600px;
           margin: 0 auto;
           line-height: 1.6;
+          text-align: center;
         }
         
         .programs-grid {

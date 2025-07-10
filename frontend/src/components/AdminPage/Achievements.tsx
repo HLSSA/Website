@@ -196,7 +196,7 @@ const Achievements = () => {
   return (
     <div className="container">
       <form className="form" onSubmit={handleSubmit}>
-        <h1 className="title">{editingId !== null ? 'Edit Achievement' : 'Add Achievement'}</h1>
+        <h1 className="title" >{editingId !== null ? 'Edit Achievement' : 'Add Achievement'}</h1>
 
         {submitSuccess && (
           <div className="success-message">

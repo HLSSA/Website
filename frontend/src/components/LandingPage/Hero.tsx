@@ -25,7 +25,7 @@ const Hero = () => {
           <div className="hero-content">
             <div className="hero-badge-container">
               <span className="hero-badge">
-                🏆 Hyderabad's Premier Soccer Academy
+                 Hyderabad's Premier Soccer Academy
               </span>
             </div>
             

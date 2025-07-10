@@ -48,9 +48,9 @@ const Header: React.FC = () => {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '12px 0',
+    padding: '24px 0',
     gap: '20px',
-    height: '80px',
+    height: '100px',
   };
 
   const logoLinkStyles: React.CSSProperties = {
@@ -61,8 +61,8 @@ const Header: React.FC = () => {
   };
 
   const logoImageStyles: React.CSSProperties = {
-    width: '80px',
-    height: '60px',
+    width: '100px',
+    height: '80px',
     objectFit: 'contain',
   };
 

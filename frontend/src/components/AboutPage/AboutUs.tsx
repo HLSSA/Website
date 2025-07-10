@@ -104,7 +104,7 @@ const AboutUs: React.FC = () => {
         
         <div className="hero-content">
           <div className="hero-badge">
-            🏆 More Than an Academy
+             More Than an Academy
           </div>
           
           <h1 className="hero-title">

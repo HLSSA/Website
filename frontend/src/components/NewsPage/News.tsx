@@ -293,6 +293,9 @@ const NewsPage: React.FC = () => {
       <div className="page">
         <header className="header">
           <div className="header-content">
+            <div className="header-badge">
+              🏆 Champions Updates
+            </div>
             <h1 className="title">HLSSA Football Academy</h1>
             <p className="subtitle">
               Stay updated with the latest football news and academy updates
@@ -320,6 +323,9 @@ const NewsPage: React.FC = () => {
       {/* Header */}
       <header className="header">
         <div className="header-content">
+          <div className="header-badge">
+            🏆 Champions Updates
+          </div>
           <h1 className="title">HLSSA Football Academy</h1>
           <p className="subtitle">
             Stay updated with the latest football news and academy updates

@@ -5,6 +5,7 @@ import OurPartners from '../components/LandingPage/OurPartners';
 import AchievementsShowcase from '../components/LandingPage/AchievementsShowcase';
 import Programs from '../components/LandingPage/Programs';
 import Coaches from '../components/LandingPage/Coaches';
+import Testimonials from '../components/LandingPage/Testimonials';
 import axios from 'axios';
 
 const LandingPage = () => {
@@ -15,6 +16,7 @@ const LandingPage = () => {
       <Coaches />
       <Programs />
       <AchievementsShowcase />
+      <Testimonials />
       <OurPartners />
     </div>
   );

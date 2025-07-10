@@ -1,12 +1,12 @@
 import React from 'react';
-import { Phone, Mail, MapPin, Facebook, Instagram, Youtube, Twitter } from 'lucide-react';
+import { Phone, Mail, MapPin, Facebook, Instagram, Youtube } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
     <>
       <style>{`
         .footer {
-          background-color:rgb(0, 24, 58);
+          background-color: rgb(0, 24, 58);
           color: white;
         }
 
@@ -58,12 +58,6 @@ const Footer: React.FC = () => {
           display: flex;
           align-items: center;
           justify-content: center;
-        }
-
-        .footer-logo-emoji {
-          color: #1e40af;
-          font-weight: bold;
-          font-size: 12px;
         }
 
         .footer-logo-text h3 {
@@ -129,11 +123,10 @@ const Footer: React.FC = () => {
         }
 
         .footer-social-link.twitter {
-          background-color: #1da1f2;
+          background-color: black;
         }
 
         .footer-social-link.twitter:hover {
-          background-color: #0d8bd9;
           transform: translateY(-2px);
         }
 
@@ -274,7 +267,7 @@ const Footer: React.FC = () => {
           margin: 0 auto;
         }
       `}</style>
-      
+
       <footer className="footer">
         <div className="footer-container">
           <div className="footer-grid">
@@ -283,11 +276,11 @@ const Footer: React.FC = () => {
               <div className="footer-logo">
                 <div className="footer-logo-icon">
                   <div className="footer-logo-inner">
-                  <img 
-                    src="https://i.ibb.co/JWPpTbt9/hlssa-optimized-1000.png" 
-                    alt="HLSSA Logo" 
-                    style={{width: '90px', height: '100px', objectFit: 'contain'}}
-                  />
+                    <img 
+                      src="https://i.ibb.co/JWPpTbt9/hlssa-optimized-1000.png" 
+                      alt="HLSSA Logo" 
+                      style={{width: '90px', height: '100px', objectFit: 'contain'}}
+                    />
                   </div>
                 </div>
                 <div className="footer-logo-text">
@@ -295,41 +288,61 @@ const Footer: React.FC = () => {
                   <p>Hyderabad Little Stars Soccer Academy</p>
                 </div>
               </div>
-              
+
               <p className="footer-description">
                 Nurturing young football talents into tomorrow's champions. With professional coaching, 
                 world-class facilities, and a proven track record, we're committed to developing both 
                 skilled players and strong characters.
               </p>
-              
+
               <div className="footer-social">
                 <a
-                  href="#"
+                  href="https://www.facebook.com/telanganafootballacademy"
                   className="footer-social-link facebook"
                   aria-label="Facebook"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <Facebook size={18} />
                 </a>
+
                 <a
-                  href="#"
+                  href="https://www.instagram.com/hydlittlestars.official/"
                   className="footer-social-link instagram"
                   aria-label="Instagram"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <Instagram size={18} />
                 </a>
+
                 <a
-                  href="#"
+                  href="https://www.youtube.com/@hyderabadlittlestarssoccer4733"
                   className="footer-social-link youtube"
                   aria-label="YouTube"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <Youtube size={18} />
                 </a>
+
+                {/* X Logo for Twitter */}
                 <a
-                  href="#"
+                  href="https://twitter.com/hlssa_academy"
                   className="footer-social-link twitter"
-                  aria-label="Twitter"
+                  aria-label="Twitter/X"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <Twitter size={18} />
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="white"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M20.187 3H17.28L12.824 9.117 8.682 3H2.25l7.298 10.664L2.25 21h2.907l4.796-6.468 4.298 6.468h6.541l-7.48-10.867L20.187 3z" />
+                  </svg>
                 </a>
               </div>
             </div>
@@ -339,10 +352,10 @@ const Footer: React.FC = () => {
               <h4>Quick Links</h4>
               <ul className="footer-links">
                 <li><a href="/">Home</a></li>
-                <li><a href="about">About Us</a></li>
-                <li><a href="achievements">Achievements</a></li>
-                <li><a href="matches">Matches & News</a></li>
-                <li><a href="team">Our Team</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/achievements">Achievements</a></li>
+                <li><a href="/matches">Matches & News</a></li>
+                <li><a href="/team">Our Team</a></li>
               </ul>
             </div>
 
@@ -358,14 +371,14 @@ const Footer: React.FC = () => {
                     <p>India - 500032</p>
                   </div>
                 </div>
-                
+
                 <div className="footer-contact-item center">
                   <Phone className="footer-contact-icon no-margin" size={18} />
                   <a href="tel:+917993994704" className="footer-contact-link">
                     +91 79939 94704
                   </a>
                 </div>
-                
+
                 <div className="footer-contact-item center">
                   <Mail className="footer-contact-icon no-margin" size={18} />
                   <a href="mailto:info@hlssa.academy" className="footer-contact-link">
@@ -382,14 +395,14 @@ const Footer: React.FC = () => {
               <p className="footer-copyright">
                 © 2024 Hyderabad Little Stars Soccer Academy. All rights reserved.
               </p>
-              
+
               <div className="footer-legal">
                 <a href="#">Privacy Policy</a>
                 <a href="#">Terms of Service</a>
                 <a href="#">Sitemap</a>
               </div>
             </div>
-            
+
             <div className="footer-social-text">
               <p>
                 Follow Hyderabad Little Stars Soccer Academy on social media for updates and behind-the-scenes content
