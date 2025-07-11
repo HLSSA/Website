@@ -57,7 +57,7 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
     <StyledWrapper>
       <div className="wrapper">
         <form className="form" onSubmit={handleSubmit}>
-          <span className="title">Admin Login</span>
+          <span className="title headlogin">Admin Login</span>
           <div className="input-container">
             {/* Username Icon */}
             <svg width={24} height={24} viewBox="0 0 24 24" fill="none">
@@ -180,6 +180,9 @@ const StyledWrapper = styled.div`
     -webkit-background-clip: text;
     background-clip: text;
   }
+
+  .headlogin{
+  color :rgb(253, 252, 250) !Important;}
   .form .input-container {
     display: flex;
     align-items: center;
