@@ -95,18 +95,6 @@ const Testimonials: React.FC<TestimonialsProps> = ({ token }) => {
               <p className="testimonial-feedback">"{testimonial.feedback}"</p>
               <h4 className="testimonial-name">{testimonial.name}</h4>
               <span className="testimonial-role">{testimonial.role}</span>
-              {testimonial.rating && (
-                <div className="testimonial-rating">
-                  {[...Array(5)].map((_, i) => (
-                    <span 
-                      key={i} 
-                      className={`star ${i < testimonial.rating ? 'star-filled' : 'star-empty'}`}
-                    >
-                      ★
-                    </span>
-                  ))}
-                </div>
-              )}
             </div>
           ))}
         </div>
