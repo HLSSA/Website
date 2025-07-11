@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Globe, Home, Search, Calendar, Clock, User, ChevronRight, Loader2, X } from 'lucide-react';
+import { Globe, Home, Search, Calendar, Clock, User, ChevronRight, Loader2 } from 'lucide-react';
 import useNews from '../../hooks/useNews';
 import './News.css';
 
@@ -17,6 +17,187 @@ interface NewsArticle {
   image: string;
   featured?: boolean;
 }
+
+// News Modal Component
+interface NewsModalProps {
+  article: NewsArticle | null;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const NewsModal: React.FC<NewsModalProps> = ({ article, isOpen, onClose }) => {
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen, onClose]);
+
+  const getCategoryColor = (category: string) => {
+    switch (category.toLowerCase()) {
+      case 'academy':
+        return '#FDE350';
+      case 'tournament':
+        return '#53A548';
+      case 'player':
+        return '#FF6B6B';
+      case 'team':
+        return '#4A90E2';
+      case 'community':
+        return '#9B59B6';
+      case 'training':
+        return '#E74C3C';
+      case 'football':
+        return '#2ECC71';
+      default:
+        return '#FDE350';
+    }
+  };
+
+  if (!isOpen || !article) return null;
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  return (
+    <div 
+      className="modal-backdrop" 
+      onClick={handleBackdropClick}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1000,
+        padding: '20px',
+        overflowY: 'auto'
+      }}
+    >
+      <div 
+        className="modal-content"
+        style={{
+          backgroundColor: 'white',
+          borderRadius: '12px',
+          maxWidth: '900px',
+          width: '100%',
+          maxHeight: '90vh',
+          overflowY: 'auto',
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'row'
+        }}
+      >
+        <button 
+          className="modal-close" 
+          onClick={onClose}
+          aria-label="Close modal"
+          style={{
+            position: 'absolute',
+            top: '16px',
+            right: '16px',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            zIndex: 10,
+            color: '#666',
+            padding: '8px',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+        
+        <div className="modal-body" style={{ padding: '0', display: 'flex', flexDirection: 'column' }}>
+          
+          <div style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
+            <div className="modal-info">
+              <div 
+                className="modal-category" 
+                style={{
+                  display: 'inline-block',
+                  padding: '4px 12px',
+                  borderRadius: '20px',
+                  color: 'white',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  marginBottom: '16px',
+                  backgroundColor: getCategoryColor(article.category)
+                }}
+              >
+                {article.category}
+              </div>
+              
+              <h2 className="modal-title" style={{ fontSize: '24px', margin: '0 0 16px 0', color: '#1A1B25' }}>
+                {article.title}
+              </h2>
+              
+              <div 
+                className="modal-meta"
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: '16px',
+                  marginBottom: '24px',
+                  fontSize: '14px',
+                  color: '#666'
+                }}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Calendar size={16} /> {article.date}
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Clock size={16} /> {article.time}
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <User size={16} /> {article.author}
+                </span>
+              </div>
+              
+              <div 
+                className="modal-description" 
+                style={{ 
+                  color: '#4A4A4A',
+                  lineHeight: 1.6,
+                  fontSize: '16px'
+                }}
+              >
+                {article.story.split('\n').map((paragraph, index) => (
+                  <p key={index} style={{ margin: '0 0 16px 0' }}>
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const NewsPage: React.FC = () => {
   const [activeSection, setActiveSection] = useState('hlssa');
@@ -52,114 +233,44 @@ const NewsPage: React.FC = () => {
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       const fromDate = thirtyDaysAgo.toISOString().split('T')[0];
 
-      // Multiple API calls for comprehensive coverage
-      const queries = [
-        'football india national team',
-        'indian super league',
-        'premier league',
-        'champions league',
-        'fifa world cup',
-        'european football',
-        'la liga',
-        'serie a',
-        'bundesliga',
-        'english premier league',
-        'Ronaldo',
-        'Messi',
-      ];
+      // Use Guardian API only
+      const guardianUrl = `https://content.guardianapis.com/search?q=football&from-date=${fromDate}&order-by=relevance&show-fields=thumbnail,trailText&page-size=${newsPerPage}&api-key=test`;
 
-      const allNews: NewsArticle[] = [];
-
-      // Try NewsAPI first (most reliable)
-      for (const query of queries.slice(0, 3)) { // Limit to avoid rate limits
-        try {
-          const newsApiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(query)}&from=${fromDate}&sortBy=popularity&language=en&pageSize=${Math.ceil(newsPerPage/3)}`;
-
-          const response = await fetch(newsApiUrl, {
-            headers: {
-              'X-API-Key': 'your-api-key' // In real app, this should be from env
-            }
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            if (data.articles && data.articles.length > 0) {
-              const formattedNews = data.articles
-                .filter((article: any) => article.title && article.title !== '[Removed]')
-                .map((article: any, index: number) => {
-                  const pubDate = new Date(article.publishedAt);
-                  return {
-                    id: `newsapi-${query}-${index}`,
-                    title: article.title,
-                    excerpt: article.description || article.title.substring(0, 150) + '...',
-                    date: pubDate.toISOString().split('T')[0],
-                    time: pubDate.toTimeString().substring(0, 5),
-                    author: article.source.name || 'Unknown',
-                    category: query.includes('india') ? 'Indian Football' : 'International',
-                    url: article.url,
-                    story: '', // API news doesn't have story content
-                    image: article.urlToImage || 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=250&fit=crop',
-                    featured: false
-                  };
-                });
-              allNews.push(...formattedNews);
-            }
-          }
-        } catch (err) {
-          console.log(`Failed to fetch from NewsAPI for query: ${query}`);
-        }
+      const response = await fetch(guardianUrl);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch news from Guardian API');
       }
 
-      // If NewsAPI fails, try Guardian API
-      if (allNews.length === 0) {
-        try {
-          const guardianUrl = `https://content.guardianapis.com/search?q=football&from-date=${fromDate}&order-by=relevance&show-fields=thumbnail,trailText&page-size=${newsPerPage}&api-key=test`;
+      const data = await response.json();
+      
+      if (data.response && data.response.results) {
+        const formattedNews = data.response.results.map((article: any, index: number) => {
+          const pubDate = new Date(article.webPublicationDate);
+          return {
+            id: `guardian-${index}`,
+            title: article.webTitle,
+            excerpt: article.fields?.trailText || article.webTitle.substring(0, 150) + '...',
+            date: pubDate.toISOString().split('T')[0],
+            time: pubDate.toTimeString().substring(0, 5),
+            author: 'The Guardian',
+            category: 'Football',
+            article_url: article.webUrl, // Direct Guardian URL
+            story: '', // API news doesn't have story content
+            image: article.fields?.thumbnail || 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=250&fit=crop',
+            featured: false
+          };
+        });
 
-          const response = await fetch(guardianUrl);
-          if (response.ok) {
-            const data = await response.json();
-            if (data.response && data.response.results) {
-              const formattedNews = data.response.results.map((article: any, index: number) => {
-                const pubDate = new Date(article.webPublicationDate);
-                return {
-                  id: `guardian-${index}`,
-                  title: article.webTitle,
-                  excerpt: article.fields?.trailText || article.webTitle.substring(0, 150) + '...',
-                  date: pubDate.toISOString().split('T')[0],
-                  time: pubDate.toTimeString().substring(0, 5),
-                  author: 'The Guardian',
-                  category: 'Football',
-                  url: article.webUrl,
-                  story: '', // API news doesn't have story content
-                  image: article.fields?.thumbnail || 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=250&fit=crop',
-                  featured: false
-                };
-              });
-              allNews.push(...formattedNews);
-            }
-          }
-        } catch (err) {
-          console.log('Guardian API also failed');
-        }
-      }
-
-      // If both APIs fail, we'll handle it in the error state
-
-      if (allNews.length > 0) {
-        // Remove duplicates and sort by date
-        const uniqueNews = allNews.filter((article, index, self) =>
-          index === self.findIndex(a => a.title === article.title)
-        ).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-        setApiNews(uniqueNews);
-        setTotalPages(Math.ceil(uniqueNews.length / newsPerPage));
-        console.log(`Loaded ${uniqueNews.length} articles`);
+        setApiNews(formattedNews);
+        setTotalPages(Math.ceil(formattedNews.length / newsPerPage));
+        console.log(`Loaded ${formattedNews.length} articles from Guardian`);
       } else {
-        throw new Error('No news articles could be loaded from any source');
+        throw new Error('No articles found in Guardian API response');
       }
     } catch (err) {
-      console.error('All APIs failed:', err);
-      setApiError('Unable to load news at the moment. Please try again later.');
+      console.error('Guardian API failed:', err);
+      setApiError('Unable to load international news at the moment. Please try again later.');
       setApiNews([]);
     } finally {
       setApiLoading(false);
@@ -222,26 +333,40 @@ const NewsPage: React.FC = () => {
     e.preventDefault();
     e.stopPropagation();
     
-    // If article has a URL from the database, redirect to it
-    if (article.article_url && article.article_url.trim() !== '' && article.article_url !== '#') {
-      // If URL doesn't have protocol, add https://
-      let url = article.article_url.trim();
-      if (!/^https?:\/\//i.test(url)) {
-        url = 'https://' + url;
+    console.log('Read more clicked for:', article.title);
+    console.log('Article URL:', article.article_url);
+    console.log('Article story:', article.story);
+    
+    // For international news: always redirect to article URL
+    if (activeSection === 'news' && article.article_url) {
+      window.open(article.article_url, '_blank');
+      return;
+    }
+    
+    // For HLSSA news: check if URL exists, if yes redirect, otherwise show modal
+    if (activeSection === 'hlssa') {
+      // If article has a URL from the database, redirect to it
+      if (article.article_url && article.article_url.trim() !== '' && article.article_url !== '#') {
+        // If URL doesn't have protocol, add https://
+        let url = article.article_url.trim();
+        if (!/^https?:\/\//i.test(url)) {
+          url = 'https://' + url;
+        }
+        // Open in new tab for external URLs
+        window.open(url, '_blank');
+        return;
       }
-      // Open in the same tab for external URLs
-      window.location.href = url;
-      return;
+      
+      // If article has story content, show modal
+      if (article.story && article.story.trim() !== '') {
+        console.log('Opening modal for article:', article.title);
+        setSelectedArticle(article);
+        setIsModalOpen(true);
+        return;
+      }
     }
     
-    // If article has story content, show modal
-    if (article.story && article.story.trim() !== '') {
-      setSelectedArticle(article);
-      setIsModalOpen(true);
-      return;
-    }
-    
-    // If no URL or story, fallback to ID-based URL if available
+    // Fallback: if no URL or story, try ID-based URL
     if (article.id) {
       window.location.href = `/news/${article.id}`;
     }
@@ -252,32 +377,6 @@ const NewsPage: React.FC = () => {
     setIsModalOpen(false);
     setSelectedArticle(null);
   };
-
-  // Handle modal backdrop click
-  const handleModalBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      closeModal();
-    }
-  };
-
-  // Handle escape key for modal
-  useEffect(() => {
-    const handleEscapeKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isModalOpen) {
-        closeModal();
-      }
-    };
-
-    if (isModalOpen) {
-      document.addEventListener('keydown', handleEscapeKey);
-      document.body.style.overflow = 'hidden'; // Prevent background scroll
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscapeKey);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isModalOpen]);
 
   const currentNews = getCurrentNews();
   const featuredArticle = activeSection === 'hlssa' 
@@ -309,7 +408,7 @@ const NewsPage: React.FC = () => {
           <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>
             {activeSection === 'hlssa' 
               ? 'Fetching latest academy updates from database'
-              : 'Fetching trending stories from the past 30 days'
+              : 'Fetching trending stories from The Guardian'
             }
           </p>
         </div>
@@ -442,7 +541,7 @@ const NewsPage: React.FC = () => {
               </div>
               {activeSection === 'news' && (
                 <div style={{ fontSize: '0.8rem', color: '#666', marginTop: '0.25rem' }}>
-                  From the past 30 days • Sorted by relevance
+                  From The Guardian • Past 30 days • Sorted by relevance
                 </div>
               )}
               {activeSection === 'hlssa' && (
@@ -493,11 +592,22 @@ const NewsPage: React.FC = () => {
                       key={article.id}
                       className="news-card"
                       onClick={() => {
-                        if (article.article_url && article.article_url !== '#' && article.article_url !== '') {
+                        // For international news, always redirect to URL
+                        if (activeSection === 'news' && article.article_url) {
                           window.open(article.article_url, '_blank');
-                        } else if (article.story && article.story.trim() !== '') {
-                          setSelectedArticle(article);
-                          setIsModalOpen(true);
+                        }
+                        // For HLSSA news, check URL first, then story
+                        else if (activeSection === 'hlssa') {
+                          if (article.article_url && article.article_url !== '#' && article.article_url !== '') {
+                            let url = article.article_url.trim();
+                            if (!/^https?:\/\//i.test(url)) {
+                              url = 'https://' + url;
+                            }
+                            window.open(url, '_blank');
+                          } else if (article.story && article.story.trim() !== '') {
+                            setSelectedArticle(article);
+                            setIsModalOpen(true);
+                          }
                         }
                       }}
                     >
@@ -527,14 +637,12 @@ const NewsPage: React.FC = () => {
                             <User size={16} /> {article.author}
                           </span>
                         </div>
-                        <a href={article.article_url} target="_blank" className='read-more-link'>
                         <button 
                           onClick={(e) => handleReadMore(article, e)}
                           className="read-more-button"
                         >
                           Read Full Story <ChevronRight size={18} />
                         </button>
-                        </a>
                       </div>
                     </article>
                   ))}
@@ -567,52 +675,12 @@ const NewsPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Modal for story content */}
-      {isModalOpen && selectedArticle && (
-        <div className="modal-overlay" onClick={handleModalBackdropClick}>
-          <div className="modal-content">
-            <div className="modal-header">
-              <h2 className="modal-title">{selectedArticle.title}</h2>
-              <button className="modal-close" onClick={closeModal}>
-                <X size={24} />
-              </button>
-            </div>
-            
-            <div className="modal-meta">
-              <span className="modal-meta-item">
-                <Calendar size={16} /> {selectedArticle.date}
-              </span>
-              <span className="modal-meta-item">
-                <Clock size={16} /> {selectedArticle.time}
-              </span>
-              <span className="modal-meta-item">
-                <User size={16} /> {selectedArticle.author}
-              </span>
-              <span className="modal-category-tag">{selectedArticle.category}</span>
-            </div>
-
-            {selectedArticle.image && (
-              <img
-                src={selectedArticle.image}
-                alt={selectedArticle.title}
-                className="modal-image"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=250&fit=crop';
-                }}
-              />
-            )}
-
-            <div className="modal-story">
-              {selectedArticle.story.split('\n').map((paragraph, index) => (
-                <p key={index} className="modal-paragraph">
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* News Modal */}
+      <NewsModal
+        article={selectedArticle}
+        isOpen={isModalOpen}
+        onClose={closeModal}
+      />
 
     </div>
   );

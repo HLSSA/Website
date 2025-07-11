@@ -1,42 +1,112 @@
 import React from 'react';
+import useTestimonials from '../../hooks/useTestimonials';
 import './styles/Testimonials.css';
 
-const testimonials = [
-  {
-    name: "Rahul Sharma",
-    role: "Parent",
-    feedback: "HLSSA transformed my son's confidence and skills. The coaches are professional, and the environment is inspiring.",
-    image: "https://randomuser.me/api/portraits/men/32.jpg"
-  },
-  {
-    name: "Ananya Rao",
-    role: "Player - U14",
-    feedback: "Thanks to HLSSA, I got the opportunity to play in state-level tournaments. The training is top-notch!",
-    image: "https://randomuser.me/api/portraits/women/44.jpg"
-  },
-  {
-    name: "Mohammed Faizan",
-    role: "Alumni",
-    feedback: "Joining HLSSA was the best decision of my football journey. I owe my current success to their excellent coaching.",
-    image: "https://randomuser.me/api/portraits/men/41.jpg"
-  }
-];
+interface TestimonialsProps {
+  token: string | null;
+}
 
-const Testimonials: React.FC = () => {
+const Testimonials: React.FC<TestimonialsProps> = ({ token }) => {
+  const { testimonials, loading, error, fetchTestimonials } = useTestimonials(token);
+
+  if (loading) {
+    return (
+      <section className="testimonials-section">
+        <div className="container">
+          <div className="testimonial-header">
+            <h2 className="section-title">What Our Community Says</h2>
+            <p className="testimonial-subtitle">Parents, players, and alumni share their HLSSA experience</p>
+          </div>
+          <div className="testimonial-loading">
+            <div className="loading-spinner"></div>
+            <p>Loading testimonials...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="testimonials-section">
+        <div className="container">
+          <div className="testimonial-header">
+            <h2 className="section-title">What Our Community Says</h2>
+            <p className="testimonial-subtitle">Parents, players, and alumni share their HLSSA experience</p>
+          </div>
+          <div className="testimonial-error">
+            <p className="error-message">Failed to load testimonials: {error}</p>
+            <button 
+              onClick={fetchTestimonials}
+              className="retry-button"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (testimonials.length === 0) {
+    return (
+      <section className="testimonials-section">
+        <div className="container">
+          <div className="testimonial-header">
+            <h2 className="section-title">What Our Community Says</h2>
+            <p className="testimonial-subtitle">Parents, players, and alumni share their HLSSA experience</p>
+          </div>
+          <div className="testimonial-empty">
+            <p>No testimonials available at the moment.</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="testimonials-section">
       <div className="container">
         <div className="testimonial-header">
-          <h2 className="testimonial-title">What Our Community Says</h2>
+          <h2 className="section-title">What Our Community Says</h2>
           <p className="testimonial-subtitle">Parents, players, and alumni share their HLSSA experience</p>
         </div>
         <div className="testimonial-cards">
-          {testimonials.map((t, index) => (
-            <div key={index} className="testimonial-card">
-              <img src={t.image} alt={t.name} className="testimonial-image" />
-              <p className="testimonial-feedback">“{t.feedback}”</p>
-              <h4 className="testimonial-name">{t.name}</h4>
-              <span className="testimonial-role">{t.role}</span>
+          {testimonials.map((testimonial) => (
+            <div key={testimonial.id} className="testimonial-card">
+              {testimonial.image && (
+                <img 
+                  src={testimonial.image} 
+                  alt={testimonial.name} 
+                  className="testimonial-image"
+                  onError={(e) => {
+                    // Fallback to a default image if the image fails to load
+                    (e.target as HTMLImageElement).src = '/default-avatar.png';
+                  }}
+                />
+              )}
+              {!testimonial.image && (
+                <div className="testimonial-image-placeholder">
+                  <span className="testimonial-initials">
+                    {testimonial.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                  </span>
+                </div>
+              )}
+              <p className="testimonial-feedback">"{testimonial.feedback}"</p>
+              <h4 className="testimonial-name">{testimonial.name}</h4>
+              <span className="testimonial-role">{testimonial.role}</span>
+              {testimonial.rating && (
+                <div className="testimonial-rating">
+                  {[...Array(5)].map((_, i) => (
+                    <span 
+                      key={i} 
+                      className={`star ${i < testimonial.rating ? 'star-filled' : 'star-empty'}`}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>

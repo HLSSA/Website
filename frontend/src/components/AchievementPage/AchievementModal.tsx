@@ -112,12 +112,12 @@ export const AchievementModal: React.FC<AchievementModalProps> = ({
         </button>
         
         <div className="modal-body" style={{ padding: '0' }}>
-          <div className="modal-media" style={{ marginBottom: '0', width: '100%' }}>
+          <div className="modal-media" style={{ marginBottom: '0', width: '100%', height: '100%' }}>
             {achievement.video ? (
               <div style={{
                 position: 'relative',
                 width: '100%',
-                height: '400px',
+                height: '100%',
                 overflow: 'hidden'
               }}>
                 <video
@@ -139,7 +139,7 @@ export const AchievementModal: React.FC<AchievementModalProps> = ({
             ) : achievement.image ? (
               <div style={{
                 width: '100%',
-                height: '400px',
+                height: '100%',
                 overflow: 'hidden'
               }}>
                 <img 
