@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import useAbout from '../hooks/useAbout';
 
 // Menu Icon Component
 const MenuIcon: React.FC = () => (
@@ -24,8 +25,33 @@ const PhoneIcon: React.FC = () => (
   </svg>
 );
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  token?: string | null;
+}
+
+const Header: React.FC<HeaderProps> = ({ token }) => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [isDesktop, setIsDesktop] = useState<boolean>(window.innerWidth >= 768);
+  const [isTablet, setIsTablet] = useState<boolean>(window.innerWidth >= 640);
+  const { aboutData, loading, error } = useAbout();
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768);
+      setIsTablet(window.innerWidth >= 640);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Close mobile menu when switching to desktop
+  useEffect(() => {
+    if (isDesktop) {
+      setIsMenuOpen(false);
+    }
+  }, [isDesktop]);
 
   const headerStyles: React.CSSProperties = {
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
@@ -58,22 +84,17 @@ const Header: React.FC = () => {
     transition: 'transform 0.2s ease',
     display: 'flex',
     alignItems: 'center',
+    flexShrink: 0,
   };
 
   const logoImageStyles: React.CSSProperties = {
-    width: '100px',
-    height: '80px',
-    objectFit: 'contain',
-  };
-
-  const mobileLogoImageStyles: React.CSSProperties = {
-    width: '70px',
-    height: '50px',
+    width: isDesktop ? '100px' : '70px',
+    height: isDesktop ? '80px' : '50px',
     objectFit: 'contain',
   };
 
   const desktopNavStyles: React.CSSProperties = {
-    display: window.innerWidth >= 768 ? 'flex' : 'none',
+    display: isDesktop ? 'flex' : 'none',
     alignItems: 'center',
     gap: '24px',
   };
@@ -93,7 +114,7 @@ const Header: React.FC = () => {
   };
 
   const ctaButtonStyles: React.CSSProperties = {
-    display: window.innerWidth >= 640 ? 'flex' : 'none',
+    display: 'flex',
     alignItems: 'center',
     gap: '8px',
     backgroundColor: '#2563eb',
@@ -106,10 +127,11 @@ const Header: React.FC = () => {
     border: 'none',
     cursor: 'pointer',
     fontSize: '14px',
+    whiteSpace: 'nowrap',
   };
 
   const mobileMenuButtonStyles: React.CSSProperties = {
-    display: window.innerWidth >= 768 ? 'none' : 'block',
+    display: isDesktop ? 'none' : 'block',
     padding: '8px',
     borderRadius: '8px',
     backgroundColor: 'transparent',
@@ -119,7 +141,7 @@ const Header: React.FC = () => {
   };
 
   const mobileMenuStyles: React.CSSProperties = {
-    display: window.innerWidth >= 768 ? 'none' : isMenuOpen ? 'block' : 'none',
+    display: isDesktop ? 'none' : isMenuOpen ? 'block' : 'none',
     padding: '16px 0',
     borderTop: '1px solid #e5e7eb',
   };
@@ -184,7 +206,42 @@ const Header: React.FC = () => {
     e.currentTarget.style.transform = 'scale(1)';
   };
 
-  const isDesktop = window.innerWidth >= 768;
+  // Get logo URL from about data or use fallback
+  const logoUrl = aboutData?.logo || "https://i.ibb.co/JWPpTbt9/hlssa-optimized-1000.png";
+  
+  // Get contact from about data or use fallback
+  const contactNumber = aboutData?.contact || "+917993994704";
+
+  // Show loading state while fetching data
+  if (loading) {
+    return (
+      <header style={headerStyles}>
+        <div style={containerStyles}>
+          <div style={headerContentStyles}>
+            <div style={logoLinkStyles}>
+              <div style={{
+                ...logoImageStyles,
+                backgroundColor: '#f3f4f6',
+                borderRadius: '4px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '12px',
+                color: '#6b7280'
+              }}>
+                Loading...
+              </div>
+            </div>
+            <div style={headerActionsStyles}>
+              <button style={mobileMenuButtonStyles}>
+                <MenuIcon />
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header style={headerStyles}>
@@ -198,9 +255,13 @@ const Header: React.FC = () => {
             onMouseLeave={handleLogoLeave}
           >
             <img 
-              src="https://i.ibb.co/JWPpTbt9/hlssa-optimized-1000.png" 
+              src={logoUrl} 
               alt="HLSSA Logo" 
-              style={isDesktop ? logoImageStyles : mobileLogoImageStyles}
+              style={logoImageStyles}
+              onError={(e) => {
+                // Fallback if image fails to load
+                e.currentTarget.src = "https://i.ibb.co/JWPpTbt9/hlssa-optimized-1000.png";
+              }}
             />
           </a>
 
@@ -258,24 +319,32 @@ const Header: React.FC = () => {
 
           {/* CTA Button & Mobile Menu */}
           <div style={headerActionsStyles}>
-            <a 
-              href="/shop" 
-              style={ctaButtonStyles}
-              onMouseEnter={handleButtonHover}
-              onMouseLeave={handleButtonLeave}
-            >
-              Shop Now
-            </a>
-            <a
-              href="tel:+917993994704"
-              style={ctaButtonStyles}
-              onMouseEnter={handleButtonHover}
-              onMouseLeave={handleButtonLeave}
-            >
-              <PhoneIcon />
-              <span>Call Now</span>
-            </a>
+            {/* Shop Button - Show on tablet and up */}
+            {isTablet && (
+              <a 
+                href="/shop" 
+                style={ctaButtonStyles}
+                onMouseEnter={handleButtonHover}
+                onMouseLeave={handleButtonLeave}
+              >
+                Shop Now
+              </a>
+            )}
+            
+            {/* Call Button - Show on tablet and up */}
+            {isTablet && (
+              <a
+                href={`tel:${contactNumber}`}
+                style={ctaButtonStyles}
+                onMouseEnter={handleButtonHover}
+                onMouseLeave={handleButtonLeave}
+              >
+                <PhoneIcon />
+                <span>Call Now</span>
+              </a>
+            )}
 
+            {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               style={mobileMenuButtonStyles}
@@ -296,6 +365,7 @@ const Header: React.FC = () => {
                 style={mobileNavLinkStyles}
                 onMouseEnter={handleLinkHover}
                 onMouseLeave={handleLinkLeave}
+                onClick={() => setIsMenuOpen(false)}
               >
                 Home
               </a>
@@ -304,6 +374,7 @@ const Header: React.FC = () => {
                 style={mobileNavLinkStyles}
                 onMouseEnter={handleLinkHover}
                 onMouseLeave={handleLinkLeave}
+                onClick={() => setIsMenuOpen(false)}
               >
                 About
               </a>
@@ -312,6 +383,7 @@ const Header: React.FC = () => {
                 style={mobileNavLinkStyles}
                 onMouseEnter={handleLinkHover}
                 onMouseLeave={handleLinkLeave}
+                onClick={() => setIsMenuOpen(false)}
               >
                 Achievements
               </a>
@@ -320,6 +392,7 @@ const Header: React.FC = () => {
                 style={mobileNavLinkStyles}
                 onMouseEnter={handleLinkHover}
                 onMouseLeave={handleLinkLeave}
+                onClick={() => setIsMenuOpen(false)}
               >
                 Matches
               </a>
@@ -328,6 +401,7 @@ const Header: React.FC = () => {
                 style={mobileNavLinkStyles}
                 onMouseEnter={handleLinkHover}
                 onMouseLeave={handleLinkLeave}
+                onClick={() => setIsMenuOpen(false)}
               >
                 Our Team
               </a>
@@ -336,6 +410,7 @@ const Header: React.FC = () => {
                 style={mobileNavLinkStyles}
                 onMouseEnter={handleLinkHover}
                 onMouseLeave={handleLinkLeave}
+                onClick={() => setIsMenuOpen(false)}
               >
                 News
               </a>
@@ -344,14 +419,16 @@ const Header: React.FC = () => {
                 style={mobileNavLinkStyles}
                 onMouseEnter={handleLinkHover}
                 onMouseLeave={handleLinkLeave}
+                onClick={() => setIsMenuOpen(false)}
               >
                 Shop
               </a>
               <a
-                href="tel:+917993994704"
+                href={`tel:${contactNumber}`}
                 style={mobileCtaButtonStyles}
                 onMouseEnter={handleButtonHover}
                 onMouseLeave={handleButtonLeave}
+                onClick={() => setIsMenuOpen(false)}
               >
                 <PhoneIcon />
                 <span>Call Now</span>

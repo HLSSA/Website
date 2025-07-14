@@ -105,7 +105,7 @@ const Programs: React.FC = () => {
     <>
       <style>{`
         .programs-section {
-          padding: 80px 0;
+          padding: 60px 60px;
           background-color: #f9fafb;
         }
         
@@ -447,7 +447,7 @@ const Programs: React.FC = () => {
       `}</style>
       
       <section className="programs-section" id="programs">
-        <div className="container">
+        <div className="">
           <div className="section-header">
             <h2 className="section-title">Our Training Programs</h2>
             <p className="section-subtitle">

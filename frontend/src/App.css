@@ -1,8 +1,11 @@
 /* Reset default margins and padding */
+@import "@fontsource/inter";
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Inter', sans-serif !important;
 }
 
 /* Root container styles */
@@ -27,8 +30,6 @@ main {
 .container {
   width: 100%;
   max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 1rem;
 }
 
 /* Card styles */

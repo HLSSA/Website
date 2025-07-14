@@ -58,6 +58,7 @@ const Footer: React.FC = () => {
           display: flex;
           align-items: center;
           justify-content: center;
+          overflow: hidden;
         }
 
         .footer-logo-text h3 {
@@ -277,9 +278,9 @@ const Footer: React.FC = () => {
                 <div className="footer-logo-icon">
                   <div className="footer-logo-inner">
                     <img 
-                      src="https://i.ibb.co/JWPpTbt9/hlssa-optimized-1000.png" 
+                      src="https://i.ibb.co/NnbJGSpD/hlssa-insta.jpg" 
                       alt="HLSSA Logo" 
-                      style={{width: '90px', height: '100px', objectFit: 'contain'}}
+                      style={{width: '120px', height: '120px', objectFit: 'contain'}}
                     />
                   </div>
                 </div>
@@ -393,7 +394,7 @@ const Footer: React.FC = () => {
           <div className="footer-bottom">
             <div className="footer-bottom-content">
               <p className="footer-copyright">
-                © 2024 Hyderabad Little Stars Soccer Academy. All rights reserved.
+                ©Hyderabad Little Stars Soccer Academy. All rights reserved.
               </p>
 
               <div className="footer-legal">

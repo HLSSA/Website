@@ -44,7 +44,7 @@ const CoachesOnlyPage = () => {
 
   if (loading) {
     return (
-      <div className="team-page">
+      <div className="staff-page">
         <div className="coaches-section">
             <h1 className="section-title">Our Elite Coaching Staff</h1>
             <p>Shaping the Future of Football with Experience and Passion</p>
@@ -59,7 +59,7 @@ const CoachesOnlyPage = () => {
 
   if (error) {
     return (
-      <div className="team-page">
+      <div className="staff-page">
         <div className="coaches-section">
             <h1 className="section-title">Our Elite Coaching Staff</h1>
             <p>Shaping the Future of Football with Experience and Passion</p>
@@ -73,7 +73,7 @@ const CoachesOnlyPage = () => {
   }
 
   return (
-    <div className="team-page">
+    <div className="staff-page">
       
       <div className="coaches-section">
             <h1 className="section-title">Our Elite Coaching Staff</h1>

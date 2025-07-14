@@ -182,7 +182,9 @@ const StyledWrapper = styled.div`
   }
 
   .headlogin{
-  color :rgb(253, 252, 250) !Important;}
+  color :rgb(253, 252, 250) !important;
+  }
+
   .form .input-container {
     display: flex;
     align-items: center;

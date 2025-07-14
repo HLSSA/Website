@@ -109,7 +109,7 @@ const Coaches = () => {
       } else {
         // Add new coach/player
         response = await axios.post(
-          `${API_URL}/${formData.category.toLowerCase()}s`,
+          `${API_URL}/${formData.category.toLowerCase()}es`,
           formDataToSend,
           { headers: { ...headers, 'Content-Type': 'multipart/form-data' } }
         );

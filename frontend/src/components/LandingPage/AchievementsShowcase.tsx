@@ -58,7 +58,7 @@ const AchievementsShowcase = () => {
   if (loading) {
     return (
       <section className="achievements-section">
-        <div className="container">
+        <div className="">
           <div className="section-header">
             <h2 className="section-title">Our Achievements</h2>
             <Loader />
@@ -72,7 +72,7 @@ const AchievementsShowcase = () => {
   if (error) {
     return (
       <section className="achievements-section">
-        <div className="container">
+        <div className="">
           <div className="section-header">
             <h2 className="section-title">Our Achievements</h2>
             <Error />
@@ -85,7 +85,7 @@ const AchievementsShowcase = () => {
   return (
     <>
       <section className="achievements-section">
-        <div className="container">
+        <div className="">
           <div className="section-header">
             <h2 className="section-title">Our Achievements</h2>
             <p className="section-description">

@@ -16,14 +16,12 @@ export interface AboutData {
 
 const API_URL = 'http://localhost:5000/api/admin';
 
-const useAbout = (token: string | null) => {
+const useAbout = () => {
   const [aboutData, setAboutData] = useState<AboutData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const headers = {
-    'Authorization': `Bearer ${token}`
-  };
+  const headers = {};
 
   const fetchAbout = async () => {
     try {
@@ -41,10 +39,8 @@ const useAbout = (token: string | null) => {
   };
 
   useEffect(() => {
-    if (token) {
-      fetchAbout();
-    }
-  }, [token]);
+    fetchAbout();
+  }, []);
 
   return { aboutData, loading, error, fetchAbout };
 };

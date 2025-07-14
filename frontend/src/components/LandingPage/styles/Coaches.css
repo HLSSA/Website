@@ -4,10 +4,11 @@
     box-sizing: border-box;
   }
 
-  .team-page {
+  .staff-page {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background: white;
-    min-height: 100vh;
+    height: 100%;
+    margin-bottom: 40px;
     color: #333;
   }
 
@@ -21,8 +22,9 @@
 
 
   .scrollable-section {
-    margin-bottom: 60px;
+    margin-bottom: 10px !important;
     padding: 0 20px;
+    width: 100%;
   }
 
   .section-header {
@@ -40,11 +42,9 @@
   }
 
   .coaches-section {
-    padding: 4rem 0;
-    max-width: 1200px;
+    padding: 0.5rem 0;
     margin: 0 auto;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    width: 100%;
   }
 
   /* Section Title */
@@ -160,6 +160,7 @@
     font-size: 1.3rem;
     font-weight: 700;
     margin-bottom: 4px;
+    color: #ffffff !important;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
   }
 
@@ -167,6 +168,7 @@
     font-size: 1rem;
     font-weight: 500;
     opacity: 0.9;
+    color: #fffdb7 !important;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
   }
 

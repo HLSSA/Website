@@ -22,7 +22,7 @@ const OurPartners = () => {
   if (loading) {
     return (
       <section className="partners-section">
-        <div className="container">
+        <div className="">
           {renderHeader('Our Partners', 'Loading our valued partners...')}
         </div>
       </section>
@@ -32,7 +32,7 @@ const OurPartners = () => {
   if (error) {
     return (
       <section className="partners-section">
-        <div className="container">
+        <div className="">
           {renderHeader('Our Partners', 'Unable to load partners at the moment. Please try again later.')}
         </div>
       </section>
@@ -41,7 +41,7 @@ const OurPartners = () => {
 
   return (
     <section className="partners-section">
-      <div className="container">
+      <div className="">
         {renderHeader('Our Partners', 'Collaborating with industry leaders to provide the best football experience')}
 
         <div className="slideshow-container">

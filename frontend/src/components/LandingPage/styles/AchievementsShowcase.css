@@ -1,343 +1,471 @@
 .achievements-section {
-padding: 80px 0;
-background: #ffffff;
-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-}
-
-.container {
-max-width: 1200px;
-margin: 0 auto;
-padding: 0 20px;
-}
-
-.section-header {
-text-align: center;
-margin-bottom: 60px;
-}
-
-.section-title {
-font-size: 2.5rem;
-font-weight: 700;
-color: #1a1a1a;
-margin-bottom: 16px;
-line-height: 1.2;
-}
-
-.section-description {
-font-size: 1.2rem;
-color: #666;
-max-width: 600px;
-margin: 0 auto;
-line-height: 1.6;
-}
-
-.achievements-grid {
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-gap: 24px;
-width: 100%;
-max-width: 100%;
-margin: 0 auto;
-padding: 0;
-box-sizing: border-box;
-}
-
-.achievement-card {
-position: relative;
-border-radius: 16px;
-overflow: hidden;
-cursor: pointer;
-transition: all 0.3s ease;
-aspect-ratio: 1;
-background: #f8f9fa;
-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-width: 100%;
-height: 100%;
-margin: 0;
-padding: 0;
-box-sizing: border-box;
-}
-
-.achievement-card:hover {
-transform: translateY(-8px);
-box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-}
-
-.achievement-image {
-width: 100%;
-height: 100%;
-object-fit: cover;
-transition: transform 0.3s ease;
-display: block;
-}
-
-.achievement-card:hover .achievement-image {
-transform: scale(1.1);
-}
-
-.achievement-overlay {
-position: absolute;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 50%, transparent 100%);
-opacity: 0;
-transition: opacity 0.3s ease;
-display: flex;
-align-items: flex-end;
-padding: 24px;
-}
-
-.achievement-card:hover .achievement-overlay {
-opacity: 1;
-}
-
-.achievement-content {
-color: white;
-width: 100%;
-}
-
-.achievement-meta {
-display: flex;
-align-items: center;
-gap: 8px;
-margin-bottom: 12px;
-}
-
-.category-badge {
-display: inline-flex;
-align-items: center;
-gap: 6px;
-padding: 6px 12px;
-border-radius: 20px;
-font-size: 0.75rem;
-font-weight: 600;
-}
-
-.category-championship {
-background: #fef3c7;
-color: #92400e;
-}
-
-.category-recognition {
-background: #dbeafe;
-color: #1e40af;
-}
-
-.category-tournament {
-background: #d1fae5;
-color: #065f46;
-}
-
-.category-alumni {
-background: #e9d5ff;
-color: #7c2d12;
-}
-
-.category-community {
-background: #fee2e2;
-color: #991b1b;
-}
-
-.achievement-year {
-color: #fbbf24;
-font-size: 0.75rem;
-font-weight: 600;
-}
-
-.achievement-title {
-font-size: 1.1rem;
-font-weight: 700;
-margin-bottom: 8px;
-line-height: 1.3;
-}
-
-.achievement-preview {
-font-size: 0.85rem;
-color: #d1d5db;
-line-height: 1.4;
-margin-bottom: 12px;
-}
-
-.read-more {
-color: #fbbf24;
-font-size: 0.85rem;
-font-weight: 600;
-}
-
-/* Modal Styles */
-.modal-overlay {
-position: fixed;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-background: rgba(0, 0, 0, 0.8);
-backdrop-filter: blur(4px);
-z-index: 1000;
-display: flex;
-align-items: center;
-justify-content: center;
-padding: 20px;
-opacity: 0;
-visibility: hidden;
-transition: all 0.3s ease;
-}
-
-.modal-overlay.active {
-opacity: 1;
-visibility: visible;
-}
-
-.modal-content {
-background: white;
-border-radius: 16px;
-max-width: 900px;
-width: 100%;
-max-height: 90vh;
-overflow: hidden;
-display: grid;
-grid-template-columns: 1fr 1fr;
-transform: scale(0.9);
-transition: transform 0.3s ease;
-}
-
-.modal-overlay.active .modal-content {
-transform: scale(1);
-}
-
-.modal-image-container {
-position: relative;
-}
-
-.modal-image {
-width: 100%;
-height: 100%;
-object-fit: cover;
-min-height: 300px;
-}
-
-.close-button {
-position: absolute;
-top: 16px;
-right: 16px;
-width: 40px;
-height: 40px;
-background: rgba(0, 0, 0, 0.5);
-color: white;
-border: none;
-border-radius: 50%;
-cursor: pointer;
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 18px;
-transition: background 0.3s ease;
-}
-
-.close-button:hover {
-background: rgba(0, 0, 0, 0.7);
-}
-
-.modal-text {
-padding: 40px;
-overflow-y: auto;
-}
-
-.modal-meta {
-display: flex;
-align-items: center;
-gap: 12px;
-margin-bottom: 20px;
-}
-
-.modal-title {
-font-size: 1.8rem;
-font-weight: 700;
-color: #1a1a1a;
-margin-bottom: 24px;
-line-height: 1.3;
-}
-
-.modal-description {
-color: #666;
-font-size: 1.1rem;
-line-height: 1.6;
-margin-bottom: 32px;
-}
-
-.modal-footer {
-padding-top: 24px;
-border-top: 1px solid #e5e7eb;
-}
-
-.close-modal-btn {
-background: #2563eb;
-color: white;
-border: none;
-padding: 12px 24px;
-border-radius: 8px;
-font-weight: 600;
-cursor: pointer;
-transition: background 0.3s ease;
-}
-
-.close-modal-btn:hover {
-background: #1d4ed8;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-.achievements-section {
-    padding: 60px 0;
-}
-
-.section-title {
-    font-size: 2rem;
-}
-
-.section-description {
-    font-size: 1rem;
-}
-
-.achievements-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-}
-
-.modal-content {
-    grid-template-columns: 1fr;
-    max-height: 95vh;
-}
-
-.modal-text {
-    padding: 24px;
-}
-
-.modal-title {
-    font-size: 1.5rem;
-}
-
-.modal-description {
-    font-size: 1rem;
-}
-}
-
-@media (max-width: 480px) {
-.container {
-    padding: 0 16px;
-}
-
-.achievement-overlay {
-    padding: 16px;
-}
-
-.modal-text {
+    padding: 80px 0;
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #1e40af 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    
+  }
+  
+  .achievements-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    pointer-events: none;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .section-header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+  
+  .section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1A1B25 !important;
+    margin-bottom: 16px;
+    line-height: 1.2;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .section-description {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  .achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+    gap: 32px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  .achievement-card {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    aspect-ratio: 1;
+    background: #ffffff;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+  }
+  
+  .achievement-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  .achievement-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+    display: block;
+  }
+  
+  .achievement-card:hover .achievement-image {
+    transform: scale(1.1);
+  }
+  
+  .achievement-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top, rgba(30, 58, 138, 0.9) 0%, rgba(59, 130, 246, 0.7) 30%, rgba(30, 64, 175, 0.3) 60%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    display: flex;
+    align-items: flex-end;
+    padding: 28px;
+  }
+  
+  .achievement-card:hover .achievement-overlay {
+    opacity: 1;
+  }
+  
+  .achievement-content {
+    color: white;
+    width: 100%;
+  }
+  
+  .achievement-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .category-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 24px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .category-championship {
+    background: rgba(251, 191, 36, 0.9);
+    color: #92400e;
+  }
+  
+  .category-recognition {
+    background: rgba(96, 165, 250, 0.9);
+    color: #1e40af;
+  }
+  
+  .category-tournament {
+    background: rgba(52, 211, 153, 0.9);
+    color: #065f46;
+  }
+  
+  .category-alumni {
+    background: rgba(196, 181, 253, 0.9);
+    color: #7c2d12;
+  }
+  
+  .category-community {
+    background: rgba(248, 113, 113, 0.9);
+    color: #991b1b;
+  }
+  
+  .achievement-year {
+    color: #fbbf24;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 4px 8px;
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+  }
+  
+  .achievement-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.3;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  
+  .achievement-preview {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.4;
+    margin-bottom: 16px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  
+  .read-more {
+    color: #fbbf24;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 16px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    transition: all 0.3s ease;
+  }
+  
+  .read-more:hover {
+    background: rgba(251, 191, 36, 0.2);
+    transform: translateX(4px);
+  }
+  
+  /* Modal Styles */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(30, 58, 138, 0.9);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 20px;
-}
-
-.achievements-grid {
-    grid-template-columns: 1fr;
-}
-}
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+  }
+  
+  .modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .modal-content {
+    background: white;
+    border-radius: 24px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .modal-overlay.active .modal-content {
+    transform: scale(1) translateY(0);
+  }
+  
+  .modal-image-container {
+    position: relative;
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    height: 320px;
+  }
+  
+  .modal-image {
+    width: 100%;
+    height: 100% !important;
+    object-fit: cover;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .close-button:hover {
+    background: rgba(0, 0, 0, 0.8);
+    transform: scale(1.1);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .modal-text {
+    padding: 40px;
+    overflow-y: auto;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  }
+  
+  .modal-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .modal-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 24px;
+    line-height: 1.3;
+  }
+  
+  .modal-description {
+    color: #4b5563;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+  
+  .modal-footer {
+    padding-top: 24px;
+    border-top: 2px solid #e5e7eb;
+  }
+  
+  .close-modal-btn {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  }
+  
+  .close-modal-btn:hover {
+    background: linear-gradient(135deg, #1d4ed8, #1e40af);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .achievements-section {
+      padding: 60px 0;
+    }
+  
+    .section-title {
+      font-size: 2rem;
+    }
+  
+    .section-description {
+      font-size: 1rem;
+    }
+  
+    .achievements-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  
+    .modal-content {
+      grid-template-columns: 1fr;
+      max-height: 95vh;
+    }
+  
+    .modal-text {
+      padding: 24px;
+    }
+  
+    .modal-title {
+      font-size: 1.5rem;
+    }
+  
+    .modal-description {
+      font-size: 1rem;
+    }
+  
+    .achievement-overlay {
+      padding: 20px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .container {
+      padding: 0 16px;
+    }
+  
+    .achievement-overlay {
+      padding: 16px;
+    }
+  
+    .modal-text {
+      padding: 20px;
+    }
+  
+    .achievements-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+  
+    .section-title {
+      font-size: 1.8rem;
+    }
+  
+    .achievement-card {
+      border-radius: 16px;
+    }
+  
+    .modal-content {
+      border-radius: 16px;
+      margin: 10px;
+    }
+  
+    .close-button {
+      top: 16px;
+      right: 16px;
+      width: 40px;
+      height: 40px;
+    }
+  }
+  
+  /* Loading and Error States */
+  .achievements-section .section-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  /* Enhanced animations */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .achievement-card {
+    animation: fadeInUp 0.6s ease forwards;
+  }
+  
+  .achievement-card:nth-child(1) { animation-delay: 0.1s; }
+  .achievement-card:nth-child(2) { animation-delay: 0.2s; }
+  .achievement-card:nth-child(3) { animation-delay: 0.3s; }
+  
+  /* Subtle hover effects for better UX */
+  .achievement-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  .achievement-card:hover::before {
+    opacity: 1;
+  }
