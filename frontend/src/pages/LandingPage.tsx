@@ -6,7 +6,9 @@ import AchievementsShowcase from '../components/LandingPage/AchievementsShowcase
 import Programs from '../components/LandingPage/Programs';
 import Coaches from '../components/LandingPage/Coaches';
 import Testimonials from '../components/LandingPage/Testimonials';
-import axios from 'axios';
+import Locations from '../components/LandingPage/Locations';
+
+
 
 const LandingPage = () => {
   return (
@@ -18,6 +20,7 @@ const LandingPage = () => {
       <AchievementsShowcase />
       <Testimonials />
       <OurPartners />
+      <Locations />
     </div>
   );
 };
