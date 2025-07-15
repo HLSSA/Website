@@ -1,6 +1,6 @@
 import React from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { LatLngExpression, Icon } from 'leaflet';
+import { LatLngExpression, Icon, Popup as LeafletPopup } from 'leaflet';
 
 // You must import the Leaflet CSS for it to work correctly
 import 'leaflet/dist/leaflet.css';
@@ -20,18 +20,27 @@ Icon.Default.mergeOptions({
 });
 
 // --- Data for the Academies ---
-const locations = [
-  { name: "Cyclone Sports", position: { lat: 17.4020, lng: 78.4090 } },
-  { name: "Leo 11", position: { lat: 17.4025, lng: 78.4095 } },
-  { name: "Korner Kick", position: { lat: 17.3850, lng: 78.4200 } },
-  { name: "One More Game", position: { lat: 17.4100, lng: 78.3800 } },
-  { name: "Inplay", position: { lat: 17.4300, lng: 78.3900 } },
-  { name: "HOS", position: { lat: 17.4320, lng: 78.3920 } },
-  { name: "Infinity Sports Arena", position: { lat: 17.3700, lng: 78.4300 } },
-  { name: "Mag Arena", position: { lat: 17.3720, lng: 78.4320 } },
-  { name: "GR Arena", position: { lat: 17.3500, lng: 78.4500 } },
-  { name: "Knockout Arena", position: { lat: 17.5000, lng: 78.4900 } },
-  { name: "Olympians Arena", position: { lat: 17.4000, lng: 78.4400 } },
+interface Location {
+  id: number;
+  name: string;
+  address: string;
+  area: string;
+  position: { lat: number; lng: number };
+  mapsUrl: string;
+}
+
+const locations: Location[] = [
+  { id: 1, name: "Cyclone Sports", address: "Tolichowki", area: "Tolichowki", position: { lat: 17.4020, lng: 78.4090 }, mapsUrl: "https://maps.app.goo.gl/oFM8qN3g4tG8N8pm7" },
+  { id: 2, name: "Leo 11", address: "7 Tombs Road, Tolichowki", area: "Tolichowki", position: { lat: 17.4025, lng: 78.4095 }, mapsUrl: "https://maps.app.goo.gl/2LMtiz7EwqP2v2CP7" },
+  { id: 3, name: "Korner Kick", address: "Alkhapur", area: "Alkhapur", position: { lat: 17.3850, lng: 78.4200 }, mapsUrl: "https://maps.app.goo.gl/VsuD29v43RF28UZQ7" },
+  { id: 4, name: "One More Game", address: "Freedom Park, Manikonda", area: "Manikonda", position: { lat: 17.4100, lng: 78.3800 }, mapsUrl: "https://maps.app.goo.gl/MAPWXv6cx23GSGd6A" },
+  { id: 5, name: "Inplay", address: "Bangla gudda Gagir, SunCity", area: "SunCity", position: { lat: 17.4300, lng: 78.3900 }, mapsUrl: "https://maps.app.goo.gl/ucrJ9ETc6f9QKzwL8" },
+  { id: 6, name: "HOS", address: "SunCity", area: "SunCity", position: { lat: 17.4320, lng: 78.3920 }, mapsUrl: "https://maps.app.goo.gl/uhToaju6RZ7uPRn98" },
+  { id: 7, name: "Infinity Sports Arena", address: "Attapur, Piller no 177", area: "Attapur", position: { lat: 17.3700, lng: 78.4300 }, mapsUrl: "https://maps.app.goo.gl/CrgJwRhkuGRYweoc9" },
+  { id: 8, name: "Mag Arena", address: "Attapur, Piller no 210", area: "Attapur", position: { lat: 17.3720, lng: 78.4320 }, mapsUrl: "https://maps.app.goo.gl/QZMXfmLrUnrZnpf39" },
+  { id: 9, name: "GR Arena", address: "Khilwat, Old City", area: "Old City", position: { lat: 17.3500, lng: 78.4500 }, mapsUrl: "https://maps.app.goo.gl/WumPqfrHVTzFDNRr8" },
+  { id: 10, name: "Knockout Arena", address: "Alwal, Secunderabad", area: "Secunderabad", position: { lat: 17.5000, lng: 78.4900 }, mapsUrl: "https://maps.app.goo.gl/yV6kNcTJyoE69uru5" },
+  { id: 11, name: "Olympians Arena", address: "Location TBD", area: "Hyderabad", position: { lat: 17.4000, lng: 78.4400 }, mapsUrl: "https://maps.app.goo.gl/MWz7N2oxbRfbMeFdA" },
 ];
 
 const AcademyMap: React.FC = () => {
@@ -67,9 +76,46 @@ const AcademyMap: React.FC = () => {
 
           {/* Map through the locations to create a Marker and a Popup for each one */}
           {locations.map((loc) => (
-            <Marker key={loc.name} position={[loc.position.lat, loc.position.lng] as LatLngExpression}>
+            <Marker 
+              key={loc.id} 
+              position={[loc.position.lat, loc.position.lng] as LatLngExpression}
+              eventHandlers={{
+                mouseover: (e: any) => {
+                  e.target.openPopup();
+                },
+                mouseout: (e: any) => {
+                  e.target.closePopup();
+                },
+                click: () => {
+                  window.open(loc.mapsUrl, '_blank');
+                }
+              }}
+            >
               <Popup>
-                <strong style={{ fontSize: '1.1em' }}>{loc.name}</strong>
+                <div style={{ padding: '1rem', maxWidth: '250px' }}>
+                  <h3 style={{ margin: 0, marginBottom: '0.5rem' }}>{loc.name}</h3>
+                  <p style={{ margin: '0.25rem 0' }}><strong>Address:</strong> {loc.address}</p>
+                  <p style={{ margin: '0.25rem 0' }}><strong>Area:</strong> {loc.area}</p>
+                  <button
+                    style={{
+                      marginTop: '0.5rem',
+                      padding: '0.5rem 1rem',
+                      backgroundColor: '#facc15',
+                      color: '#1e3a8a',
+                      border: 'none',
+                      borderRadius: '9999px',
+                      cursor: 'pointer',
+                      fontSize: '0.9rem',
+                      fontWeight: 'bold'
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(loc.mapsUrl, '_blank');
+                    }}
+                  >
+                    View on Google Maps
+                  </button>
+                </div>
               </Popup>
             </Marker>
           ))}

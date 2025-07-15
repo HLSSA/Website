@@ -558,7 +558,39 @@ const StyledWrapper = styled.div`
   /* ===========================================
      RESPONSIVE DESIGN
   =========================================== */
-  
+
+  /* Mobile only (max-width: 640px) */
+  @media (max-width: 640px) {
+    .hero-content {
+      max-width: 90%;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    .hero-badge {
+      font-size: 12px;
+    }
+
+    .hero-description {
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .hero-stats {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .stat-number {
+      font-size: 1.2rem;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+    }
+  }
+
   /* Small screens (sm) */
   @media (min-width: 640px) {
     .hero-container {
@@ -574,10 +606,6 @@ const StyledWrapper = styled.div`
     .btn-secondary {
       width: auto;
       min-width: 200px;
-    }
-    
-    .hero-description {
-      font-size: 1.25rem;
     }
     
     .hero-title {

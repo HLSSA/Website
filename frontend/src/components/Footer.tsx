@@ -97,6 +97,66 @@ const Footer: React.FC = () => {
           transition: all 0.3s ease;
         }
 
+        .footer-developers {
+          margin-top: 0px;
+          padding-top: 24px;
+          display: flex;
+          align-items: center;
+          gap: 24px;
+          flex-wrap: wrap;
+        }
+
+        .footer-developer-info {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 12px;
+        }
+
+        .footer-developer-name {
+          color:rgb(112, 112, 112);
+          font-weight: 600;
+          font-size: 14px;
+        }
+
+        .footer-linkedin-icon {
+          width: 24px;
+          height: 24px;
+          color:rgb(112, 112, 112);
+          transition: all 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+          .footer-developers {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+          }
+
+          .footer-developer-info {
+            margin-bottom: 8px;
+          }
+
+          .footer-developer-name {
+            font-size: 13px;
+          }
+
+          .footer-linkedin-icon {
+            width: 20px;
+            height: 20px;
+          }
+        }
+
+        .footer-developers p {
+          margin: 0 0 12px 0;
+          color: #9ca3af;
+          font-size: 14px;
+        }
+
+        .footer-linkedin-icon:hover {
+          transform: translateY(-2px);
+        }
+
         .footer-social-link.facebook {
           background-color: #1877f2;
         }
@@ -213,7 +273,7 @@ const Footer: React.FC = () => {
 
         .footer-bottom {
           border-top: 1px solid #374151;
-          margin-top: 40px;
+          margin-top: 20px;
           padding-top: 24px;
           text-align: center;
         }
@@ -387,6 +447,31 @@ const Footer: React.FC = () => {
                   </a>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Developers */}
+          <div className="footer-developers">
+            <p>Developed By:</p>
+            <div className="footer-developer-info">
+              <a href="https://www.linkedin.com/in/teja-vardhan-reddy-chennuru/" target="_blank" rel="noopener noreferrer">
+                <div className="footer-linkedin-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                </div>
+              </a>
+              <span className="footer-developer-name">Teja Vardhan Reddy</span>
+            </div>
+            <div className="footer-developer-info">
+              <a href="https://www.linkedin.com/in/divya-theresa-mallavarapu-322378284/" target="_blank" rel="noopener noreferrer">
+                <div className="footer-linkedin-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                </div>
+              </a>
+              <span className="footer-developer-name">Divya Theresa</span>
             </div>
           </div>
 
