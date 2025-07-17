@@ -4,12 +4,9 @@ import './styles/Testimonials.css';
 import Loader from '../Loader';
 import Error from '../Error';
 
-interface TestimonialsProps {
-  token: string | null;
-}
 
-const Testimonials: React.FC<TestimonialsProps> = ({ token }) => {
-  const { testimonials, loading, error, fetchTestimonials } = useTestimonials(token);
+const Testimonials: React.FC = () => {
+  const { testimonials, loading, error, fetchTestimonials } = useTestimonials();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
@@ -113,7 +110,7 @@ const Testimonials: React.FC<TestimonialsProps> = ({ token }) => {
               className="carousel-track"
               style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
-              {testimonials.map((testimonial, index) => (
+              {testimonials.map((testimonial) => (
                 <div key={testimonial.id} className="testimonial-slide">
                   <div className="testimonial-card">
                     <div className="testimonial-content">

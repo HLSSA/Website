@@ -1,6 +1,6 @@
 import React from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { LatLngExpression, Icon, Popup as LeafletPopup } from 'leaflet';
+import { LatLngExpression, Icon} from 'leaflet';
 
 // You must import the Leaflet CSS for it to work correctly
 import 'leaflet/dist/leaflet.css';
@@ -70,7 +70,7 @@ const AcademyMap: React.FC = () => {
         >
           {/* TileLayer provides the map imagery. OpenStreetMap is a free alternative. */}
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright"></a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 

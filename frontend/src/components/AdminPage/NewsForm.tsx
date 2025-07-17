@@ -9,7 +9,7 @@ import Cookies from 'js-cookie';
 
 const News = () => {
   const token = Cookies.get('adminToken');
-  const { news, loading, error, fetchNews, setNews } = useNews(token || null);
+  const { news, loading, error, setNews } = useNews();
   const formRef = useRef<HTMLFormElement>(null);
 
   const [formData, setFormData] = useState<NewsFormData>({
@@ -31,7 +31,7 @@ const News = () => {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [contentType, setContentType] = useState<'fullStory' | 'article_url'>('fullStory');
 
-  const API_URL = 'http://localhost:5000/api/admin';
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const headers = {
     'Authorization': `Bearer ${token}`

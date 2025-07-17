@@ -14,7 +14,7 @@ export interface AboutData {
   carousel_pics: string[];
 }
 
-const API_URL = 'http://localhost:5000/api/admin';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const useAbout = () => {
   const [aboutData, setAboutData] = useState<AboutData | null>(null);

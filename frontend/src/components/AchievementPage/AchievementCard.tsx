@@ -88,7 +88,6 @@ export const AchievementCard: React.FC<AchievementCardProps> = ({ achievement, o
         </div>
         <div className="achievement-card__info">
           <h3 className="achievement-card__title">{achievement.title}</h3>
-          <p className="achievement-card__date">{achievement.date}</p>
         </div>
       </div>
       <div className="achievement-card__hover-icon">

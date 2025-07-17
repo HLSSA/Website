@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Award, Globe, Brain, Trophy, Users, Target, Star, ChevronDown, ChevronRight } from 'lucide-react';
+import { Play, Globe, Brain, Trophy, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface TimelineEvent {
   year: string;
@@ -346,7 +346,7 @@ const AboutUs: React.FC = () => {
         </div>
       </section>
 
-      <style jsx>{`
+      <style>{`
         /* Reset and Base Styles */
         * {
           margin: 0;

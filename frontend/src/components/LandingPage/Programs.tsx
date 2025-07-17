@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Zap, Trophy, Users, Dumbbell, Clock, Award } from 'lucide-react';
 
 const Programs: React.FC = () => {

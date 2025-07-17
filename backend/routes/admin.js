@@ -6,66 +6,110 @@ const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const supabase = require('../supabaseClient');
 
-// Environment configuration
-const SECRET = process.env.JWT_SECRET || 'supasecret';
+// Load configuration
+const config = require('../config');
+const SECRET = config.jwt.secret;
+const JWT_EXPIRES_IN = config.jwt.expiresIn;
+const SUPABASE_BUCKET = config.supabase.bucket;
 
-// Set up multer for file uploads
-const upload = multer({ storage: multer.memoryStorage() });
+// Configure multer for file uploads
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: parseInt(config.upload.limit) * 1024 * 1024 // Convert MB to bytes
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept images only
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+      return cb(new Error('Only image files are allowed!'), false);
+    }
+    cb(null, true);
+  }
+});
 
-// === Auth Middleware ===
+// Authentication Middleware
 const verifyToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  // Get token from Authorization header or cookies
+  let token = req.headers.authorization?.split(' ')[1] || req.cookies?.token;
   
   if (!token) {
-    return res.status(403).json({ error: 'Authorization token required' });
+    return res.status(401).json({ 
+      success: false,
+      message: 'Access denied. No token provided.'
+    });
   }
 
-  jwt.verify(token, SECRET, (err, user) => {
-    if (err) {
-      return res.status(403).json({ error: 'Invalid or expired token' });
-    }
-    req.user = user;
+  try {
+    // Verify token
+    const decoded = jwt.verify(token, SECRET, { issuer: 'hlssa-api' });
+    
+    // Attach user to request object
+    req.user = decoded;
+    
+    // Add token to response locals for potential use in controllers
+    res.locals.token = token;
+    
     next();
-  });
+  } catch (err) {
+    console.error('Token verification error:', err);
+    
+    // Clear invalid token cookie if it exists
+    res.clearCookie('token');
+    
+    const message = err.name === 'TokenExpiredError' 
+      ? 'Session expired. Please log in again.'
+      : 'Invalid authentication token.';
+      
+    return res.status(401).json({ 
+      success: false,
+      message
+    });
+  }
 };
 
 // === Upload Utility ===
-async function uploadImageToSupabase(file, folder = 'news') {
-  if (!file) return null;
+async function uploadToSupabase(file, folder = '') {
+  // Generate a unique filename with folder structure
+  const fileExt = path.extname(file.originalname).toLowerCase();
+  const filename = `${folder}/${uuidv4()}${fileExt}`;
   
-  // Sanitize the filename - remove special characters and spaces
-  const sanitizedFilename = file.originalname
-    .toLowerCase()
-    .replace(/[^a-z0-9.]/g, '-')  // Replace special chars with hyphens
-    .replace(/\-+/g, '-')         // Replace multiple hyphens with single
-    .replace(/^\-|\-$/g, '');     // Remove leading/trailing hyphens
-    
-  const filename = `${folder}/${uuidv4()}-${sanitizedFilename}`;
+  // Validate file type
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  if (!allowedTypes.includes(file.mimetype)) {
+    throw new Error('Invalid file type. Only images are allowed.');
+  }
   
+  // Validate file size (5MB max)
+  const maxSize = 5 * 1024 * 1024; // 5MB
+  if (file.size > maxSize) {
+    throw new Error('File size too large. Maximum size is 5MB.');
+  }
+
+  // Upload to Supabase
   const { error } = await supabase.storage
-    .from('media')
+    .from(SUPABASE_BUCKET)
     .upload(filename, file.buffer, {
       contentType: file.mimetype,
       cacheControl: '3600',
-      upsert: true
+      upsert: false, // Don't allow overwriting existing files
+      duplex: 'half' // Required for large files
     });
 
   if (error) {
-    console.error('Supabase storage error:', error);
-    throw new Error(error.message);
+    console.error('Error uploading to Supabase:', error);
+    throw new Error(`File upload failed: ${error.message}`);
   }
 
+  // Get public URL
   const { data: { publicUrl } } = supabase.storage
-    .from('media')
+    .from(SUPABASE_BUCKET)
     .getPublicUrl(filename);
 
   return publicUrl;
 }
 
-// === Admin Login (Database + Hardcoded Fallback) ===
-const HARDCODED_ADMIN_USERNAME = 'admin';
-const HARDCODED_ADMIN_PASSWORD = 'admin123';
+// Admin credentials from config
+const { username: ADMIN_USERNAME, password: ADMIN_PASSWORD } = config.admin;
 
 router.post('/login', async (req, res) => {
   try {
@@ -78,38 +122,90 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // First, check hardcoded admin
-    if (username === HARDCODED_ADMIN_USERNAME && password === HARDCODED_ADMIN_PASSWORD) {
-      const token = jwt.sign({ username, type: 'hardcoded' }, SECRET, { expiresIn: '2h' });
+    // Check environment admin credentials
+    if (ADMIN_USERNAME && ADMIN_PASSWORD && username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+      const token = jwt.sign(
+        { 
+          username: ADMIN_USERNAME, 
+          isAdmin: true,
+          type: 'admin'
+        },
+        SECRET,
+        { 
+          expiresIn: JWT_EXPIRES_IN,
+          issuer: 'hlssa-api'
+        }
+      );
+      
+      // Set secure cookie in production
+      const isProduction = config.nodeEnv === 'production';
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? 'strict' : 'lax',
+        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+      });
+      
       return res.json({ 
+        success: true,
         token,
-        message: 'Login successful (hardcoded admin)'
+        user: { username: ADMIN_USERNAME, isAdmin: true },
+        message: 'Login successful (admin)'
       });
     }
 
-    // Then check database admins
+    // Check database admins if environment credentials don't match
     const { data: admin, error } = await supabase
-      .from('admin')
-      .select('id, username, password')
+      .from('admins')
+      .select('id, username, password, email')
       .eq('username', username)
-      .maybeSingle();
+      .eq('active', true)
+      .single();
 
     if (error) {
       console.error('Supabase error during login:', error);
-      return res.status(500).json({ error: 'Login system error' });
+      return res.status(500).json({ 
+        success: false,
+        message: 'Database error during login' 
+      });
     }
 
-    // If admin found in database, verify password
-    if (admin && bcrypt.compareSync(password, admin.password)) {
-      const token = jwt.sign({ 
-        username: admin.username, 
-        id: admin.id,
-        type: 'database' 
-      }, SECRET, { expiresIn: '2h' });
+    // In a real app, you should use proper password hashing (e.g., bcrypt)
+    if (admin && admin.password === password) {
+      const token = jwt.sign(
+        { 
+          id: admin.id,
+          username: admin.username,
+          email: admin.email,
+          isAdmin: true,
+          type: 'database_admin'
+        },
+        SECRET,
+        { 
+          expiresIn: JWT_EXPIRES_IN,
+          issuer: 'hlssa-api'
+        }
+      );
+      
+      // Set secure cookie in production
+      const isProduction = config.nodeEnv === 'production';
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? 'strict' : 'lax',
+        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+      });
       
       return res.json({ 
+        success: true,
         token,
-        message: 'Login successful'
+        user: { 
+          id: admin.id,
+          username: admin.username,
+          email: admin.email,
+          isAdmin: true 
+        },
+        message: 'Login successful (database admin)'
       });
     }
 

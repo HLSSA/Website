@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { NewsArticle } from '../types/news.type';
 
-const API_URL = 'http://localhost:5000/api/admin';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const useNews = () => {
   const [news, setNews] = useState<NewsArticle[]>([]);

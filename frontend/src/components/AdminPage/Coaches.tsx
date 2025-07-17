@@ -9,7 +9,7 @@ import Cookies from 'js-cookie';
 
 const Coaches = () => {
   const token = Cookies.get('adminToken');
-  const { coaches, players, loading, error, fetchCoaches, fetchPlayers, setCoaches, setPlayers, fetchAllCoaches, fetchAllPlayers } = useCoaches();
+  const { coaches, players, loading, error, fetchCoaches, fetchPlayers, setCoaches, setPlayers } = useCoaches();
 
   const [formData, setFormData] = useState<PersonFormData>({
     name: '',
@@ -99,17 +99,19 @@ const Coaches = () => {
       }
 
       let response;
+      const endpoint = formData.category.toLowerCase() === 'coach' ? 'coaches' : 'players';
+      
       if (editingId !== null) {
         // Update existing coach/player
         response = await axios.put(
-          `${API_URL}/${editingCategory.toLowerCase()}s/${editingId}`, 
+          `${API_URL}/${endpoint}/${editingId}`, 
           formDataToSend,
           { headers: { ...headers, 'Content-Type': 'multipart/form-data' } }
         );
       } else {
         // Add new coach/player
         response = await axios.post(
-          `${API_URL}/${formData.category.toLowerCase()}es`,
+          `${API_URL}/${endpoint}`,
           formDataToSend,
           { headers: { ...headers, 'Content-Type': 'multipart/form-data' } }
         );
@@ -382,8 +384,8 @@ const Coaches = () => {
                     </div>
                   )}
                   <div className="coach-details">
-                    <h3 className="coach-name">{person.name}</h3>
-                    <div className="coach-role"><strong>Role:</strong> {person.role}</div>
+                    <h3 className="admin-coach-name">{person.name}</h3>
+                    <div className="admin-coach-role"><strong>Role:</strong> {person.role}</div>
                     <div className="coach-category"><strong>Category:</strong> {person.category}</div>
                     {person.category === 'Player' && person.age && (
                       <div className="coach-age"><strong>Age Category:</strong> {person.age}</div>

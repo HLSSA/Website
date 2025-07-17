@@ -9,7 +9,7 @@ import Cookies from 'js-cookie';
 
 const Matches = () => {
   const token = Cookies.get('adminToken');
-  const { matches, upcomingMatches, pastMatches, loading, error, fetchMatches, fetchUpcomingMatches, fetchPastMatches } = useMatches(token || null);
+  const { matches, upcomingMatches, pastMatches, loading, error } = useMatches();
 
   const [formData, setFormData] = useState<MatchFormData>({
     opponent_name: '',
@@ -25,9 +25,9 @@ const Matches = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'all' | 'upcoming'>('all');
+  const [viewMode, setViewMode] = useState<'all' | 'upcoming' | 'past'>('all');
 
-  const API_URL = 'http://localhost:5000/api/admin';
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const headers = {
     'Authorization': `Bearer ${token}`
@@ -82,21 +82,16 @@ const Matches = () => {
         form.append('opponent_image', imageFile);
       }
 
-      let response;
-
       if (editingId !== null) {
-        response = await axios.put(`${API_URL}/matches/${editingId}`, form, { headers });
+        await axios.put(`${API_URL}/matches/${editingId}`, form, { headers });
         setSubmitSuccess('Match updated successfully!');
       } else {
-        response = await axios.post(`${API_URL}/matches`, form, { headers });
+        await axios.post(`${API_URL}/matches`, form, { headers });
         setSubmitSuccess('New match added successfully!');
       }
 
       resetForm();
       setEditingId(null);
-      // Fetch fresh data from the server
-      await fetchMatches();
-      await fetchUpcomingMatches();
     } catch (err: any) {
       console.error('Error saving match:', err);
       setSubmitError(err.response?.data?.error || err.message || 'An error occurred while saving the match');
@@ -120,10 +115,6 @@ const Matches = () => {
     try {
       await axios.delete(`${API_URL}/matches/${id}`, { headers });
     
-      // Instead of directly modifying the state, refetch the data
-      await fetchMatches();
-      await fetchUpcomingMatches();
-      
       setSubmitSuccess('Match deleted successfully!');
       setDeleteConfirm(null);
     } catch (err: any) {
@@ -168,7 +159,11 @@ const Matches = () => {
     });
   };
 
-  const currentMatches = viewMode === 'upcoming' ? upcomingMatches : matches;
+  const currentMatches = viewMode === 'upcoming' 
+    ? upcomingMatches 
+    : viewMode === 'past' 
+      ? pastMatches 
+      : matches;
 
   return (
     <div className="container">
@@ -280,11 +275,23 @@ const Matches = () => {
         <div className="list-header">
           <h2>Matches List</h2>
           <div className="view-toggle">
-            <button className={`toggle-btn ${viewMode === 'all' ? 'active' : ''}`} onClick={() => setViewMode('all')}>
+            <button 
+              className={`toggle-btn ${viewMode === 'all' ? 'active' : ''}`} 
+              onClick={() => setViewMode('all')}
+            >
               All Matches ({matches.length})
             </button>
-            <button className={`toggle-btn ${viewMode === 'upcoming' ? 'active' : ''}`} onClick={() => setViewMode('upcoming')}>
-              Upcoming (60 days) ({upcomingMatches.length})
+            <button 
+              className={`toggle-btn ${viewMode === 'upcoming' ? 'active' : ''}`} 
+              onClick={() => setViewMode('upcoming')}
+            >
+              Upcoming ({upcomingMatches.length})
+            </button>
+            <button 
+              className={`toggle-btn ${viewMode === 'past' ? 'active' : ''}`} 
+              onClick={() => setViewMode('past')}
+            >
+              Past ({pastMatches.length})
             </button>
           </div>
         </div>
@@ -295,7 +302,11 @@ const Matches = () => {
           <div className="error-message">{error}</div>
         ) : currentMatches.length === 0 ? (
           <div className="empty-message">
-            {viewMode === 'upcoming' ? 'No upcoming matches in the next 60 days' : 'No matches available'}
+            {viewMode === 'upcoming' 
+              ? 'No upcoming matches' 
+              : viewMode === 'past'
+                ? 'No past matches available'
+                : 'No matches available'}
           </div>
         ) : (
           <ul className="items-list">

@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import Hero from '../components/LandingPage/Hero';
 import UpcomingMatches from '../components/LandingPage/UpcomingMatches';
 import OurPartners from '../components/LandingPage/OurPartners';

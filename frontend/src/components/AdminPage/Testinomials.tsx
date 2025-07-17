@@ -9,7 +9,7 @@ import Cookies from 'js-cookie';
 
 const Testimonials = () => {
   const token = Cookies.get('adminToken');
-  const { testimonials, loading, error, fetchTestimonials, setTestimonials } = useTestimonials(token || null);
+  const { testimonials, loading, error, fetchTestimonials, setTestimonials } = useTestimonials();
 
   const [formData, setFormData] = useState<TestimonialFormData>({
     name: '',

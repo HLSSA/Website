@@ -103,12 +103,10 @@ const Admins = () => {
     setSubmitError(null);
     setSubmitSuccess(null);
 
-    try {
-      let response;
-      
+    try {      
       if (editingId !== null) {
         // Update existing admin
-        response = await axios.put(
+        await axios.put(
           `${API_URL}/admins/${editingId}`, 
           formData, 
           { headers: getHeaders() }
@@ -116,7 +114,7 @@ const Admins = () => {
         setSubmitSuccess('Admin updated successfully!');
       } else {
         // Create new admin
-        response = await axios.post(
+        await axios.post(
           `${API_URL}/admins`, 
           formData, 
           { headers: getHeaders() }

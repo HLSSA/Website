@@ -29,11 +29,11 @@ interface HeaderProps {
   token?: string | null;
 }
 
-const Header: React.FC<HeaderProps> = ({ token }) => {
+const Header: React.FC<HeaderProps> = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isDesktop, setIsDesktop] = useState<boolean>(window.innerWidth >= 768);
   const [isTablet, setIsTablet] = useState<boolean>(window.innerWidth >= 640);
-  const { aboutData, loading, error } = useAbout();
+  const { aboutData, loading } = useAbout();
 
   // Handle window resize
   useEffect(() => {

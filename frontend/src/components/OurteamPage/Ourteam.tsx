@@ -73,52 +73,58 @@ const OurTeamPage = () => {
     }
   };
 
-  const PlayerCard: React.FC<{ player: Person }> = ({ player }) => (
-    <div className="player-card">
-      <div className="player-image-container">
-        <img 
-          src={player.image || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face'} 
-          alt={`${player.name} - ${player.role}`} 
-          className="player-image" 
-          loading="lazy"
-          onError={handleImageError}
-        />
-        <div className="player-overlay">
-          <div className="player-number-large">{player.jersey_no || '0'}</div>
-          <div className="player-details">
-            <div className="player-name">{player.name}</div>
-            <div className="player-position">{player.role}</div>
+  const PlayerCard: React.FC<CardComponentProps> = ({ player }) => {
+    if (!player) return null;
+    return (
+      <div className="player-card">
+        <div className="player-image-container">
+          <img 
+            src={player.image || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face'} 
+            alt={`${player.name} - ${player.role}`} 
+            className="player-image" 
+            loading="lazy"
+            onError={handleImageError}
+          />
+          <div className="player-overlay">
+            <div className="player-details">
+              <div className="player-number-large">{player.jersey_no || '0'}</div>
+              <div className="player-name">{player.name}</div>
+              <div className="player-position">{player.role}</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
-  const CoachCard: React.FC<{ coach: Person }> = ({ coach }) => (
-    <div className="coach-card">
-      <div className="coach-image-container">
-        <img 
-          src={coach.image || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face'} 
-          alt={`${coach.name} - ${coach.role}`} 
-          className="coach-image" 
-          loading="lazy"
-          onError={handleImageError}
-        />
-        <div className="coach-overlay">
-          <div className="coach-details">
-            <div className="coach-name">{coach.name}</div>
-            <div className="coach-role">{coach.role}</div>
-            <div className="coach-experience">{coach.age}</div>
+  const CoachCard: React.FC<CardComponentProps> = ({ coach }) => {
+    if (!coach) return null;
+    return (
+      <div className="coach-card">
+        <div className="coach-image-container">
+          <img 
+            src={coach.image || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face'} 
+            alt={`${coach.name} - ${coach.role}`} 
+            className="coach-image" 
+            loading="lazy"
+            onError={handleImageError}
+          />
+          <div className="coach-overlay">
+            <div className="coach-details">
+              <div className="coach-name">{coach.name}</div>
+              <div className="coach-role">{coach.role}</div>
+              {coach.age && <div className="coach-experience">{coach.age}</div>}
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   interface CardComponentProps {
     [key: string]: Person | undefined;
     player?: Person;
-    coach?: Person;
+    coach?: Person;  // Made optional
   }
 
   const ScrollableRow: React.FC<{ 

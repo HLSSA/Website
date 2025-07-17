@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Tournament } from '../types/tournaments.type';
 
-const API_URL = 'http://localhost:5000/api/admin';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const useTournaments = (token: string | null) => {
   const [tournaments, setTournaments] = useState<Tournament[]>([]);

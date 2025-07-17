@@ -2,7 +2,7 @@
 
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
-import useAbout, { AboutData } from '../../hooks/useAbout';
+import useAbout from '../../hooks/useAbout';
 import './admin.css';
 import Cookies from 'js-cookie';
 
@@ -16,7 +16,7 @@ interface AboutFormData {
 
 const AboutForm = () => {
   const token = Cookies.get('adminToken');
-  const { aboutData, loading, error, fetchAbout } = useAbout(token || null);
+  const { aboutData, loading, error, fetchAbout } = useAbout();
 
   const [formData, setFormData] = useState<AboutFormData>({
     name: '',
@@ -35,7 +35,7 @@ const AboutForm = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
 
-  const API_URL = 'http://localhost:5000/api/admin';
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const headers = {
     'Authorization': `Bearer ${token}`

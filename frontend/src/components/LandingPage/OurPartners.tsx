@@ -1,4 +1,3 @@
-import React from 'react';
 import usePartners from '../../hooks/usePartners';
 import './styles/OurPartners.css';
 

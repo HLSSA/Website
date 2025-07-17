@@ -223,7 +223,7 @@ const NewsPage: React.FC = () => {
 
   const newsPerPage = 20;
 
-  const fetchApiNews = useCallback(async (page = 1): Promise<void> => {
+  const fetchApiNews = useCallback(async (): Promise<void> => {
     setApiLoading(true);
     setApiError(null);
 
@@ -279,16 +279,14 @@ const NewsPage: React.FC = () => {
 
   useEffect(() => {
     if (activeSection === 'news') {
-      fetchApiNews(currentPage);
+      fetchApiNews();
     }
-  }, [activeSection, currentPage, fetchApiNews]);
+  }, [fetchApiNews]);
 
-  const handlePageChange = (newPage: number) => {
-    if (newPage > 0 && newPage <= totalPages) {
-      setCurrentPage(newPage);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+  const handleLoadMore = () => {
+    setCurrentPage(prev => prev + 1);
   };
+
 
   // Format database news to match the NewsArticle interface
   const formatDbNews = (dbNewsItem: any): NewsArticle => {
@@ -561,7 +559,7 @@ const NewsPage: React.FC = () => {
                   if (activeSection === 'hlssa') {
                     fetchNews();
                   } else {
-                    fetchApiNews(currentPage);
+                    fetchApiNews();
                   }
                 }}
                 className="retry-button"
@@ -588,86 +586,78 @@ const NewsPage: React.FC = () => {
                     .filter(article => !article.featured || activeSection === 'news')
                     .slice((currentPage - 1) * newsPerPage, currentPage * newsPerPage)
                     .map(article => (
-                    <article
-                      key={article.id}
-                      className="news-card"
-                      onClick={() => {
-                        // For international news, always redirect to URL
-                        if (activeSection === 'news' && article.article_url) {
-                          window.open(article.article_url, '_blank');
-                        }
-                        // For HLSSA news, check URL first, then story
-                        else if (activeSection === 'hlssa') {
-                          if (article.article_url && article.article_url !== '#' && article.article_url !== '') {
-                            let url = article.article_url.trim();
-                            if (!/^https?:\/\//i.test(url)) {
-                              url = 'https://' + url;
+                      <article
+                        key={article.id}
+                        className="news-card"
+                        onClick={() => {
+                          if (activeSection === 'news' && article.article_url) {
+                            window.open(article.article_url, '_blank');
+                          } else if (activeSection === 'hlssa') {
+                            if (article.article_url && article.article_url !== '#' && article.article_url !== '') {
+                              let url = article.article_url.trim();
+                              if (!/^https?:\/\//i.test(url)) {
+                                url = 'https://' + url;
+                              }
+                              window.open(url, '_blank');
+                            } else if (article.story && article.story.trim() !== '') {
+                              setSelectedArticle(article);
+                              setIsModalOpen(true);
                             }
-                            window.open(url, '_blank');
-                          } else if (article.story && article.story.trim() !== '') {
-                            setSelectedArticle(article);
-                            setIsModalOpen(true);
                           }
-                        }
-                      }}
-                    >
-                      <img
-                        src={article.image}
-                        alt={article.title}
-                        className="news-image"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=250&fit=crop';
                         }}
-                      />
-                      <div className="news-content-div">
-                        <div style={{ marginBottom: '0.5rem' }}>
-                          <span className="category-tag">{article.category}</span>
+                      >
+                        <img
+                          src={article.image}
+                          alt={article.title}
+                          className="news-image"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=250&fit=crop';
+                          }}
+                        />
+                        <div className="news-content-div">
+                          <div style={{ marginBottom: '0.5rem' }}>
+                            <span className="category-tag">{article.category}</span>
+                          </div>
+                          <h3 className="news-title">{article.title}</h3>
+                          <p className="news-excerpt">{article.excerpt}</p>
+                          <div className="news-meta">
+                            <span className="news-meta-item">
+                              <Calendar size={16} /> {article.date}
+                            </span>
+                            <span className="news-meta-item">
+                              <Clock size={16} /> {article.time}
+                            </span>
+                            <span className="news-meta-item">
+                              <User size={16} /> {article.author}
+                            </span>
+                          </div>
+                          <button 
+                            onClick={(e) => handleReadMore(article, e)}
+                            className="read-more-button"
+                          >
+                            Read Full Story <ChevronRight size={18} />
+                          </button>
                         </div>
-                        <h3 className="news-title">{article.title}</h3>
-                        <p className="news-excerpt">{article.excerpt}</p>
-                        <div className="news-meta">
-                          <span className="news-meta-item">
-                            <Calendar size={16} /> {article.date}
-                          </span>
-                          <span className="news-meta-item">
-                            <Clock size={16} /> {article.time}
-                          </span>
-                          <span className="news-meta-item">
-                            <User size={16} /> {article.author}
-                          </span>
-                        </div>
-                        <button 
-                          onClick={(e) => handleReadMore(article, e)}
-                          className="read-more-button"
-                        >
-                          Read Full Story <ChevronRight size={18} />
-                        </button>
-                      </div>
-                    </article>
-                  ))}
+                      </article>
+                    ))}
                 </div>
               )}
 
-              {activeSection === 'news' && totalPages > 1 && (
+              {activeSection === 'news' && (
                 <div className="pagination">
-                  <button
-                    className="page-button"
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                  >
-                    Previous
-                  </button>
                   <span className="page-info">
                     Page {currentPage} of {totalPages}
                   </span>
-                  <button
-                    className="page-button"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                  >
-                    Next
-                  </button>
+                  {currentPage < totalPages && (
+                    <button
+                      className="load-more"
+                      onClick={handleLoadMore}
+                      disabled={apiLoading}
+                    >
+                      {apiLoading ? 'Loading...' : 'Load More'}
+                    </button>
+                  )}
                 </div>
               )}
             </>

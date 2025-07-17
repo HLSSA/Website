@@ -10,7 +10,7 @@ import { Achievement, AchievementFormData } from '../../types/achievement.type';
 
 const Achievements = () => {
   const token = Cookies.get('adminToken');
-  const { achievements, loading, error, fetchAchievements, setAchievements } = useAchievements(token || null);
+  const { achievements, loading, error, fetchAchievements, setAchievements } = useAchievements();
 
   const [formData, setFormData] = useState<AchievementFormData>({
     title: '',

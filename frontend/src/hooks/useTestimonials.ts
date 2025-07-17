@@ -4,16 +4,14 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Testimonial } from '../types/testimonials.type';
 
-const API_URL = 'http://localhost:5000/api/admin';
+const API_URL = import.meta.env.VITE_API_URL;
 
-const useTestimonials = (token: string | null) => {
+const useTestimonials = () => {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const headers = {
-    'Authorization': `Bearer ${token}`
-  };
+  const headers = {};
 
   const fetchTestimonials = async () => {
     try {
@@ -32,7 +30,7 @@ const useTestimonials = (token: string | null) => {
 
   useEffect(() => {
     fetchTestimonials();
-  }, [token]);
+  }, []);
 
   return { testimonials, loading, error, fetchTestimonials, setTestimonials };
 };

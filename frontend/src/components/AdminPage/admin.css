@@ -332,11 +332,17 @@ video.uploaded-media {
 }
 
 /* Item Name/Title Styles */
-.partner-name, .match-opponent, .coach-name, .tournament-name, .item-title {
+.partner-name, .match-opponent, .admin-coach-name, .tournament-name, .item-title {
     font-size: 1.25rem;
     font-weight: 600;
     color: #333;
     margin: 0 0 0.5rem;
+}
+
+.admin-coach-role{
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+    max-width: 500px;
 }
 
 /* Item Description Styles */
