@@ -223,7 +223,7 @@ const NewsPage: React.FC = () => {
 
   const newsPerPage = 20;
 
-  const fetchApiNews = useCallback(async (): Promise<void> => {
+  const fetchApiNews = useCallback(async (page = 1): Promise<void> => {
     setApiLoading(true);
     setApiError(null);
 
@@ -279,14 +279,16 @@ const NewsPage: React.FC = () => {
 
   useEffect(() => {
     if (activeSection === 'news') {
-      fetchApiNews();
+      fetchApiNews(currentPage);
     }
-  }, [fetchApiNews]);
+  }, [activeSection, currentPage, fetchApiNews]);
 
-  const handleLoadMore = () => {
-    setCurrentPage(prev => prev + 1);
+  const handlePageChange = (newPage: number) => {
+    if (newPage > 0 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
-
 
   // Format database news to match the NewsArticle interface
   const formatDbNews = (dbNewsItem: any): NewsArticle => {
@@ -393,7 +395,7 @@ const NewsPage: React.FC = () => {
             <div className="header-badge">
               🏆 Champions Updates
             </div>
-            <h1 className="title">HLSSA Football Academy</h1>
+            <h1 className="new-headding">HLSSA Football Academy</h1>
             <p className="subtitle">
               Stay updated with the latest football news and academy updates
             </p>
@@ -418,17 +420,21 @@ const NewsPage: React.FC = () => {
     <div className="page">
 
       {/* Header */}
-      <header className="header">
-        <div className="header-content">
-          <div className="header-badge">
-            🏆 Champions Updates
-          </div>
-          <h1 className="title">HLSSA Football Academy</h1>
-          <p className="subtitle">
-            Stay updated with the latest football news and academy updates
-          </p>
-        </div>
-      </header>
+      <div className="header">
+  <div className="header-content">
+    <span className="header-badge yellow">🏆 Champions Updates</span>
+    <h1 className="hero-title">
+      Crafting <span className="white">Hyderabad's</span><br />
+      <span className="yellow">Football News,</span><br />
+      <span className="yellow">One Update at a Time.</span>
+    </h1>
+    <p className="hero-subtitle">
+      Stay updated with the latest football news, match reports,<br />
+      academy insights, and inspiring stories from HLSSA.
+    </p>
+  </div>
+</div>
+
 
       {/* Navigation */}
       <nav className="navigation">
@@ -559,7 +565,7 @@ const NewsPage: React.FC = () => {
                   if (activeSection === 'hlssa') {
                     fetchNews();
                   } else {
-                    fetchApiNews();
+                    fetchApiNews(currentPage);
                   }
                 }}
                 className="retry-button"
@@ -586,78 +592,86 @@ const NewsPage: React.FC = () => {
                     .filter(article => !article.featured || activeSection === 'news')
                     .slice((currentPage - 1) * newsPerPage, currentPage * newsPerPage)
                     .map(article => (
-                      <article
-                        key={article.id}
-                        className="news-card"
-                        onClick={() => {
-                          if (activeSection === 'news' && article.article_url) {
-                            window.open(article.article_url, '_blank');
-                          } else if (activeSection === 'hlssa') {
-                            if (article.article_url && article.article_url !== '#' && article.article_url !== '') {
-                              let url = article.article_url.trim();
-                              if (!/^https?:\/\//i.test(url)) {
-                                url = 'https://' + url;
-                              }
-                              window.open(url, '_blank');
-                            } else if (article.story && article.story.trim() !== '') {
-                              setSelectedArticle(article);
-                              setIsModalOpen(true);
+                    <article
+                      key={article.id}
+                      className="news-card"
+                      onClick={() => {
+                        // For international news, always redirect to URL
+                        if (activeSection === 'news' && article.article_url) {
+                          window.open(article.article_url, '_blank');
+                        }
+                        // For HLSSA news, check URL first, then story
+                        else if (activeSection === 'hlssa') {
+                          if (article.article_url && article.article_url !== '#' && article.article_url !== '') {
+                            let url = article.article_url.trim();
+                            if (!/^https?:\/\//i.test(url)) {
+                              url = 'https://' + url;
                             }
+                            window.open(url, '_blank');
+                          } else if (article.story && article.story.trim() !== '') {
+                            setSelectedArticle(article);
+                            setIsModalOpen(true);
                           }
+                        }
+                      }}
+                    >
+                      <img
+                        src={article.image}
+                        alt={article.title}
+                        className="news-image"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=250&fit=crop';
                         }}
-                      >
-                        <img
-                          src={article.image}
-                          alt={article.title}
-                          className="news-image"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=250&fit=crop';
-                          }}
-                        />
-                        <div className="news-content-div">
-                          <div style={{ marginBottom: '0.5rem' }}>
-                            <span className="category-tag">{article.category}</span>
-                          </div>
-                          <h3 className="news-title">{article.title}</h3>
-                          <p className="news-excerpt">{article.excerpt}</p>
-                          <div className="news-meta">
-                            <span className="news-meta-item">
-                              <Calendar size={16} /> {article.date}
-                            </span>
-                            <span className="news-meta-item">
-                              <Clock size={16} /> {article.time}
-                            </span>
-                            <span className="news-meta-item">
-                              <User size={16} /> {article.author}
-                            </span>
-                          </div>
-                          <button 
-                            onClick={(e) => handleReadMore(article, e)}
-                            className="read-more-button"
-                          >
-                            Read Full Story <ChevronRight size={18} />
-                          </button>
+                      />
+                      <div className="news-content-div">
+                        <div style={{ marginBottom: '0.5rem' }}>
+                          <span className="category-tag">{article.category}</span>
                         </div>
-                      </article>
-                    ))}
+                        <h3 className="news-title">{article.title}</h3>
+                        <p className="news-excerpt">{article.excerpt}</p>
+                        <div className="news-meta">
+                          <span className="news-meta-item">
+                            <Calendar size={16} /> {article.date}
+                          </span>
+                          <span className="news-meta-item">
+                            <Clock size={16} /> {article.time}
+                          </span>
+                          <span className="news-meta-item">
+                            <User size={16} /> {article.author}
+                          </span>
+                        </div>
+                        <button 
+                          onClick={(e) => handleReadMore(article, e)}
+                          className="read-more-button"
+                        >
+                          Read Full Story <ChevronRight size={18} />
+                        </button>
+                      </div>
+                    </article>
+                  ))}
                 </div>
               )}
 
-              {activeSection === 'news' && (
+              {activeSection === 'news' && totalPages > 1 && (
                 <div className="pagination">
+                  <button
+                    className="page-button"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    Previous
+                  </button>
                   <span className="page-info">
                     Page {currentPage} of {totalPages}
                   </span>
-                  {currentPage < totalPages && (
-                    <button
-                      className="load-more"
-                      onClick={handleLoadMore}
-                      disabled={apiLoading}
-                    >
-                      {apiLoading ? 'Loading...' : 'Load More'}
-                    </button>
-                  )}
+                  <button
+                    className="page-button"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                  </button>
                 </div>
               )}
             </>

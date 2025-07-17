@@ -91,7 +91,7 @@ const OurPartners = () => {
             </div>
 
             <div className="benefit-item">
-              <div className="benefit-icon tournaments"><span>🏆</span></div>
+              <div className="benefit-icon opportunities"><span>🏆</span></div>
               <h4 className="benefit-title">Tournament Access</h4>
               <p className="benefit-description">Participation in high-level competitions and leagues</p>
             </div>
