@@ -18,7 +18,7 @@ const Admins = () => {
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
-  const API_URL = 'http://localhost:5000/api/admin';
+  const API_URL = import.meta.env.VITE_API_URL;
   
   // Get token from localStorage and handle potential null value
   const getToken = () => {

@@ -28,7 +28,7 @@ const Coaches = () => {
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: number; category: 'Coach' | 'Player' } | null>(null);
   const [activeTab, setActiveTab] = useState<'Coach' | 'Player'>('Coach');
 
-  const API_URL = 'http://localhost:5000/api/admin';
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const headers = {
     'Authorization': `Bearer ${token}`

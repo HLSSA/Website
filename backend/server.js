@@ -1,106 +1,62 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
+const dotenv = require('dotenv');
 
-// Load configuration
-const config = require('./config');
+dotenv.config();
 
-const adminRoutes = require('./routes/admin');
+const adminRoutes = require('./routes/admin'); 
+
 const app = express();
 
-// CORS Configuration - Allow all origins in production, use config in development
-const corsOptions = process.env.NODE_ENV === 'production' 
-  ? { origin: true, credentials: true }
-  : {
-      origin: config.cors.origin,
-      methods: config.cors.methods,
-      allowedHeaders: config.cors.allowedHeaders,
-      credentials: true
-    };
-
+// ✅ CORS Configuration
+const corsOptions = {
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
 app.use(cors(corsOptions));
 
-// Handle JSON & form data
-app.use(bodyParser.json({ limit: config.upload.limit }));
-app.use(bodyParser.urlencoded({ limit: config.upload.limit, extended: true }));
-app.use(express.json({ limit: config.upload.limit }));
-app.use(express.urlencoded({ limit: config.upload.limit, extended: true }));
+// ✅ Handle JSON & form data
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Static assets (e.g., for uploaded files)
+// ✅ Static assets (e.g., for uploaded files)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Request Logger
+// ✅ Request Logger
 app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  console.log(`[${req.method}] ${req.url}`);
   next();
 });
 
-// API Routes
-app.use('/api/admin', adminRoutes);
+// ✅ Routes
+app.use('/api/admin', adminRoutes); // Add other route files as needed
 
-// Health Check Endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || config.nodeEnv,
-    supabase: {
-      connected: !!(process.env.SUPABASE_URL || config.supabase?.url),
-      bucket: process.env.SUPABASE_BUCKET || config.supabase?.bucket
-    }
-  });
-});
-
-// Base Route
+// ✅ Base Test Route
 app.get('/', (req, res) => {
-  res.send(`🌐 HLSSA API v1.0.0 (${config.nodeEnv})`);
+  res.send('🌐 HLSSA backend (Supabase connected) is running');
 });
 
-// 404 Handler
-app.use((req, res) => {
-  res.status(404).json({
-    status: 'error',
-    message: 'Not Found',
-    path: req.path
-  });
-});
-
-// Error Handler
+// ✅ Error Handling
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  
-  const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
-  
-  res.status(statusCode).json({
-    status: 'error',
-    message,
-    ...(config.nodeEnv === 'development' && { stack: err.stack })
+  console.error(err.stack);
+  res.status(500).send({
+    message: 'Something went wrong!',
+    error: process.env.NODE_ENV === 'production' ? {} : err.stack
   });
 });
 
-// Start Server
-const server = app.listen(config.port, () => {
-  console.log(`🚀 Server running in ${config.nodeEnv} mode on port ${config.port}`);
-  console.log(`CORS configured for: ${config.cors.origin}`);
-  console.log(`Supabase bucket: ${config.supabase.bucket}`);
-});
+// ✅ Server Setup
+const PORT = process.env.PORT || 5000;
 
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-  console.error('UNHANDLED REJECTION! 💥 Shutting down...');
-  console.error(err);
-  server.close(() => {
-    process.exit(1);
-  });
-});
-
-// Handle uncaught exceptions
-process.on('uncaughtException', (err) => {
-  console.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
-  console.error(err);
-  process.exit(1);
+// ✅ Graceful Shutdown
+const server = app.listen(PORT, () => {
+  console.log(` Server running at http://localhost:${PORT}`);
 });
 
 // Handle uncaught exceptions
