@@ -16,7 +16,24 @@
   font-weight: bold;
   margin-bottom: 32px;
   line-height: 1.1;
-  color: #ffffff !important;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.title-white {
+  color: #ffffff;
+}
+
+.title-yellow {
+  color: #ffd700;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+}
+
+/* Make sure the responsive version also updates */
+.hero-content h1 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
 .hero-description {
@@ -70,7 +87,7 @@
   opacity: 0.95;
   max-width: 600px;
   margin: 0 auto;
-  color: #dce3a7;
+  color: #fefffa;
 }
 
 .main-content {
