@@ -16,24 +16,7 @@
   font-weight: bold;
   margin-bottom: 32px;
   line-height: 1.1;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-}
-
-.title-white {
-  color: #ffffff;
-}
-
-.title-yellow {
-  color: #ffd700;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-}
-
-/* Make sure the responsive version also updates */
-.hero-content h1 {
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  font-weight: 800;
-  margin-bottom: 1rem;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  color: #ffffff !important;
 }
 
 .hero-description {
@@ -48,14 +31,17 @@
 
 .hero-section {
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
-            url('https://res.cloudinary.com/dwlccnvfh/image/upload/v1753939098/xlr2w1lwxmkqupfzzyzl_iytqhn.webp') center/cover no-repeat;
+            url('https://res.cloudinary.com/dwlccnvfh/image/upload/v1753939098/xlr2w1lwxmkqupfzzyzl_iytqhn.webp');
   background-size: cover;
   background-position: center;
   color: white;
   padding: 200px 20px 80px 20px;
   text-align: center;
   position: relative;
-  height: 105vh;
+}
+
+.hero-card{
+  height: 100vh;
 }
 
 .hero-badge {
@@ -88,7 +74,7 @@
   opacity: 0.95;
   max-width: 600px;
   margin: 0 auto;
-  color: #fefffa;
+  color: #dce3a7;
 }
 
 .main-content {

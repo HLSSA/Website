@@ -205,7 +205,7 @@ const OurTeamPage = () => {
 
   return (
     <div className="team-page">
-      <div className="hero-section">
+      <div className="hero-section hero-card">
         <div className="hero-content">
           <h1 className="hero-title">
           <span className="title-white">Our </span>
