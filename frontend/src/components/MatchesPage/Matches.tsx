@@ -195,9 +195,20 @@ const Matches: React.FC = () => {
             
             {/* Main Title */}
             <h1 className="main-title">
-              {activeTab === 'upcoming' ? 'Upcoming' : 'Past'} Matches
+              {activeTab === 'upcoming' ? (
+                <>
+                  <span className="title-yellow">Upcoming </span>
+                  <span className="title-white">Matches</span>
+                </>
+              ) : (
+                <>
+                  <span className="title-yellow">Past </span>
+                  <span className="title-white">Matches</span>
+                </>
+              )}
             </h1>
-            <p className="subtitle">
+
+            <p className="subtitle-white">
               {activeTab === 'upcoming' 
                 ? 'Follow our journey as we compete against the best teams in Hyderabad. Every match is a step towards excellence.'
                 : 'Relive our victories and learn from our challenges. Each game tells a story of growth and determination.'
