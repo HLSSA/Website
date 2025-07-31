@@ -450,7 +450,7 @@ const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Developers */}
+          {/* Developers 
           <div className="footer-developers">
             <p>Developed By:</p>
             <div className="footer-developer-info">
@@ -474,6 +474,7 @@ const Footer: React.FC = () => {
               <span className="footer-developer-name">Divya Theresa</span>
             </div>
           </div>
+          */}
 
           {/* Bottom Section */}
           <div className="footer-bottom">

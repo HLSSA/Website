@@ -32,7 +32,7 @@ const Programs: React.FC = () => {
 
   const programs = [
     {
-      title: "Little Champions",
+      title: "Beginner",
       ageGroup: "Ages 4-8",
       description: "Introduction to football fundamentals in a fun, engaging environment.",
       icon: <Zap size={24} />,
@@ -47,7 +47,7 @@ const Programs: React.FC = () => {
       delay: 0
     },
     {
-      title: "Rising Stars",
+      title: "Advance",
       ageGroup: "Ages 9-12", 
       description: "Building technical foundations and introducing tactical concepts.",
       icon: <Trophy size={24} />,
@@ -62,7 +62,7 @@ const Programs: React.FC = () => {
       delay: 0.2
     },
     {
-      title: "Elite Development",
+      title: "Elite",
       ageGroup: "Ages 13-16",
       description: "Advanced training focusing on technical excellence and tactical understanding.",
       icon: <Award size={24} />,
@@ -521,7 +521,7 @@ const Programs: React.FC = () => {
               </div>
               <div>
                 <img 
-                  src="https://images.pexels.com/photos/274506/pexels-photo-274506.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" 
+                  src="https://res.cloudinary.com/dwlccnvfh/image/upload/v1753937979/iy147kee5hdfkohjt4ig_w1vysp.webp" 
                   alt="Specialized soccer training" 
                   className="specialized-image"
                 />

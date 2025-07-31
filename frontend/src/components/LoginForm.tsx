@@ -11,13 +11,14 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  const API_URL = import.meta.env.VITE_API_URL;
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
 
     try {
   const res = await axios.post(
-    'http://localhost:5000/api/admin/login',
+    `${API_URL}/login`,
     { username, password },
     {
       withCredentials: true, // Include cookies if needed

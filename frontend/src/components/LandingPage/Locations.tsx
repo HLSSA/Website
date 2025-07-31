@@ -60,7 +60,7 @@ const AcademyMap: React.FC = () => {
       boxSizing: 'border-box',
       background: '#f0f2f5'
     }}>
-      <h1 style={{ marginBottom: '1.5rem', color: '#333' }}>HLSSA Academies in the Area 🗺️</h1>
+      <h1 style={{ marginBottom: '1.5rem', color: '#333' }}>HLSSA Academies 🗺️</h1>
       <div style={{ height: '80%', width: '90%', borderRadius: '15px', overflow: 'hidden', boxShadow: '0 8px 30px rgba(0,0,0,0.15)' }}>
         <MapContainer
           center={mapCenter}

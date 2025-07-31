@@ -13,7 +13,7 @@ const Hero = () => {
         {/* Hero Background Image */}
         <div className="hero-background">
           <img 
-            src="https://images.pexels.com/photos/274422/pexels-photo-274422.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop"
+            src="https://res.cloudinary.com/dwlccnvfh/image/upload/v1753936491/pf9tswepd5vcngpx6cnt_nhc29f.webp"
             alt="Soccer training"
             className="hero-bg-image"
           />
@@ -31,9 +31,9 @@ const Hero = () => {
               
               <h1 className="hero-title">
                 <span className="title-gradient-title">Forge Your </span>
-                <span className="title-accent">Legacy.</span>
+                <span className="title-accent">Legacy</span>
                 <span className="title-gradient">
-                  Join the Champions.
+                  Join the Champions
                 </span>
               </h1>
               
@@ -164,7 +164,7 @@ const StyledWrapper = styled.div`
   =========================================== */
   .hero-section {
     position: relative;
-    min-height: 100vh;
+    
     display: flex;
     align-items: center;
     background: linear-gradient(to bottom right, #1e3a8a, #1e40af, #1d4ed8);
@@ -207,7 +207,7 @@ const StyledWrapper = styled.div`
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: blur(3px);
+    filter: blur(1px);
     transform: scale(1.1);
   }
 
@@ -221,6 +221,7 @@ const StyledWrapper = styled.div`
     margin: 0 auto;
     padding: 2rem 1rem;
     width: 100%;
+    margin-top: 7rem;
   }
 
   .hero-grid {
@@ -390,7 +391,7 @@ const StyledWrapper = styled.div`
   .stat-number {
     font-size: 2rem;
     font-weight: bold;
-    color: #facc15;
+    color:rgb(0, 0, 0);
     margin-bottom: 0.5rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
   }
@@ -623,6 +624,10 @@ const StyledWrapper = styled.div`
     .hero-title {
       font-size: 3.5rem;
     }
+
+    .hero-container {
+      margin-top: 80px;
+    }
     
     .hero-content {
       text-align: left;
@@ -645,7 +650,7 @@ const StyledWrapper = styled.div`
   /* Large screens (lg) */
   @media (min-width: 1024px) {
     .hero-container {
-      padding: 0rem 2rem;
+      padding: 0rem 1rem;
     }
     
     .hero-grid {

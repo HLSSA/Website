@@ -31,13 +31,14 @@
 
 .hero-section {
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
-            url('https://images.unsplash.com/photo-1553778263-73a83bab9b0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            url('https://res.cloudinary.com/dwlccnvfh/image/upload/v1753939098/xlr2w1lwxmkqupfzzyzl_iytqhn.webp') center/cover no-repeat;
   background-size: cover;
   background-position: center;
   color: white;
   padding: 200px 20px 80px 20px;
   text-align: center;
   position: relative;
+  height: 105vh;
 }
 
 .hero-badge {

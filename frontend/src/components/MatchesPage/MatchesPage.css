@@ -15,9 +15,9 @@
 /* Header Section */
 .header-section {
   position: relative;
-  height: 384px; /* 96 * 4px = 384px for h-96 */
+  height: 90vh; /* 96 * 4px = 384px for h-96 */
   background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
-                    url('https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2340&q=80');
+                    url('https://res.cloudinary.com/dwlccnvfh/image/upload/v1753939826/pyn9vuo7cwf68jiozoez_yxiwqi.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -25,7 +25,7 @@
 
 .home-header-section {
   position: relative;
-  height: 384px; /* 96 * 4px = 384px for h-96 */
+  height: 90vh; /* 96 * 4px = 384px for h-96 */
 }
 
 .header-overlay {

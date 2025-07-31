@@ -96,7 +96,7 @@ const AboutUs: React.FC = () => {
         <div className="hero-background">
           <div className="hero-overlay"></div>
           <img 
-            src="https://images.pexels.com/photos/1618269/pexels-photo-1618269.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&fit=crop"
+            src="https://res.cloudinary.com/dwlccnvfh/image/upload/v1753938453/i7fr4uh4fnzpqbwixfz6_etstwp.webp"
             alt="Coach inspiring young players"
             className="hero-image"
           />
@@ -114,8 +114,7 @@ const AboutUs: React.FC = () => {
           </h1>
           
           <p className="hero-description">
-            Since 2015, we've been the nurturing ground for aspiring athletes, transforming raw talent into 
-            championship-caliber players through holistic development, world-class coaching, and unwavering dedication.
+          Since 2015, we’ve been a springboard for aspiring athletes — shaping raw talent into championship-level players through holistic training, elite coaching, and a steadfast commitment to excellence.
           </p>
 
           <div className="hero-buttons">
@@ -249,7 +248,7 @@ const AboutUs: React.FC = () => {
           <div className="founder-content">
             <div className="founder-image-container">
               <img
-                src="https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=600&h=600&fit=crop"
+                src="https://res.cloudinary.com/dwlccnvfh/image/upload/v1753938789/ndn8zj4lhpkjsjflg7cr_cafbdm.webp"
                 alt="Mohammed Faiz Khan"
                 className="founder-image"
               />
@@ -397,7 +396,7 @@ const AboutUs: React.FC = () => {
         .hero-image {
           width: 100%;
           height: 100%;
-          object-fit: cover;
+          
           filter: blur(2px);
         }
 
@@ -951,8 +950,8 @@ const AboutUs: React.FC = () => {
         }
 
         .pathway-logo {
-          width: 8rem;
-          height: 4rem;
+          width: 16rem;
+          height: 10rem;
           object-fit: cover;
           border-radius: 0.5rem;
           box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
