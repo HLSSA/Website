@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Partner } from '../types/partners.type';
+import Cookies from 'js-cookie';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -11,7 +12,9 @@ const usePartners = (token: string | null) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const headers = {};
+  const headers = {
+    Authorization: `Bearer ${Cookies.get('adminToken')}`,
+  };
 
   const fetchPartners = async () => {
     try {

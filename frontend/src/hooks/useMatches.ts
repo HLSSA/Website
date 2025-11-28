@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 import { Match } from '../types/matches.type';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -11,7 +12,9 @@ const useMatches = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const headers = {};
+  const headers = {
+    Authorization: `Bearer ${Cookies.get('adminToken')}`,
+  };
 
   const fetchMatches = async () => {
     try {

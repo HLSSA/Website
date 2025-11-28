@@ -50,6 +50,7 @@ const OurPartners = () => {
                 key={`${partner.id}-${index}`}
                 className="partner-card"
               >
+                <a href={partner.website_link} target="_blank" rel="noopener noreferrer">
                 <div className="logo-container">
                   <img
                     src={partner.image}
@@ -64,6 +65,7 @@ const OurPartners = () => {
                 <div className="partner-info">
                   <h3 className="partner-name">{partner.name}</h3>
                 </div>
+                </a>
               </div>
             ))}
           </div>

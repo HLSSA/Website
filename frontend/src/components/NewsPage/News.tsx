@@ -223,7 +223,7 @@ const NewsPage: React.FC = () => {
 
   const newsPerPage = 20;
 
-  const fetchApiNews = useCallback(async (page = 1): Promise<void> => {
+  const fetchApiNews = useCallback(async (): Promise<void> => {
     setApiLoading(true);
     setApiError(null);
 
@@ -279,7 +279,7 @@ const NewsPage: React.FC = () => {
 
   useEffect(() => {
     if (activeSection === 'news') {
-      fetchApiNews(currentPage);
+      fetchApiNews();
     }
   }, [activeSection, currentPage, fetchApiNews]);
 
@@ -565,7 +565,7 @@ const NewsPage: React.FC = () => {
                   if (activeSection === 'hlssa') {
                     fetchNews();
                   } else {
-                    fetchApiNews(currentPage);
+                    fetchApiNews();
                   }
                 }}
                 className="retry-button"

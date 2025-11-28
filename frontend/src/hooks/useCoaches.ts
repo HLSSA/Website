@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Person } from '../types/coaches.type';
+import Cookies from 'js-cookie';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -13,11 +14,15 @@ const useCoaches = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const headers = {
+    Authorization: `Bearer ${Cookies.get('adminToken')}`,
+  };
+
   const fetchCoaches = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(`${API_URL}/coaches/active`);
+      const response = await axios.get(`${API_URL}/coaches/active`, { headers });
       setCoaches(response.data);
     } catch (err: any) {
       console.error('Error fetching coaches:', err);
@@ -32,7 +37,7 @@ const useCoaches = () => {
       setLoading(true);
       setError(null);
 
-      const response = await axios.get(`${API_URL}/coaches`);
+      const response = await axios.get(`${API_URL}/coaches`, { headers });
       setCoaches(response.data);
     } catch (err: any) {
       console.error('Error fetching coaches:', err);
@@ -47,7 +52,7 @@ const useCoaches = () => {
       setLoading(true);
       setError(null);
 
-      const response = await axios.get(`${API_URL}/players/active`);
+      const response = await axios.get(`${API_URL}/players/active`, { headers });
       setPlayers(response.data);
     } catch (err: any) {
       console.error('Error fetching players:', err);
@@ -62,7 +67,7 @@ const useCoaches = () => {
       setLoading(true);
       setError(null);
 
-      const response = await axios.get(`${API_URL}/players/age/${age}`);
+      const response = await axios.get(`${API_URL}/players/age/${age}`, { headers });
       return response.data;
     } catch (err: any) {
       console.error('Error fetching players:', err);
@@ -84,7 +89,7 @@ const useCoaches = () => {
       // Fetch players for each age category
       for (const age of ageCategories) {
         try {
-          const response = await axios.get(`${API_URL}/players/age/${age}`);
+          const response = await axios.get(`${API_URL}/players/age/${age}`, { headers });
           allPlayers.push(...response.data);
         } catch (ageErr: any) {
           // If a specific age category fails, continue with others
@@ -106,7 +111,7 @@ const useCoaches = () => {
       setLoading(true);
       setError(null);
 
-      const response = await axios.get(`${API_URL}/players`);
+      const response = await axios.get(`${API_URL}/players`, { headers });
       setPlayers(response.data);
     } catch (err: any) {
       console.error('Error fetching players:', err);
@@ -123,7 +128,7 @@ const useCoaches = () => {
 
       // Fetch coaches and players concurrently
       const [coachesResponse] = await Promise.all([
-        axios.get(`${API_URL}/coaches`)
+        axios.get(`${API_URL}/coaches`, { headers })
       ]);
 
       setCoaches(coachesResponse.data);
@@ -144,7 +149,7 @@ const useCoaches = () => {
       setError(null);
 
       // Fetch active coaches
-      const coachesResponse = await axios.get(`${API_URL}/coaches/active`);
+      const coachesResponse = await axios.get(`${API_URL}/coaches/active`, { headers });
       setCoaches(coachesResponse.data);
 
       // Fetch players by age categories

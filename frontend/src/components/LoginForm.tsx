@@ -21,7 +21,6 @@ const LoginForm = ({ onLoginSuccess }: LoginFormProps) => {
     `${API_URL}/login`,
     { username, password },
     {
-      withCredentials: true, // Include cookies if needed
       headers: {
         'Content-Type': 'application/json',
       },

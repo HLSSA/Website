@@ -9,12 +9,17 @@ import MatchesPage from './components/MatchesPage/Matches';
 import News from './components/NewsPage/News';
 import OurTeam from './components/OurteamPage/Ourteam';
 import SoccerAcademyProducts from './components/SoccerAcademyProducts/SoccerAcademyProducts';
+import ProtectedRoute from './components/ProtectedRoute';
+import LoginForm from './components/LoginForm';
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/admin" element={<AdminPage />} />
+      <Route path="/login" element={<LoginForm onLoginSuccess={() => window.location.href = '/admin'} />} />
+      <Route element={<ProtectedRoute />}>
+        <Route path="/admin" element={<AdminPage />} />
+      </Route>
       <Route path="/about" element={<AboutPage />} />
       <Route path="/achievements" element={<Achievements />} />
       <Route path="/matches" element={<MatchesPage/>} />

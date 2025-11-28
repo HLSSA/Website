@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Achievement } from '../types/achievement.type';
+import Cookies from 'js-cookie';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -11,7 +12,9 @@ const useAchievements = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const headers = {};
+  const headers = {
+    Authorization: `Bearer ${Cookies.get('adminToken')}`,
+  };
 
   const fetchAchievements = async () => {
     try {

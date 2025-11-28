@@ -119,7 +119,7 @@
 }
 
 .logo-container {
-  height: 200px;
+  height: 240px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -153,6 +153,11 @@
   color: #111827;
   margin-bottom: 4px;
   text-align: center;
+  text-decoration: none !important;
+}
+
+.partner-card a {
+  text-decoration: none !important;
 }
 
 /* Benefits Section */
