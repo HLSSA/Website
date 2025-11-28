@@ -11,12 +11,18 @@ import OurTeam from './components/OurteamPage/Ourteam';
 import SoccerAcademyProducts from './components/SoccerAcademyProducts/SoccerAcademyProducts';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginForm from './components/LoginForm';
+import Cookies from 'js-cookie';
 
 function App() {
+  const handleLoginSuccess = (token: string) => {
+    Cookies.set('adminToken', token, { expires: 1 });
+    window.location.href = '/admin';
+  };
+
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<LoginForm onLoginSuccess={() => window.location.href = '/admin'} />} />
+      <Route path="/login" element={<LoginForm onLoginSuccess={handleLoginSuccess} />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/admin" element={<AdminPage />} />
       </Route>
